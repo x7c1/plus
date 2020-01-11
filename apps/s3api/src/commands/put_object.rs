@@ -7,7 +7,7 @@ use clap::{App, Arg, ArgMatches, SubCommand};
 
 const COMMAND_NAME: &str = "put-object";
 
-pub fn create<'a, 'b>() -> Definition<'a, 'b> {
+pub fn create<'a, 'b>() -> Definition<'a, 'b, S3ApiResult<()>> {
     Definition {
         name: COMMAND_NAME.to_string(),
         define,

@@ -1,4 +1,3 @@
-use crate::S3ApiResult;
 use clap::{App, ArgMatches};
 
 // see also:
@@ -6,19 +5,19 @@ use clap::{App, ArgMatches};
 
 pub mod put_object;
 
-pub struct Definition<'a, 'b> {
+pub struct Definition<'a, 'b, T> {
     pub name: String,
     pub define: fn() -> App<'a, 'b>,
-    pub run: fn(matches: &ArgMatches) -> S3ApiResult<()>,
+    pub run: fn(matches: &ArgMatches) -> T,
 }
 
-pub struct Task<'a, 'b> {
-    pub definition: &'a Definition<'a, 'b>,
+pub struct Task<'a, 'b, T> {
+    pub definition: &'a Definition<'a, 'b, T>,
     pub matches: &'a ArgMatches<'a>,
 }
 
-impl Task<'_, '_> {
-    pub fn run(&self) -> S3ApiResult<()> {
+impl<T> Task<'_, '_, T> {
+    pub fn run(&self) -> T {
         let run = self.definition.run;
         run(self.matches)
     }

@@ -24,21 +24,26 @@ fn main() {
         }
     }
 }
+type ApiResult = S3ApiResult<()>;
 
-fn run() -> S3ApiResult<()> {
-    let definitions: Vec<Definition> = vec![commands::put_object::create()];
+type ApiDef<'a, 'b> = Definition<'a, 'b, ApiResult>;
+
+type ApiTask<'a, 'b> = Task<'a, 'b, ApiResult>;
+
+fn run() -> ApiResult {
+    let definitions: Vec<ApiDef> = vec![commands::put_object::create()];
     let finder = TaskFinder::new(definitions)?;
     let task = finder.require_task()?;
     task.run()
 }
 
 struct TaskFinder<'a, 'b> {
-    definitions: Vec<Definition<'a, 'b>>,
+    definitions: Vec<ApiDef<'a, 'b>>,
     matches: ArgMatches<'a>,
 }
 
 impl<'a, 'b> TaskFinder<'a, 'b> {
-    fn new(definitions: Vec<Definition<'a, 'b>>) -> S3ApiResult<TaskFinder<'a, 'b>> {
+    fn new(definitions: Vec<ApiDef<'a, 'b>>) -> S3ApiResult<TaskFinder<'a, 'b>> {
         let app = definitions
             .iter()
             .map(|task| task.define)
@@ -56,8 +61,8 @@ impl<'a, 'b> TaskFinder<'a, 'b> {
             .author(crate_authors!())
     }
 
-    fn require_task(&'a self) -> S3ApiResult<Task<'a, 'b>> {
-        let to_task = |definition: &'a Definition| {
+    fn require_task(&'a self) -> S3ApiResult<ApiTask<'a, 'b>> {
+        let to_task = |definition: &'a ApiDef| {
             self.matches
                 .subcommand_matches(definition.name.to_string())
                 .map(|matches| Task {
