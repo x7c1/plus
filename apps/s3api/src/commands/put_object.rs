@@ -1,4 +1,4 @@
-use crate::commands::Task;
+use crate::commands::Definition;
 use crate::S3ApiResult;
 use clap::{App, Arg, ArgMatches, SubCommand};
 
@@ -7,15 +7,15 @@ use clap::{App, Arg, ArgMatches, SubCommand};
 
 const COMMAND_NAME: &str = "put-object";
 
-pub fn create_task<'a, 'b>() -> Task<'a, 'b> {
-    Task {
+pub fn create<'a, 'b>() -> Definition<'a, 'b> {
+    Definition {
         name: COMMAND_NAME.to_string(),
-        create,
+        define,
         run,
     }
 }
 
-fn create<'a, 'b>() -> App<'a, 'b> {
+fn define<'a, 'b>() -> App<'a, 'b> {
     SubCommand::with_name(COMMAND_NAME)
         .about("Adds an object to a bucket")
         .arg(
@@ -36,6 +36,6 @@ fn create<'a, 'b>() -> App<'a, 'b> {
 
 fn run(matches: &ArgMatches) -> S3ApiResult<()> {
     println!("running put-object!");
-    println!("matches: {:?}", matches);
+    println!("matches: {:#?}", matches);
     Ok({})
 }

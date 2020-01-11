@@ -5,9 +5,9 @@ extern crate failure;
 
 mod commands;
 mod error;
-use crate::commands::Task;
+use crate::commands::{Definition, Task};
 use crate::error::Error::SubCommandMissing;
-use clap::App;
+use clap::{App, ArgMatches};
 pub use error::Result as S3ApiResult;
 use std::process::exit;
 
@@ -26,26 +26,48 @@ fn main() {
 }
 
 fn run() -> S3ApiResult<()> {
-    let tasks: Vec<Task> = vec![commands::put_object::create_task()];
-    let mut app = create_app();
-    for task in &tasks {
-        app = app.subcommand((task.create)());
-    }
-    let arg_matches = app.get_matches_safe()?;
-    let (sub_matches, run) = tasks
-        .iter()
-        .find_map(|task| {
-            arg_matches
-                .subcommand_matches(task.name.to_string())
-                .map(|matches| (matches, task.run))
-        })
-        .ok_or(SubCommandMissing)?;
-
-    run(sub_matches)
+    let definitions: Vec<Definition> = vec![commands::put_object::create()];
+    let finder = TaskFinder::new(definitions)?;
+    let task = finder.require_task()?;
+    task.run()
 }
 
-fn create_app<'a, 'b>() -> App<'a, 'b> {
-    App::new(crate_name!())
-        .version(crate_version!())
-        .author(crate_authors!())
+struct TaskFinder<'a, 'b> {
+    definitions: Vec<Definition<'a, 'b>>,
+    matches: ArgMatches<'a>,
+}
+
+impl<'a, 'b> TaskFinder<'a, 'b> {
+    fn new(definitions: Vec<Definition<'a, 'b>>) -> S3ApiResult<TaskFinder<'a, 'b>> {
+        let app = definitions
+            .iter()
+            .map(|task| task.define)
+            .fold(Self::init(), |acc, define| acc.subcommand(define()));
+
+        Ok(TaskFinder {
+            definitions,
+            matches: app.get_matches_safe()?,
+        })
+    }
+
+    fn init() -> App<'a, 'b> {
+        App::new(crate_name!())
+            .version(crate_version!())
+            .author(crate_authors!())
+    }
+
+    fn require_task(&'a self) -> S3ApiResult<Task<'a, 'b>> {
+        let to_task = |definition: &'a Definition| {
+            self.matches
+                .subcommand_matches(definition.name.to_string())
+                .map(|matches| Task {
+                    definition,
+                    matches,
+                })
+        };
+        self.definitions
+            .iter()
+            .find_map(to_task)
+            .ok_or(SubCommandMissing)
+    }
 }
