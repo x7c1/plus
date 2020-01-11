@@ -38,7 +38,12 @@ get_build_mode() {
   done
   echo "--release"
 }
+OPT_LEVEL=$(get_opt_level "$@")
 
-export RUSTFLAGS="-C opt-level=$(get_opt_level $@)"
+# defined for this project
+export PROJECT_ROOT="/wasabi"
 export TARGET_X86="x86_64-unknown-linux-musl"
 export TARGET_ARM="armv7-unknown-linux-musleabihf"
+
+# used by rustc
+export RUSTFLAGS="-C opt-level=$OPT_LEVEL"

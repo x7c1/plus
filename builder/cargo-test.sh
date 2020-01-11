@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 . $(dirname $0)/setup-env.sh
-cd /wasabi
+cd "$PROJECT_ROOT"
 
 cargo build \
   --verbose \
