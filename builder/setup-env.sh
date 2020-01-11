@@ -39,8 +39,10 @@ get_build_mode() {
   echo "--release"
 }
 OPT_LEVEL=$(get_opt_level "$@")
+BUILD_MODE=$(get_build_mode "$@")
 
 # defined for this project
+export BUILD_MODE
 export PROJECT_ROOT="/wasabi"
 export TARGET_X86="x86_64-unknown-linux-musl"
 export TARGET_ARM="armv7-unknown-linux-musleabihf"

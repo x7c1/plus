@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
 
-. $(dirname $0)/setup-env.sh
-cd "$PROJECT_ROOT"
+. ./builder/setup-env.sh
+cd "$PROJECT_ROOT" || exit 1
 
 cargo build \
   --verbose \
-  $(get_build_mode $@) \
-  --target=${TARGET_X86}
+  ${BUILD_MODE} \
+  --target="${TARGET_X86}"
 
 cargo build \
   --verbose \
-  $(get_build_mode $@) \
-  --target=${TARGET_ARM}
+  ${BUILD_MODE} \
+  --target="${TARGET_ARM}"
 
 cargo test \
-  $(get_build_mode $@) \
-  --target=${TARGET_X86} \
+  ${BUILD_MODE} \
+  --target="${TARGET_X86}" \
   -- --nocapture
