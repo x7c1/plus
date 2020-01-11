@@ -3,9 +3,9 @@ use clap::{App, Arg, ArgMatches, SubCommand};
 use clap_task::Definition;
 
 // see also:
-// https://docs.aws.amazon.com/cli/latest/reference/s3api/put-object.html
+// https://docs.aws.amazon.com/cli/latest/reference/s3api/get-object.html
 
-const COMMAND_NAME: &str = "put-object";
+const COMMAND_NAME: &str = "get-object";
 
 pub fn create<'a, 'b>() -> Definition<'a, 'b, S3ApiResult<()>> {
     Definition {
@@ -23,21 +23,20 @@ fn define<'a, 'b>() -> App<'a, 'b> {
                 .long("bucket")
                 .required(true)
                 .takes_value(true)
-                .help("Bucket name to which the PUT operation was initiated."),
+                .help("The bucket name containing the object."),
         )
         .arg(
             Arg::with_name("key")
                 .long("key")
                 .required(true)
                 .takes_value(true)
-                .help("Object key for which the PUT operation was initiated."),
+                .help("Key of the object to get."),
         )
         .arg(
-            Arg::with_name("body")
-                .long("body")
-                .required(false)
+            Arg::with_name("outfile")
+                .required(true)
                 .takes_value(true)
-                .help("Object data."),
+                .help("Filename where the content will be saved."),
         )
 }
 

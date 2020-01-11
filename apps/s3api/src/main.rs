@@ -30,7 +30,10 @@ type ApiResult = S3ApiResult<()>;
 type ApiDef<'a, 'b> = Definition<'a, 'b, ApiResult>;
 
 fn run() -> ApiResult {
-    let definitions: Vec<ApiDef> = vec![commands::put_object::create()];
+    let definitions: Vec<ApiDef> = vec![
+        commands::get_object::create(),
+        commands::put_object::create(),
+    ];
     let finder = TaskFinder::new(init(), definitions)?;
     let task = finder.require_task()?;
     task.run()
