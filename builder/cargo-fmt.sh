@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-. $(dirname $0)/setup-env.sh
-cd "$PROJECT_ROOT"
+. ./builder/setup-env.sh
+cd "$PROJECT_ROOT" || exit 1
 
 while getopts ":-:" OPT
 do
