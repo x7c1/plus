@@ -1,0 +1,17 @@
+sudo: required
+
+language: python
+python:
+  - "3.6"
+
+services:
+  - docker
+
+before_install:
+  - ./scripts/setup-builder-docker.sh
+
+before_script:
+  - ./scripts/run_builder_task.sh cargo-fmt --all-check
+
+script:
+  - ./scripts/run_tests.sh

@@ -1,0 +1,9 @@
+[package]
+name = "s3api"
+version = "0.0.0"
+edition = "2018"
+
+[dependencies]
+sabi-s3 = { path = "../../libs/aws/sabi-s3" }
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
