@@ -4,6 +4,7 @@ version = "0.0.0"
 edition = "2018"
 
 [dependencies]
+clap-task = { path = "../../libs/clap-task" }
 sabi-s3 = { path = "../../libs/aws/sabi-s3" }
 clap = "2.33"
 failure = "0.1"

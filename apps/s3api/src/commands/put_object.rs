@@ -1,6 +1,6 @@
-use crate::commands::Definition;
 use crate::S3ApiResult;
 use clap::{App, Arg, ArgMatches, SubCommand};
+use clap_task::Definition;
 
 // see also:
 // https://docs.aws.amazon.com/cli/latest/reference/s3api/put-object.html
