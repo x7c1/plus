@@ -21,15 +21,13 @@ current_container() {
 run_container() {
   docker run \
       --privileged \
-      --volume $(pwd):${MOUNT_DIR} \
+      --volume "$(pwd)":${MOUNT_DIR} \
       --name ${CONTAINER_NAME} \
       --tty \
       --workdir ${MOUNT_DIR} \
       ${IMAGE_NAME} \
       sh ${MOUNT_DIR}/builder/cargo-test.sh ${ARGS} --debug --opt-level=0
 }
-#      --user ${UID}:$(id -g) \
-
 
 restart_container() {
   docker start --attach ${CONTAINER_NAME}
