@@ -14,4 +14,6 @@ before_script:
   - ./scripts/run_builder_task.sh cargo-fmt --all-check
 
 script:
-  - ./scripts/run_tests.sh
+  - |
+    ./scripts/run_tests.sh &&
+    ./scripts/build.sh
