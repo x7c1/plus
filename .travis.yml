@@ -11,10 +11,10 @@ before_install:
   - ./scripts.travis/setup-docker.sh
 
 before_script:
-  - ./scripts/run_cacher.sh cargo-fmt.sh --all-check
+  - ./scripts/run_builder.sh cargo-fmt.sh --all-check
 
 script:
   - |
     ./scripts/run_tests.sh &&
     ./scripts/build.sh &&
-    ./scripts/run_cacher.sh release-test.sh
+    ./scripts/run_builder.sh release-test.sh

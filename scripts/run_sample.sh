@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
-./scripts/run_cacher.sh \
+./scripts/run_builder.sh \
   sample.sh --debug --opt-level=0
