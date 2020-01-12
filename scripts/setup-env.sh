@@ -29,13 +29,9 @@ restart_container() {
 }
 
 write_main() {
-  text=$(cat << EOS
-#!/usr/bin/env bash
-
-$1
-EOS
-)
-  echo "$text" > ./builder/main.gen.sh
+  path="./builder/main.gen.sh"
+  echo "#!/usr/bin/env bash" > ${path}
+  echo -e "\n$1" >> ${path}
 }
 
 export CONTAINER_NAME=wasabi_builder_cacher
