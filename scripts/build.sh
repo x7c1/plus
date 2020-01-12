@@ -6,9 +6,6 @@ set -e
 # not allow undefined values.
 set -u
 
-# show executed commands.
-set -x
-
 main() {
   build_for_release
 
@@ -20,12 +17,16 @@ main() {
 
   println "after strip"
   show_file_size
+
+  println "about x86_64 binary"
+  show_detail "x86_64"
+
+  println "about armv7 binary"
+  show_detail "armv7"
 }
 
 println() {
-  set +x
   echo -e "\n>> $1"
-  set -x
 }
 
 build_for_release() {
@@ -36,14 +37,26 @@ build_for_release() {
     cargo-build --release --opt-level=z
 }
 
-show_file_size() {
+list_artifacts() {
   find ./ -type f -name "s3api" \
-    | grep release \
-    | xargs ls -lh
+    | grep release
+}
+
+show_file_size() {
+  list_artifacts | xargs ls -lh
 }
 
 strip_files() {
   sudo strip ./target/x86_64-unknown-linux-musl/release/s3api
+}
+
+show_detail() {
+  list_artifacts | grep $1 | xargs file | sed -e "s/,/,\n /g"
+
+  echo "ldd:"
+  set +e # ignore ldd error
+  list_artifacts | grep $1 | xargs ldd
+  set -e
 }
 
 main
