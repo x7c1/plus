@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
 
-target_sdk_path="$PROJECT_ROOT/builder/$OSX_SDK"
-if [[ ! -f "$target_sdk_path" ]]; then
-  echo "osx sdk not found. [$target_sdk_path]"
+tarball_path="$PROJECT_ROOT/builder/$OSX_SDK"
+if [[ ! -f "$tarball_path" ]]; then
+  echo "osx sdk tarball not found. [$tarball_path]"
   return
 fi
 
 tarballs_path="$OSXCROSS_ROOT/tarballs/$OSX_SDK"
 if [[ -f "$tarballs_path" ]]; then
-  echo "already copied [$tarballs_path]"
+  echo "osx sdk tarball already copied. [$tarballs_path]"
 else
-  cp ${target_sdk_path} ${tarballs_path}
+  cp ${tarball_path} ${tarballs_path}
 fi
 
 if is_osx_sdk_installed; then
