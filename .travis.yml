@@ -8,7 +8,7 @@ services:
   - docker
 
 before_install:
-  - ./scripts/setup-builder-docker.sh
+  - ./scripts.travis/setup-docker.sh
 
 before_script:
   - ./scripts/run_cacher.sh cargo-fmt.sh --all-check
