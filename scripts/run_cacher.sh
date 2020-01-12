@@ -1,23 +1,12 @@
 #!/usr/bin/env bash
 
-current_container() {
-  docker inspect --format '{{.Created}}' ${CONTAINER_NAME}
-}
+. ./scripts/setup-env.sh
 
-run_container() {
-  docker run \
-      --privileged \
-      --volume "$(pwd)":${MOUNT_DIR} \
-      --name ${CONTAINER_NAME} \
-      --tty \
-      --workdir ${MOUNT_DIR} \
-      ${IMAGE_NAME} \
-      ${COMMAND}
-}
+IMAGE_NAME=wasabi_builder
+MOUNT_DIR=/wasabi
+CONTAINER_NAME=wasabi_builder_cacher
 
-restart_container() {
-  docker start --attach ${CONTAINER_NAME}
-}
+write_main "${MOUNT_DIR}/builder/$(echo $@)"
 
 if [[ "$(current_container)" ]]; then
   restart_container
