@@ -39,7 +39,7 @@ get_build_mode() {
   echo "--release"
 }
 
-has_osx_sdk() {
+is_osx_sdk_installed() {
   target=${OSXCROSS_ROOT}/target/bin/${OSX_SDK_CC}
   if [[ -f ${target} ]]; then
     return 0

@@ -3,7 +3,7 @@
 target_sdk_path="$PROJECT_ROOT/builder/$OSX_SDK"
 if [[ ! -f "$target_sdk_path" ]]; then
   echo "osx sdk not found. [$target_sdk_path]"
-  exit
+  return
 fi
 
 tarballs_path="$OSXCROSS_ROOT/tarballs/$OSX_SDK"
@@ -13,9 +13,9 @@ else
   cp ${target_sdk_path} ${tarballs_path}
 fi
 
-if has_osx_sdk; then
+if is_osx_sdk_installed; then
   echo "osx sdk already installed."
-  exit
+  return
 fi
 
 cd "$OSXCROSS_ROOT" || exit 1
