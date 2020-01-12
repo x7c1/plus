@@ -1,17 +1,8 @@
 #!/usr/bin/env bash
 
-# stop if non-zero returned.
-set -e
-
-# not allow undefined values.
-set -u
-
-# show executed commands.
-set -x
+. ./scripts/setup-env.sh
 
 CONTAINER_NAME=wasabi_builder_cacher
-IMAGE_NAME=wasabi_builder
-MOUNT_DIR=/wasabi
 ARGS=$@
 COMMAND="sh ${MOUNT_DIR}/builder/cargo-test.sh ${ARGS} --debug --opt-level=0"
 
