@@ -50,6 +50,7 @@ show_file_size() {
 }
 
 strip_files() {
+  # todo: use docker
   sudo strip ./target/x86_64-unknown-linux-musl/release/s3api
 }
 
