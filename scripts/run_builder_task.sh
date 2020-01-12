@@ -28,7 +28,7 @@ set -u
 set -x
 
 # exclude $1
-ARGS=("${@:2}")
+ARGS=${@:2}
 
 docker run \
     --privileged \
@@ -39,4 +39,4 @@ docker run \
     --tty \
     --workdir ${MOUNT_DIR} \
     ${IMAGE_NAME} \
-    sh ${MOUNT_DIR}/${SCRIPTS_DIR}/"${TARGET}".sh "${ARGS[@]}"
+    sh ${MOUNT_DIR}/${SCRIPTS_DIR}/"${TARGET}".sh $ARGS
