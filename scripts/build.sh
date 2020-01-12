@@ -19,10 +19,13 @@ main() {
   show_file_size
 
   println "about x86_64 binary"
-  show_detail "x86_64"
+  show_detail "x86_64-unknown-linux"
 
   println "about armv7 binary"
   show_detail "armv7"
+
+  println "about macOS binary"
+  show_detail "apple"
 }
 
 println() {
@@ -51,10 +54,16 @@ strip_files() {
 }
 
 show_detail() {
-  list_artifacts | grep $1 | xargs file | sed -e "s/,/,\n /g"
+  set +e # ignore errors
 
+  list=$(list_artifacts | grep $1)
+  if [[ ! $? -eq 0 ]]; then
+    echo "artifact not found: $1"
+    return
+  fi
+
+  echo "$list" | xargs file | sed -e "s/,/,\n /g"
   echo "ldd:"
-  set +e # ignore ldd error
   list_artifacts | grep $1 | xargs ldd
   set -e
 }

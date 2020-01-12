@@ -37,3 +37,5 @@ EOS
 )
   echo "$text" > ./builder/main.gen.sh
 }
+
+export CONTAINER_NAME=wasabi_builder_cacher

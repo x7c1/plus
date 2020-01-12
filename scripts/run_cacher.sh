@@ -4,7 +4,6 @@
 
 IMAGE_NAME=wasabi_builder
 MOUNT_DIR=/wasabi
-CONTAINER_NAME=wasabi_builder_cacher
 
 write_main "${MOUNT_DIR}/builder/$(echo $@)"
 

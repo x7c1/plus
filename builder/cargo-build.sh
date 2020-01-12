@@ -13,3 +13,12 @@ cargo build \
   --verbose \
   ${BUILD_MODE} \
   --target="${TARGET_ARM}"
+
+if has_osx_sdk; then
+  PATH=${OSXCROSS_ROOT}/target/bin:$PATH \
+  CC=${OSX_SDK_CC} \
+  cargo build \
+    --verbose \
+    ${BUILD_MODE} \
+    --target="${TARGET_MAC}"
+fi
