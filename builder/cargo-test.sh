@@ -3,17 +3,6 @@
 . ./builder/setup-env.sh
 cd "$PROJECT_ROOT" || exit 1
 
-cargo build \
-  --verbose \
-  ${BUILD_MODE} \
-  --target="${TARGET_X86}"
-
-CC=arm-linux-gnueabihf-gcc \
-cargo build \
-  --verbose \
-  ${BUILD_MODE} \
-  --target="${TARGET_ARM}"
-
 cargo test \
   ${BUILD_MODE} \
   --target="${TARGET_X86}" \
