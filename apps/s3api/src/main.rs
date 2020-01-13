@@ -8,8 +8,9 @@ mod commands;
 mod error;
 pub use error::Result as S3ApiResult;
 
+use crate::commands::CommandResult;
 use clap::App;
-use clap_task::{Definition, TaskFinder};
+use clap_task::TaskFinder;
 use std::process::exit;
 
 fn main() {
@@ -25,15 +26,9 @@ fn main() {
         }
     }
 }
-type ApiResult = S3ApiResult<()>;
 
-type ApiDef<'a, 'b> = Definition<'a, 'b, ApiResult>;
-
-fn run() -> ApiResult {
-    let definitions: Vec<ApiDef> = vec![
-        commands::get_object::create(),
-        commands::put_object::create(),
-    ];
+fn run() -> CommandResult {
+    let definitions = commands::create_all();
     let finder = TaskFinder::new(init(), definitions)?;
     let task = finder.require_task()?;
     task.run()
