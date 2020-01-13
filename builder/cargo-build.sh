@@ -3,6 +3,9 @@
 . ./builder/setup-env.sh
 cd "$PROJECT_ROOT" || exit 1
 
+# show executed commands.
+set -x
+
 cargo build \
   --verbose \
   ${BUILD_MODE} \

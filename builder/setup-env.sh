@@ -6,9 +6,6 @@ set -e
 # not allow undefined values.
 set -u
 
-# show executed commands.
-set -x
-
 # enable alias on bash
 shopt -s expand_aliases
 

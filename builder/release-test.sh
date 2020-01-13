@@ -3,6 +3,9 @@
 . ./builder/setup-env.sh
 cd "$PROJECT_ROOT" || exit 1
 
+# show executed commands.
+set -x
+
 alias s3api="$PROJECT_ROOT"/target/x86_64-unknown-linux-musl/release/s3api
 
 s3api put-object \

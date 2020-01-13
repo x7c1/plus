@@ -6,9 +6,6 @@ set -e
 # not allow undefined values.
 set -u
 
-# show executed commands.
-set -x
-
 current_container() {
   docker inspect --format '{{.Created}}' ${CONTAINER_NAME}
 }
