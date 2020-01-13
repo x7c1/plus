@@ -50,8 +50,7 @@ show_file_size() {
 }
 
 strip_files() {
-  # todo: use docker
-  sudo strip ./target/x86_64-unknown-linux-musl/release/s3api
+  ./scripts/run_builder.sh strip-files.sh
 }
 
 show_detail() {
@@ -63,6 +62,8 @@ show_detail() {
     return
   fi
 
+  # todo: use docker
+  # x86_64-apple-darwin19-otool for macOS
   echo "$list" | xargs file | sed -e "s/,/,\n /g"
   echo "ldd:"
   list_artifacts | grep $1 | xargs ldd

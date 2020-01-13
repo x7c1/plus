@@ -70,3 +70,7 @@ export TARGET_MAC="x86_64-apple-darwin"
 export RUSTFLAGS="-C opt-level=$OPT_LEVEL"
 
 . ./builder/build-osxcross.sh
+
+if is_osx_sdk_installed; then
+  PATH=${OSXCROSS_ROOT}/target/bin:$PATH
+fi

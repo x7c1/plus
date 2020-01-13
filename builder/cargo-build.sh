@@ -15,7 +15,6 @@ cargo build \
   --target="${TARGET_ARM}"
 
 if is_osx_sdk_installed; then
-  PATH=${OSXCROSS_ROOT}/target/bin:$PATH \
   CC=${OSX_SDK_CC} \
   cargo build \
     --verbose \
