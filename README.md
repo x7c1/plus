@@ -8,7 +8,7 @@ Install `docker` first.
 
 ## Setup
 
-Create a container to build crates:
+Create a container image to build crates:
 
 ```
 $ ./scripts/setup_builder_docker.sh
