@@ -12,9 +12,7 @@ pub fn create_all<'a, 'b>() -> Vec<Definition<'a, 'b, CommandResult>> {
 }
 
 #[derive(Debug)]
-pub struct ResponseSummary {
-
-}
+pub struct ResponseSummary {}
 
 impl ResponseSummary {
     pub fn empty() -> ResponseSummary {
