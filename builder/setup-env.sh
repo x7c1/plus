@@ -9,6 +9,9 @@ set -u
 # show executed commands.
 set -x
 
+# enable alias on bash
+shopt -s expand_aliases
+
 get_opt_level() {
   while getopts ":-:" OPT; do
     case "${OPT}" in
