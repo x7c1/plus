@@ -18,13 +18,13 @@ main() {
   println "after strip"
   show_file_size
 
-  println "about x86_64 binary"
+  println "about linux (x86_64) binary"
   show_detail "x86_64-unknown-linux"
 
-  println "about armv7 binary"
+  println "about linux (armv7) binary"
   show_detail "armv7"
 
-  println "about macOS binary"
+  println "about macOS (x86_64) binary"
   show_detail "apple"
 }
 
