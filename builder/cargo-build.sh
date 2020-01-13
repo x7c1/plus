@@ -3,6 +3,9 @@
 . ./builder/setup-env.sh
 cd "$PROJECT_ROOT" || exit 1
 
+# show executed commands.
+set -x
+
 cargo build \
   --verbose \
   ${BUILD_MODE} \
@@ -13,3 +16,11 @@ cargo build \
   --verbose \
   ${BUILD_MODE} \
   --target="${TARGET_ARM}"
+
+if is_osx_sdk_installed; then
+  CC=${OSX_SDK_CC} \
+  cargo build \
+    --verbose \
+    ${BUILD_MODE} \
+    --target="${TARGET_MAC}"
+fi
