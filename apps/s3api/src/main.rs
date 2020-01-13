@@ -5,6 +5,7 @@ extern crate clap;
 extern crate failure;
 
 mod commands;
+
 mod error;
 pub use error::Result as S3ApiResult;
 

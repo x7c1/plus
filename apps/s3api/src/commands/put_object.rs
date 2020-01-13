@@ -1,4 +1,4 @@
-use crate::S3ApiResult;
+use super::{ResponseSummary, CommandResult};
 use clap::{App, Arg, ArgMatches, SubCommand};
 use clap_task::Definition;
 
@@ -7,7 +7,7 @@ use clap_task::Definition;
 
 const COMMAND_NAME: &str = "put-object";
 
-pub fn create<'a, 'b>() -> Definition<'a, 'b, S3ApiResult<()>> {
+pub fn create<'a, 'b>() -> Definition<'a, 'b, CommandResult> {
     Definition {
         name: COMMAND_NAME.to_string(),
         define,
@@ -41,8 +41,8 @@ fn define<'a, 'b>() -> App<'a, 'b> {
         )
 }
 
-fn run(matches: &ArgMatches) -> S3ApiResult<()> {
+fn run(matches: &ArgMatches) -> CommandResult {
     println!("running {}!", COMMAND_NAME);
     println!("matches: {:#?}", matches);
-    Ok({})
+    Ok(ResponseSummary::empty())
 }
