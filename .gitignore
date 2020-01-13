@@ -1,6 +1,7 @@
 *.log
 *.tmp
 *.gen.sh
+*.local.sh
 
 # OSXCross
 builder/MacOSX*.sdk.tar.bz2

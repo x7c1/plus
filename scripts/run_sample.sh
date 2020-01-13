@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
 ./scripts/run_builder.sh \
-  sample.sh --debug --opt-level=0
+  sample.local.sh --debug --opt-level=0
