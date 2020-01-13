@@ -64,7 +64,10 @@ show_detail() {
     return
   fi
 
-  echo "$list" | xargs file | sed -e "s/,/,\n /g"
+  # rf.
+  # [How to add new line using sed on MacOS? - Stack Overflow]
+  # https://stackoverflow.com/questions/16576197/how-to-add-new-line-using-sed-on-macos
+  echo "$list" | xargs file | sed $'s/,/,\\\n /g'
   set -e
 }
 
