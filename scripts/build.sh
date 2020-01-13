@@ -26,6 +26,8 @@ main() {
 
   println "about macOS (x86_64) binary"
   show_detail "apple"
+
+  println "done."
 }
 
 println() {
@@ -62,11 +64,7 @@ show_detail() {
     return
   fi
 
-  # todo: use docker
-  # x86_64-apple-darwin19-otool for macOS
   echo "$list" | xargs file | sed -e "s/,/,\n /g"
-  echo "ldd:"
-  list_artifacts | grep $1 | xargs ldd
   set -e
 }
 
