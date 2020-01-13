@@ -1,4 +1,4 @@
-use super::{CommandResult, ResponseSummary};
+use crate::{CommandResult, ResponseSummary};
 use clap::{App, Arg, ArgMatches, SubCommand};
 use clap_task::Definition;
 

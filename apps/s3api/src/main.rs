@@ -9,7 +9,9 @@ mod commands;
 mod error;
 pub use error::Result as S3ApiResult;
 
-use crate::commands::CommandResult;
+mod summary;
+pub use summary::{CommandResult, ResponseSummary};
+
 use clap::App;
 use clap_task::TaskFinder;
 use std::process::exit;
