@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-. ./scripts/setup-env.sh
+. ./scripts/setup_env.sh
 
 repository="x7c1/wasabi"
 

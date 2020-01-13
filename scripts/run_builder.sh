@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-. ./scripts/setup-env.sh
+. ./scripts/setup_env.sh
 
 IMAGE_NAME=wasabi_builder
 MOUNT_DIR=/wasabi

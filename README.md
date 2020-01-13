@@ -4,14 +4,14 @@ S3 Client for Rust
 
 ## Requirements
 
-Install `docker` and `docker-compose` first.
+Install `docker` first.
 
 ## Setup
 
 Create a container to build crates:
 
 ```
-$ ./scripts/setup-builder-docker.sh
+$ ./scripts/setup_builder_docker.sh
 ```
 
 ## Build
@@ -19,5 +19,5 @@ $ ./scripts/setup-builder-docker.sh
 Build crates on the container:
 
 ```
-$ ./scripts/run_tests.sh
+$ ./scripts/build.sh
 ```
