@@ -31,7 +31,7 @@ fn main() {
 }
 
 fn run() -> CommandResult {
-    let definitions = commands::create_all();
+    let definitions = commands::define_all();
     let finder = TaskFinder::new(init(), definitions)?;
     let task = finder.require_task()?;
     task.run()
