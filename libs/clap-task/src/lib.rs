@@ -10,7 +10,7 @@ use clap::{App, ArgMatches};
 
 pub struct Definition<'a, 'b, T> {
     pub name: String,
-    pub define: fn() -> App<'a, 'b>,
+    pub create: fn() -> App<'a, 'b>,
     pub run: fn(matches: &ArgMatches) -> T,
 }
 
@@ -38,8 +38,8 @@ impl<'a, 'b, T> TaskFinder<'a, 'b, T> {
     ) -> ClapTaskResult<TaskFinder<'a, 'b, T>> {
         let app = definitions
             .iter()
-            .map(|task| task.define)
-            .fold(app, |acc, define| acc.subcommand(define()));
+            .map(|task| task.create)
+            .fold(app, |acc, create| acc.subcommand(create()));
 
         Ok(TaskFinder {
             definitions,

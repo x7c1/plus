@@ -7,15 +7,15 @@ use clap_task::Definition;
 
 const COMMAND_NAME: &str = "put-object";
 
-pub fn create<'a, 'b>() -> Definition<'a, 'b, CommandResult> {
+pub fn define<'a, 'b>() -> Definition<'a, 'b, CommandResult> {
     Definition {
         name: COMMAND_NAME.to_string(),
-        define,
+        create,
         run,
     }
 }
 
-fn define<'a, 'b>() -> App<'a, 'b> {
+fn create<'a, 'b>() -> App<'a, 'b> {
     SubCommand::with_name(COMMAND_NAME)
         .about("Adds an object to a bucket")
         .arg(
