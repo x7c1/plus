@@ -1,11 +1,15 @@
 #[macro_use]
 extern crate failure;
 
+extern crate derive_sabi;
+
+#[macro_use]
+pub mod operations;
+
 mod client;
 pub use client::S3Client;
 
 mod errors;
-pub mod operations;
 
 #[cfg(test)]
 mod tests {
