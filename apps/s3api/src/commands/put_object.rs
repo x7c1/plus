@@ -1,6 +1,8 @@
 use crate::{CommandResult, ResponseSummary};
 use clap::{App, Arg, ArgMatches, SubCommand};
 use clap_task::Definition;
+use sabi_s3::operations::put_object::PutFile;
+use sabi_s3::S3Client;
 
 // see also:
 // https://docs.aws.amazon.com/cli/latest/reference/s3api/put-object.html
@@ -44,5 +46,12 @@ fn create<'a, 'b>() -> App<'a, 'b> {
 fn run(matches: &ArgMatches) -> CommandResult {
     println!("running {}!", COMMAND_NAME);
     println!("matches: {:#?}", matches);
+
+    let client = S3Client {};
+    let request = PutFile {
+        file_path: "sample-path".to_string(),
+    };
+    client.put_object(request);
+
     Ok(ResponseSummary::empty())
 }
