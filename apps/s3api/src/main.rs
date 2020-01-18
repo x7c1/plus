@@ -6,8 +6,8 @@ extern crate failure;
 
 mod commands;
 
-mod error;
-pub use error::Result as S3ApiResult;
+mod errors;
+pub use errors::Result as S3ApiResult;
 
 mod summary;
 pub use summary::{CommandResult, ResponseSummary};
