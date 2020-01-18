@@ -5,6 +5,7 @@ mod client;
 pub use client::S3Client;
 
 mod errors;
+pub mod operations;
 
 #[cfg(test)]
 mod tests {
