@@ -1,4 +1,3 @@
-#[derive(Debug)]
-pub struct S3Client {
-}
 
+#[derive(Debug)]
+pub struct S3Client {}

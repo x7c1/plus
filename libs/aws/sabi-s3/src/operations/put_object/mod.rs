@@ -1,13 +1,9 @@
 use crate::S3Client;
 use std::fmt::Debug;
 
-pub trait Request : Debug {
+pub trait Request: Debug {}
 
-}
-
-struct PutObjectResult {
-
-}
+struct PutObjectResult {}
 
 //todo: use type like ClientResult<Response<PutObjectResult>>
 type PseudoResponse = String;
