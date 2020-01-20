@@ -1,5 +1,6 @@
 use crate::{CommandResult, ResponseSummary};
 use clap::{App, Arg, ArgMatches, SubCommand};
+use clap_extractor::Extractor;
 use clap_task::Definition;
 use sabi_s3::operations::put_object::FileBody;
 use sabi_s3::S3Client;
@@ -46,10 +47,11 @@ fn create<'a, 'b>() -> App<'a, 'b> {
 fn run(matches: &ArgMatches) -> CommandResult {
     println!("running {}!", COMMAND_NAME);
     println!("matches: {:#?}", matches);
+    let extractor = Extractor::new(matches);
 
     let client = S3Client {};
     let request = FileBody {
-        file_path: "sample-path".to_string(),
+        file_path: extractor.single("body").as_required()?,
     };
     client.put_object(request);
 
