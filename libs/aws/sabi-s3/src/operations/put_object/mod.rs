@@ -1,5 +1,5 @@
-mod put_file;
-pub use put_file::PutFile;
+mod file_body;
+pub use file_body::FileBody;
 
 use crate::S3Client;
 use std::fmt::Debug;

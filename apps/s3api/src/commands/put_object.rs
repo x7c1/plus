@@ -1,7 +1,7 @@
 use crate::{CommandResult, ResponseSummary};
 use clap::{App, Arg, ArgMatches, SubCommand};
 use clap_task::Definition;
-use sabi_s3::operations::put_object::PutFile;
+use sabi_s3::operations::put_object::FileBody;
 use sabi_s3::S3Client;
 
 // see also:
@@ -48,7 +48,7 @@ fn run(matches: &ArgMatches) -> CommandResult {
     println!("matches: {:#?}", matches);
 
     let client = S3Client {};
-    let request = PutFile {
+    let request = FileBody {
         file_path: "sample-path".to_string(),
     };
     client.put_object(request);
