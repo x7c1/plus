@@ -1,8 +1,6 @@
 #[macro_use]
 extern crate failure;
 
-extern crate derive_sabi;
-
 #[macro_use]
 pub mod operations;
 
