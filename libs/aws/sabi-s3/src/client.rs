@@ -7,12 +7,18 @@ use derive_sabi::delegate_requesters;
 //#[derive(Delegate)]
 //#[delegate(Requester)]
 
-#[delegate_requesters(operations::put_object::Requester)]
+#[delegate_requesters(operations::put_object)]
 #[derive(Debug)]
 pub struct S3Client {
     // todo: add bucket field
 }
 
 impl S3Client {
-    define__operations__put_object__requester__methods!();
+    pub fn put_object<A>(&self, request: A) -> String
+    where
+        A: operations::put_object::Request,
+    {
+        operations::put_object::Requester::put_object(self, request)
+    }
+//    define__operations__put_object__requester__methods!(operations::put_object);
 }

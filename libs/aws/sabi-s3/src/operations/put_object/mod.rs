@@ -13,7 +13,9 @@ type PseudoResponse = String;
 
 #[derive_requester_macros]
 pub trait Requester {
-    fn put_object<A: Request>(&self, request: A) -> PseudoResponse;
+    fn put_object<A>(&self, request: A) -> String
+    where
+        A: Request;
 }
 
 impl Requester for S3Client {

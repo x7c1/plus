@@ -24,7 +24,7 @@ pub fn derive_requester_macros(_attr: TokenStream, item: TokenStream) -> TokenSt
     let original_item: syn::ItemTrait = syn::parse(item).unwrap();
     let add_macro_rules = delegator::generate_macro_rules(&original_item);
 
-    println!("add_macro_rules: {}", add_macro_rules);
+    //    println!("add_macro_rules: {}", add_macro_rules);
 
     let expanded = quote! {
         #original_item
