@@ -2,6 +2,9 @@ mod errors;
 pub use errors::Error;
 pub use errors::Result as ExtractorResult;
 
+mod matcher;
+pub use matcher::Matcher;
+
 mod multiple;
 pub use multiple::FromMultiple;
 
@@ -9,32 +12,7 @@ mod single;
 pub use single::FromSingle;
 
 use crate::errors::Error::ParseError;
-use clap::ArgMatches;
 use std::fmt::Debug;
-
-pub struct Extractor<'a> {
-    pub matches: &'a ArgMatches<'a>,
-}
-
-impl<'a> Extractor<'a> {
-    pub fn new(matches: &'a ArgMatches) -> Extractor<'a> {
-        Extractor { matches }
-    }
-
-    pub fn single<'k>(&self, key: &'k str) -> FromSingle<'k, 'a> {
-        FromSingle {
-            key,
-            matches: self.matches,
-        }
-    }
-
-    pub fn multiple<'k>(&self, key: &'k str) -> FromMultiple<'k, 'a> {
-        FromMultiple {
-            key,
-            matches: self.matches,
-        }
-    }
-}
 
 pub trait CanExtractOptional<A> {
     type Err;
