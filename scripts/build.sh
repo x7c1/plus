@@ -39,7 +39,7 @@ build_for_release() {
   # [What do the optimization levels `-Os` and `-Oz` do in rustc? - Stack Overflow]
   # https://stackoverflow.com/questions/45608392/what-do-the-optimization-levels-os-and-oz-do-in-rustc
   ./scripts/run_builder.sh \
-    cargo-build.sh --release --opt-level=z
+    cargo-build-all.sh --release --opt-level=z
 }
 
 list_artifacts() {

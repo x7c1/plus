@@ -5,11 +5,15 @@ extern crate clap;
 extern crate failure;
 
 mod commands;
-mod error;
-pub use error::Result as S3ApiResult;
+
+mod errors;
+pub use errors::Result as S3ApiResult;
+
+mod summary;
+use clap_task::{ClapTasks, TaskRunner};
+pub use summary::{CommandResult, ResponseSummary};
 
 use clap::App;
-use clap_task::{Definition, TaskFinder};
 use std::process::exit;
 
 fn main() {
@@ -25,18 +29,13 @@ fn main() {
         }
     }
 }
-type ApiResult = S3ApiResult<()>;
 
-type ApiDef<'a, 'b> = Definition<'a, 'b, ApiResult>;
-
-fn run() -> ApiResult {
-    let definitions: Vec<ApiDef> = vec![
-        commands::get_object::create(),
-        commands::put_object::create(),
-    ];
-    let finder = TaskFinder::new(init(), definitions)?;
-    let task = finder.require_task()?;
-    task.run()
+fn run() -> CommandResult {
+    let tasks = commands::define_all();
+    init()
+        .subcommands(tasks.to_apps())
+        .get_matches()
+        .run_matched_from(&tasks)?
 }
 
 fn init<'a, 'b>() -> App<'a, 'b> {
