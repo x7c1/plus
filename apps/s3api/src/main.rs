@@ -10,7 +10,7 @@ mod errors;
 pub use errors::Result as S3ApiResult;
 
 mod summary;
-use clap_task::ClapTasks;
+use clap_task::{ClapTasks, TaskRunner};
 pub use summary::{CommandResult, ResponseSummary};
 
 use clap::App;
@@ -32,9 +32,10 @@ fn main() {
 
 fn run() -> CommandResult {
     let tasks = commands::define_all();
-    let app = init().subcommands(tasks.to_apps());
-    let matches = app.get_matches();
-    tasks.run_matched(&matches)?
+    init()
+        .subcommands(tasks.to_apps())
+        .get_matches()
+        .run_matched_from(&tasks)?
 }
 
 fn init<'a, 'b>() -> App<'a, 'b> {

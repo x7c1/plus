@@ -24,11 +24,6 @@ pub trait ClapTasks<T> {
         &'a self,
         matches: &'a ArgMatches,
     ) -> ClapTaskResult<(&'a Box<dyn ClapTask<T>>, &'a ArgMatches<'a>)>;
-
-    fn run_matched(&self, matches: &ArgMatches) -> ClapTaskResult<T> {
-        let (task, sub_matches) = self.sub_matches(matches)?;
-        Ok(task.run(sub_matches))
-    }
 }
 
 impl<T> ClapTasks<T> for Vec<Box<dyn ClapTask<T>>> {
@@ -44,5 +39,16 @@ impl<T> ClapTasks<T> for Vec<Box<dyn ClapTask<T>>> {
         self.iter()
             .find_map(|x| matches.subcommand_matches(x.name()).map(|m| (x, m)))
             .ok_or_else(|| SubCommandMissing)
+    }
+}
+
+pub trait TaskRunner<T> {
+    fn run_matched_from<U: ClapTasks<T>>(&self, tasks: &U) -> ClapTaskResult<T>;
+}
+
+impl<T> TaskRunner<T> for ArgMatches<'_> {
+    fn run_matched_from<U: ClapTasks<T>>(&self, tasks: &U) -> ClapTaskResult<T> {
+        let (task, sub_matches) = tasks.sub_matches(self)?;
+        Ok(task.run(sub_matches))
     }
 }
