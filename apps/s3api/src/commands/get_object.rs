@@ -5,8 +5,6 @@ use clap_task::ClapTask;
 // see also:
 // https://docs.aws.amazon.com/cli/latest/reference/s3api/get-object.html
 
-const COMMAND_NAME: &str = "get-object";
-
 pub fn define() -> Box<dyn ClapTask<CommandResult>> {
     Box::new(Task)
 }
@@ -14,8 +12,12 @@ pub fn define() -> Box<dyn ClapTask<CommandResult>> {
 struct Task;
 
 impl ClapTask<CommandResult> for Task {
+    fn name(&self) -> &str {
+        "get-object"
+    }
+
     fn design(&self) -> App {
-        SubCommand::with_name(COMMAND_NAME)
+        SubCommand::with_name(self.name())
             .about("Adds an object to a bucket")
             .arg(
                 Arg::with_name("bucket")
@@ -39,12 +41,8 @@ impl ClapTask<CommandResult> for Task {
             )
     }
 
-    fn name(&self) -> &str {
-        COMMAND_NAME
-    }
-
     fn run(&self, matches: &ArgMatches) -> CommandResult {
-        println!("running {}!", COMMAND_NAME);
+        println!("running {}!", self.name());
         println!("matches: {:#?}", matches);
         Ok(ResponseSummary::empty())
     }
