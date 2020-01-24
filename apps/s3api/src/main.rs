@@ -10,10 +10,10 @@ mod errors;
 pub use errors::Result as S3ApiResult;
 
 mod summary;
+use clap_task::ClapTasks;
 pub use summary::{CommandResult, ResponseSummary};
 
 use clap::App;
-use clap_task::TaskFinder;
 use std::process::exit;
 
 fn main() {
@@ -31,10 +31,10 @@ fn main() {
 }
 
 fn run() -> CommandResult {
-    let definitions = commands::define_all();
-    let finder = TaskFinder::new(init(), definitions)?;
-    let task = finder.require_task()?;
-    task.run()
+    let tasks = commands::define_all();
+    let app = init().subcommands(tasks.to_apps());
+    let matches = app.get_matches();
+    tasks.run_matched(&matches)?
 }
 
 fn init<'a, 'b>() -> App<'a, 'b> {

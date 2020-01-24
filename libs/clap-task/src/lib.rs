@@ -7,58 +7,42 @@ pub use error::Result as ClapTaskResult;
 
 use crate::error::Error::SubCommandMissing;
 use clap::{App, ArgMatches};
+use std::iter::FromIterator;
 
-pub struct Definition<'a, 'b, T> {
-    pub name: String,
-    pub create: fn() -> App<'a, 'b>,
-    pub run: fn(matches: &ArgMatches) -> T,
+pub trait ClapTask<T> {
+    fn design(&self) -> App;
+
+    fn name(&self) -> &str;
+
+    fn run(&self, matches: &ArgMatches) -> T;
 }
 
-pub struct Task<'a, 'b, T> {
-    pub definition: &'a Definition<'a, 'b, T>,
-    pub matches: &'a ArgMatches<'a>,
-}
+pub trait ClapTasks<T> {
+    fn to_apps(&self) -> Vec<App>;
 
-impl<T> Task<'_, '_, T> {
-    pub fn run(&self) -> T {
-        let run = self.definition.run;
-        run(self.matches)
+    fn sub_matches<'a>(
+        &'a self,
+        matches: &'a ArgMatches,
+    ) -> ClapTaskResult<(&'a Box<dyn ClapTask<T>>, &'a ArgMatches<'a>)>;
+
+    fn run_matched(&self, matches: &ArgMatches) -> ClapTaskResult<T> {
+        let (task, sub_matches) = self.sub_matches(matches)?;
+        Ok(task.run(sub_matches))
     }
 }
 
-pub struct TaskFinder<'a, 'b, T> {
-    definitions: Vec<Definition<'a, 'b, T>>,
-    matches: ArgMatches<'a>,
-}
-
-impl<'a, 'b, T> TaskFinder<'a, 'b, T> {
-    pub fn new(
-        app: App<'a, 'b>,
-        definitions: Vec<Definition<'a, 'b, T>>,
-    ) -> ClapTaskResult<TaskFinder<'a, 'b, T>> {
-        let app = definitions
-            .iter()
-            .map(|task| task.create)
-            .fold(app, |acc, create| acc.subcommand(create()));
-
-        Ok(TaskFinder {
-            definitions,
-            matches: app.get_matches_safe()?,
-        })
+impl<T> ClapTasks<T> for Vec<Box<dyn ClapTask<T>>> {
+    fn to_apps(&self) -> Vec<App> {
+        let apps = self.iter().map(|task| task.design());
+        Vec::from_iter(apps)
     }
 
-    pub fn require_task(&'a self) -> ClapTaskResult<Task<'a, 'b, T>> {
-        let to_task = |definition: &'a Definition<'a, 'b, T>| {
-            self.matches
-                .subcommand_matches(definition.name.to_string())
-                .map(|matches| Task {
-                    definition,
-                    matches,
-                })
-        };
-        self.definitions
-            .iter()
-            .find_map(to_task)
-            .ok_or(SubCommandMissing)
+    fn sub_matches<'a>(
+        &'a self,
+        matches: &'a ArgMatches,
+    ) -> ClapTaskResult<(&'a Box<dyn ClapTask<T>>, &'a ArgMatches<'a>)> {
+        self.iter()
+            .find_map(|x| matches.subcommand_matches(x.name()).map(|m| (x, m)))
+            .ok_or_else(|| SubCommandMissing)
     }
 }
