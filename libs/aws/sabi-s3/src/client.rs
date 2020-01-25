@@ -1,4 +1,5 @@
 use crate::operations;
+use crate::S3Result;
 
 #[derive(Debug)]
 pub struct S3Client {
@@ -6,7 +7,7 @@ pub struct S3Client {
 }
 
 impl S3Client {
-    pub fn put_object<A>(&self, request: A) -> String
+    pub async fn put_object<A>(&self, request: A) -> S3Result<String>
     where
         A: operations::put_object::Request,
     {

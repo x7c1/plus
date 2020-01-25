@@ -2,6 +2,7 @@ use crate::{CommandResult, ResponseSummary};
 use clap::{App, Arg, ArgMatches, SubCommand};
 use clap_extractor::Matcher;
 use clap_task::ClapTask;
+use futures::executor;
 use sabi_s3::operations::put_object::FileBody;
 use sabi_s3::S3Client;
 
@@ -53,7 +54,9 @@ impl ClapTask<CommandResult> for Task {
         let request = FileBody {
             file_path: matches.single("body").as_required()?,
         };
-        client.put_object(request);
+        let future = client.put_object(request);
+        let response = executor::block_on(future);
+        println!("response: {:?}", response);
 
         Ok(ResponseSummary::empty())
     }
