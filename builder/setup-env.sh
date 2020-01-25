@@ -48,6 +48,15 @@ is_osx_sdk_installed() {
   fi
 }
 
+is_arm_openssl_installed() {
+  target="${WSB_WORKSPACE_ARM}/local/lib/libssl.a"
+  if [[ -f ${target} ]]; then
+    return 0
+  else
+    return 1
+  fi
+}
+
 OPT_LEVEL=$(get_opt_level "$@")
 BUILD_MODE=$(get_build_mode "$@")
 
@@ -55,18 +64,26 @@ BUILD_MODE=$(get_build_mode "$@")
 export BUILD_MODE
 export PROJECT_ROOT="/wasabi"
 
+export ARM_OPENSSL_ROOT="${WSB_WORKSPACE_ARM}/${WSB_OPENSSL}"
+
 export OSX_SDK="MacOSX10.15.sdk.tar.bz2"
 export OSX_SDK_CC="x86_64-apple-darwin19-clang"
-export OSXCROSS_ROOT="/root/osxcross"
+export OSXCROSS_ROOT="${WSB_WORKSPACE}/osxcross"
 
 export TARGET_X86="x86_64-unknown-linux-musl"
 export TARGET_ARM="armv7-unknown-linux-musleabihf"
 export TARGET_MAC="x86_64-apple-darwin"
 
+export MAX_PARALLEL=$(getconf _NPROCESSORS_ONLN)
+
 # used by rustc
 export RUSTFLAGS="-C opt-level=$OPT_LEVEL"
 
+cd ${PROJECT_ROOT}
 . ./builder/build-osxcross.sh
+
+cd ${PROJECT_ROOT}
+. ./builder/build-openssl.sh
 
 if is_osx_sdk_installed; then
   PATH=${OSXCROSS_ROOT}/target/bin:$PATH

@@ -2,6 +2,10 @@ FROM rust:1.40
 
 ARG rust_version="1.40.0"
 
+ENV WSB_WORKSPACE="/workspace"
+ENV WSB_WORKSPACE_ARM="${WSB_WORKSPACE}/arm"
+ENV WSB_OPENSSL="openssl-1.1.0f"
+
 RUN set -x && \
   apt-get update && \
   apt-get install -y gcc-arm-linux-gnueabihf
@@ -19,6 +23,13 @@ RUN set -x && \
     clang \
     cmake
 
+WORKDIR ${WSB_WORKSPACE}
 RUN set -x && \
-  cd /root && \
   git clone https://github.com/tpoechtrager/osxcross.git
+
+WORKDIR ${WSB_WORKSPACE_ARM}
+RUN set -x && \
+  curl \
+    -L https://www.openssl.org/source/${WSB_OPENSSL}.tar.gz \
+    -o ${WSB_OPENSSL}.tar.gz && \
+  tar -xvf ${WSB_OPENSSL}.tar.gz
