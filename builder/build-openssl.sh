@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#
+
 if is_arm_openssl_installed; then
   echo "OpenSSL for ARM already installed."
   return
