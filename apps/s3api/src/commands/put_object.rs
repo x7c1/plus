@@ -21,7 +21,7 @@ impl ClapTask<CommandResult> for Task {
 
     fn design(&self) -> App {
         SubCommand::with_name(self.name())
-            .about("Adds an object to a bucket")
+            .about("Adds an object to a bucket.")
             .arg(
                 Arg::with_name("bucket")
                     .long("bucket")
