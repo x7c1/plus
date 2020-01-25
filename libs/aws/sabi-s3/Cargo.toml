@@ -8,3 +8,17 @@ edition = "2018"
 [dependencies]
 failure = "0.1"
 reqwest = { version = "0.10", features = ["blocking"] }
+
+# As of 2020-01-26:
+#   specifying dependencies with 'features' requires following workaround
+#   because [target.x86_64-unknown-linux-musl.dependencies] not working well.
+#
+# see also:
+#   Conditional compilation of dependency feature based on target doesn't work · Issue #2524
+#   https://github.com/rust-lang/cargo/issues/2524
+openssl = { version = "0.10", default-features = false }
+
+[features]
+default = []
+x86_support = ["openssl/vendored"]
+mac_support = ["openssl/vendored"]
