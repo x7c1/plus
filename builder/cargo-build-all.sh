@@ -22,13 +22,13 @@ build_for_armv7_linux() {
     --target="${TARGET_ARMV7}"
 }
 
-build_for_mac() {
+build_for_macos() {
   if is_osx_sdk_installed; then
     CC=${OSX_SDK_CC} \
     cargo build \
       --verbose \
       ${BUILD_MODE} \
-      --target="${TARGET_MAC}"
+      --target="${TARGET_MACOS}"
   fi
 }
 
@@ -36,4 +36,4 @@ build_for_x86_linux
 
 build_for_armv7_linux
 
-build_for_mac
+build_for_macos

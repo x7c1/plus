@@ -3,7 +3,6 @@ FROM rust:1.40
 ARG rust_version="1.40.0"
 
 ENV WSB_WORKSPACE="/workspace"
-ENV WSB_WORKSPACE_ARM="${WSB_WORKSPACE}/arm"
 
 RUN set -x && \
   apt-get update && \

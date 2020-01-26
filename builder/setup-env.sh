@@ -61,7 +61,7 @@ export OSXCROSS_ROOT="${WSB_WORKSPACE}/osxcross"
 
 export TARGET_X86="x86_64-unknown-linux-musl"
 export TARGET_ARMV7="armv7-unknown-linux-musleabihf"
-export TARGET_MAC="x86_64-apple-darwin"
+export TARGET_MACOS="x86_64-apple-darwin"
 
 export MAX_PARALLEL=$(getconf _NPROCESSORS_ONLN)
 
