@@ -23,3 +23,7 @@ do
         ;;
   esac
 done
+
+# usage:
+# $ ./scripts/run_builder.sh cargo-fmt.sh --emit-files
+# $ ./scripts/run_builder.sh cargo-fmt.sh --all-check
