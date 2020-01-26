@@ -9,8 +9,6 @@ set -x
 build_for_x86_linux() {
   cargo build \
     --verbose \
-    --manifest-path=./apps/s3api/Cargo.toml \
-    --features=sabi-s3/x86_support \
     ${BUILD_MODE} \
     --target="${TARGET_X86}"
 }
@@ -32,8 +30,6 @@ build_for_mac() {
     CC=${OSX_SDK_CC} \
     cargo build \
       --verbose \
-      --manifest-path=./apps/s3api/Cargo.toml \
-      --features=sabi-s3/mac_support \
       ${BUILD_MODE} \
       --target="${TARGET_MAC}"
   fi
