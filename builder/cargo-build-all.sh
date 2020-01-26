@@ -15,7 +15,7 @@ build_for_x86_linux() {
     --target="${TARGET_X86}"
 }
 
-build_for_arm_linux() {
+build_for_armv7_linux() {
   CC=arm-linux-gnueabihf-gcc \
   PKG_CONFIG_ALLOW_CROSS=1 \
   OPENSSL_STATIC=yes \
@@ -24,7 +24,7 @@ build_for_arm_linux() {
   cargo build \
     --verbose \
     ${BUILD_MODE} \
-    --target="${TARGET_ARM}"
+    --target="${TARGET_ARMV7}"
 }
 
 build_for_mac() {
@@ -41,6 +41,6 @@ build_for_mac() {
 
 build_for_x86_linux
 
-build_for_arm_linux
+build_for_armv7_linux
 
 build_for_mac
