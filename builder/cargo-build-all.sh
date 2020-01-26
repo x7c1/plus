@@ -16,9 +16,6 @@ build_for_x86_linux() {
 build_for_armv7_linux() {
   CC=arm-linux-gnueabihf-gcc \
   PKG_CONFIG_ALLOW_CROSS=1 \
-  OPENSSL_STATIC=yes \
-  OPENSSL_LIB_DIR=${WSB_WORKSPACE_ARM}/local/lib \
-  OPENSSL_INCLUDE_DIR=${WSB_WORKSPACE_ARM}/local/include \
   cargo build \
     --verbose \
     ${BUILD_MODE} \
