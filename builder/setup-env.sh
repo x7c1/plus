@@ -57,15 +57,18 @@ export PROJECT_ROOT="/wasabi"
 
 export OSX_SDK="MacOSX10.15.sdk.tar.bz2"
 export OSX_SDK_CC="x86_64-apple-darwin19-clang"
-export OSXCROSS_ROOT="/root/osxcross"
+export OSXCROSS_ROOT="${WSB_WORKSPACE}/osxcross"
 
 export TARGET_X86="x86_64-unknown-linux-musl"
-export TARGET_ARM="armv7-unknown-linux-musleabihf"
-export TARGET_MAC="x86_64-apple-darwin"
+export TARGET_ARMV7="armv7-unknown-linux-musleabihf"
+export TARGET_MACOS="x86_64-apple-darwin"
+
+export MAX_PARALLEL=$(getconf _NPROCESSORS_ONLN)
 
 # used by rustc
 export RUSTFLAGS="-C opt-level=$OPT_LEVEL"
 
+cd ${PROJECT_ROOT}
 . ./builder/build-osxcross.sh
 
 if is_osx_sdk_installed; then

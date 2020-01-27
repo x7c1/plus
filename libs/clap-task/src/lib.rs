@@ -10,9 +10,9 @@ use clap::{App, ArgMatches};
 use std::iter::FromIterator;
 
 pub trait ClapTask<T> {
-    fn design(&self) -> App;
-
     fn name(&self) -> &str;
+
+    fn design(&self) -> App;
 
     fn run(&self, matches: &ArgMatches) -> T;
 }

@@ -2,13 +2,12 @@ use crate::{CommandResult, ResponseSummary};
 use clap::{App, Arg, ArgMatches, SubCommand};
 use clap_extractor::Matcher;
 use clap_task::ClapTask;
+use futures::executor;
 use sabi_s3::operations::put_object::FileBody;
 use sabi_s3::S3Client;
 
 // see also:
 // https://docs.aws.amazon.com/cli/latest/reference/s3api/put-object.html
-
-const COMMAND_NAME: &str = "put-object";
 
 pub fn define() -> Box<dyn ClapTask<CommandResult>> {
     Box::new(Task)
@@ -17,9 +16,13 @@ pub fn define() -> Box<dyn ClapTask<CommandResult>> {
 struct Task;
 
 impl ClapTask<CommandResult> for Task {
+    fn name(&self) -> &str {
+        "put-object"
+    }
+
     fn design(&self) -> App {
-        SubCommand::with_name(COMMAND_NAME)
-            .about("Adds an object to a bucket")
+        SubCommand::with_name(self.name())
+            .about("Adds an object to a bucket.")
             .arg(
                 Arg::with_name("bucket")
                     .long("bucket")
@@ -43,19 +46,17 @@ impl ClapTask<CommandResult> for Task {
             )
     }
 
-    fn name(&self) -> &str {
-        COMMAND_NAME
-    }
-
     fn run(&self, matches: &ArgMatches) -> CommandResult {
-        println!("running {}!", COMMAND_NAME);
+        println!("running {}!", self.name());
         println!("matches: {:#?}", matches);
 
         let client = S3Client {};
         let request = FileBody {
             file_path: matches.single("body").as_required()?,
         };
-        client.put_object(request);
+        let future = client.put_object(request);
+        let response = executor::block_on(future);
+        println!("response: {:?}", response);
 
         Ok(ResponseSummary::empty())
     }
