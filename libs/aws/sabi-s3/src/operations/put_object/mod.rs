@@ -1,12 +1,11 @@
-mod file_body;
+mod file;
+pub use file::FileRequest;
 
 use crate::internal::InternalClient;
+use crate::verbs::HasObjectKey;
 use crate::{S3Client, S3Result};
-pub use file_body::FileBody;
 
-use std::fmt::Debug;
-
-pub trait Request: Debug {}
+pub trait Request: HasObjectKey {}
 
 pub trait Requester {
     fn put_object<A>(&self, request: A) -> S3Result<String>

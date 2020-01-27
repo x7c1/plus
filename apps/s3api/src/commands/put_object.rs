@@ -4,7 +4,7 @@ use clap_extractor::Matcher;
 use clap_task::ClapTask;
 use futures::executor;
 use sabi_s3::core::S3Bucket;
-use sabi_s3::operations::put_object::FileBody;
+use sabi_s3::operations::put_object::FileRequest;
 use sabi_s3::S3Client;
 
 // see also:
@@ -54,8 +54,9 @@ impl ClapTask<CommandResult> for Task {
         let client = S3Client {
             bucket: S3Bucket::from_string(matches.single("bucket").as_required()?),
         };
-        let request = FileBody {
+        let request = FileRequest {
             file_path: matches.single("body").as_required()?,
+            object_key: matches.single("key").as_required()?,
         };
         let future = client.put_object(request);
         let response = executor::block_on(future);

@@ -13,6 +13,8 @@ pub mod core;
 mod errors;
 pub use errors::Result as S3Result;
 
+pub mod verbs;
+
 #[cfg(test)]
 mod tests {
     #[test]

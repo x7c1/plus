@@ -8,4 +8,8 @@ impl S3Bucket {
     pub fn from_string(name: String) -> S3Bucket {
         S3Bucket(name)
     }
+
+    pub fn as_str(&self) -> &str {
+        &self.0
+    }
 }
