@@ -16,6 +16,6 @@ pub trait Requester {
 impl Requester for S3Client {
     fn put_object<A: Request>(&self, request: A) -> S3Result<String> {
         let client = InternalClient::new(&self.bucket);
-        client.post(request)
+        client.put((&self.bucket, request))
     }
 }
