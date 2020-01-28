@@ -2,6 +2,8 @@ mod errors;
 pub use errors::Error;
 pub use errors::Result as ExtractorResult;
 
+mod iter;
+
 mod matcher;
 pub use matcher::Matcher;
 
