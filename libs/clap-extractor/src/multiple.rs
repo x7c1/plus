@@ -10,7 +10,6 @@ pub struct FromMultiple<'k, 'v> {
 }
 
 impl<'k, 'v> FromMultiple<'k, 'v> {
-    #[allow(dead_code)]
     pub fn as_optional<A>(&self) -> Result<A, <Self as CanExtractOptional<A>>::Err>
     where
         FromMultiple<'k, 'v>: CanExtractOptional<A>,
