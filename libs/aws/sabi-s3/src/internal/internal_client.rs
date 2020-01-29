@@ -1,18 +1,14 @@
-use reqwest::blocking::Client;
-
-use crate::core::S3Bucket;
 use crate::internal::InternalRequest;
 use crate::S3Result;
+use reqwest::blocking::Client;
 use std::fmt::Debug;
 
 #[derive(Debug)]
-pub struct InternalClient<'a> {
-    bucket: &'a S3Bucket,
-}
+pub struct InternalClient {}
 
-impl InternalClient<'_> {
-    pub fn new(bucket: &S3Bucket) -> InternalClient {
-        InternalClient { bucket }
+impl InternalClient {
+    pub fn new() -> InternalClient {
+        InternalClient {}
     }
 
     pub fn put<A>(&self, request_like: A) -> S3Result<String>
