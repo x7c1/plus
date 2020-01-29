@@ -20,7 +20,7 @@ impl Requester for S3Client {
         let client = InternalClient::new();
         let factory = RequestFactory {
             url: (&self.bucket, &request).to_endpoint()?,
-            request,
+            original: request,
         };
         client.put(factory)
     }
@@ -28,7 +28,7 @@ impl Requester for S3Client {
 
 struct RequestFactory<A: Request> {
     url: Url,
-    request: A,
+    original: A,
 }
 
 impl<A> From<RequestFactory<A>> for S3Result<InternalRequest>
@@ -38,7 +38,7 @@ where
     fn from(factory: RequestFactory<A>) -> Self {
         Ok(InternalRequest {
             url: factory.url,
-            body: Some(factory.request.into()?),
+            body: Some(factory.original.into()?),
             // todo:
             headers: Default::default(),
         })
