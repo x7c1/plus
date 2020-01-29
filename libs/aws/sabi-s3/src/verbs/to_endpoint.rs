@@ -8,7 +8,7 @@ pub trait ToEndpoint: Debug {
     fn to_endpoint(&self) -> S3Result<Url>;
 }
 
-impl<A: HasObjectKey> ToEndpoint for (&S3Bucket, A) {
+impl<A: HasObjectKey> ToEndpoint for (&S3Bucket, &A) {
     fn to_endpoint(&self) -> S3Result<Url> {
         let (bucket, request) = self;
         let full = format!(

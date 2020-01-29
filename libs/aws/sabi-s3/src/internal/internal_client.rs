@@ -1,7 +1,7 @@
 use reqwest::blocking::Client;
 
 use crate::core::S3Bucket;
-use crate::verbs::ToEndpoint;
+use crate::internal::InternalRequest;
 use crate::S3Result;
 use std::fmt::Debug;
 
@@ -15,14 +15,21 @@ impl InternalClient<'_> {
         InternalClient { bucket }
     }
 
-    pub fn put<A: ToEndpoint>(&self, request: A) -> S3Result<String> {
-        let url = request.to_endpoint()?;
-        println!("url: {}", url);
+    pub fn put<A>(&self, request_like: A) -> S3Result<String>
+    where
+        A: Into<S3Result<InternalRequest>>,
+    {
+        let request = request_like.into()?;
+        println!("put > request > {:#?}", request);
 
-        let response = Client::new().put(url).body("sample body").send()?;
+        let builder = Client::new().put(request.url).headers(request.headers);
+        let builder = match request.body {
+            Some(body) => builder.body(body),
+            _ => builder,
+        };
+        let response = builder.send()?;
 
-        println!("put_object request..: {:#?}", request);
-        println!("put_object response: {:#?}", response);
+        println!("put > response > {:#?}", response);
         Ok("dummy result".to_string())
     }
 }
