@@ -1,13 +1,12 @@
 mod file;
 pub use file::FileRequest;
 
-use crate::internal::{InternalClient, InternalRequest};
+use crate::internal::{InternalClient, InternalRequest, RequestResource};
 use crate::verbs::{HasObjectKey, ToEndpoint};
 use crate::{S3Client, S3Result};
-use reqwest::blocking::Body;
 use url::Url;
 
-pub trait Request: HasObjectKey + Into<S3Result<Body>> {}
+pub trait Request: HasObjectKey + Into<S3Result<RequestResource>> {}
 
 pub trait Requester {
     fn put_object<A>(&self, request: A) -> S3Result<String>
@@ -16,29 +15,36 @@ pub trait Requester {
 }
 
 impl Requester for S3Client {
-    fn put_object<A: Request>(&self, request: A) -> S3Result<String> {
+    fn put_object<A>(&self, request: A) -> S3Result<String>
+    where
+        A: Request,
+    {
         let client = InternalClient::new();
-        let factory = RequestFactory {
+        let provider = RequestProvider {
             url: (&self.bucket, &request).to_endpoint()?,
             original: request,
         };
-        client.put(factory)
+        client.put(provider)
     }
 }
 
-struct RequestFactory<A: Request> {
+struct RequestProvider<A>
+where
+    A: Request,
+{
     url: Url,
     original: A,
 }
 
-impl<A> From<RequestFactory<A>> for S3Result<InternalRequest>
+impl<A> From<RequestProvider<A>> for S3Result<InternalRequest>
 where
     A: Request,
 {
-    fn from(factory: RequestFactory<A>) -> Self {
+    fn from(factory: RequestProvider<A>) -> Self {
+        let resource = factory.original.into()?;
         Ok(InternalRequest {
             url: factory.url,
-            body: Some(factory.original.into()?),
+            body: resource.body,
             // todo:
             headers: Default::default(),
         })

@@ -1,3 +1,4 @@
+use crate::internal::RequestResource;
 use crate::verbs::HasObjectKey;
 use crate::S3Result;
 use reqwest::blocking::Body;
@@ -15,11 +16,12 @@ impl HasObjectKey for FileRequest {
     }
 }
 
-impl From<FileRequest> for S3Result<Body> {
+impl From<FileRequest> for S3Result<RequestResource> {
     fn from(request: FileRequest) -> Self {
         let file = File::open(request.file_path)?;
         let body = Body::from(file);
-        Ok(body)
+        let resource = RequestResource { body: Some(body) };
+        Ok(resource)
     }
 }
 
