@@ -1,3 +1,6 @@
+mod error;
+pub use error::Error;
+
 mod file;
 pub use file::FileRequest;
 
@@ -40,10 +43,10 @@ impl<A> From<RequestProvider<A>> for S3Result<InternalRequest>
 where
     A: Request,
 {
-    fn from(factory: RequestProvider<A>) -> Self {
-        let resource = factory.original.into()?;
+    fn from(provider: RequestProvider<A>) -> Self {
+        let resource = provider.original.into()?;
         Ok(InternalRequest {
-            url: factory.url,
+            url: provider.url,
             body: resource.body,
             // todo:
             headers: Default::default(),

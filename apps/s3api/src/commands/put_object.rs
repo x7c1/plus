@@ -60,7 +60,7 @@ impl ClapTask<CommandResult> for Task {
         };
         let future = client.put_object(request);
         let response = executor::block_on(future);
-        println!("response: {:?}", response);
+        println!("response: {:#?}", response);
 
         Ok(ResponseSummary::empty())
     }
