@@ -1,5 +1,5 @@
+use crate::core::S3Result;
 use crate::internal::InternalRequest;
-use crate::S3Result;
 use reqwest::blocking::Client;
 use std::fmt::Debug;
 

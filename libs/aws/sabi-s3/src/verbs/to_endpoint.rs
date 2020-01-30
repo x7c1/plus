@@ -1,6 +1,5 @@
-use crate::core::S3Bucket;
+use crate::core::{S3Bucket, S3Result};
 use crate::verbs::HasObjectKey;
-use crate::S3Result;
 use reqwest::Url;
 use std::fmt::Debug;
 

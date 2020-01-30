@@ -9,7 +9,7 @@ mod internal;
 pub mod core;
 
 mod error;
-pub use error::Result as S3Result;
+pub use error::Error;
 
 pub mod verbs;
 

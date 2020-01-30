@@ -1,8 +1,8 @@
 use super::error::Error::FileNotFound;
+use crate::core::S3Result;
 use crate::error::Error::{PutObjectError, StdIoError};
 use crate::internal::RequestResource;
 use crate::verbs::HasObjectKey;
-use crate::S3Result;
 use reqwest::blocking::Body;
 use std::error::Error;
 use std::fs::File;

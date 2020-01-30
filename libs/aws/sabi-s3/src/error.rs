@@ -6,14 +6,14 @@ pub type Result<T> = ::std::result::Result<T, Error>;
 
 #[derive(Fail, Debug)]
 pub enum Error {
+    #[fail(display = "operations::put_object::Error > {}", 0)]
+    PutObjectError(operations::put_object::Error),
+
     #[fail(display = "reqwest::Error > {}", 0)]
     Reqwest(reqwest::Error),
 
     #[fail(display = "std::io::Error > {}", 0)]
     StdIoError(std::io::Error),
-
-    #[fail(display = "operations::put_object::Error > {}", 0)]
-    PutObjectError(operations::put_object::Error),
 
     #[fail(display = "url::ParseError > {}", 0)]
     UrlParseError(url::ParseError),

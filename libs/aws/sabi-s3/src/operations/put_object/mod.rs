@@ -4,9 +4,9 @@ pub use error::Error;
 mod file;
 pub use file::FileRequest;
 
+use crate::core::{S3Client, S3Result};
 use crate::internal::{InternalClient, InternalRequest, RequestResource};
 use crate::verbs::{HasObjectKey, ToEndpoint};
-use crate::{core::S3Client, S3Result};
 use url::Url;
 
 pub trait Request: HasObjectKey + Into<S3Result<RequestResource>> {}
