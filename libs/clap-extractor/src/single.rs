@@ -1,4 +1,4 @@
-use crate::errors::Error::NotFound;
+use crate::error::Error::NotFound;
 use crate::{to_parse_error, CanExtractOptional, CanExtractRequired, Error, ExtractorResult};
 use clap::ArgMatches;
 use std::fmt::Debug;

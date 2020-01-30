@@ -6,8 +6,8 @@ extern crate failure;
 
 mod commands;
 
-mod errors;
-pub use errors::Result as S3ApiResult;
+mod error;
+pub use error::Result as S3ApiResult;
 
 mod summary;
 use clap_task::{ClapTasks, TaskRunner};

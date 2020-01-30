@@ -10,8 +10,8 @@ pub use client::S3Client;
 
 pub mod core;
 
-mod errors;
-pub use errors::Result as S3Result;
+mod error;
+pub use error::Result as S3Result;
 
 pub mod verbs;
 

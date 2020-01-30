@@ -1,6 +1,6 @@
-mod errors;
-pub use errors::Error;
-pub use errors::Result as ExtractorResult;
+mod error;
+pub use error::Error;
+pub use error::Result as ExtractorResult;
 
 mod iter;
 
@@ -13,7 +13,7 @@ pub use multiple::FromMultiple;
 mod single;
 pub use single::FromSingle;
 
-use crate::errors::Error::ParseError;
+use crate::error::Error::ParseError;
 use std::fmt::Debug;
 
 pub trait CanExtractOptional<A> {
