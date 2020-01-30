@@ -4,6 +4,7 @@ pub use file::FileRequest;
 use crate::core::{S3Client, S3Result};
 use crate::internal::{InternalClient, InternalRequest, RequestResource};
 use crate::verbs::{HasObjectKey, ToEndpoint};
+use reqwest::Method;
 use url::Url;
 
 pub trait Request: HasObjectKey + Into<S3Result<RequestResource>> {}
@@ -24,7 +25,7 @@ impl Requester for S3Client {
             url: (&self.bucket, &request).to_endpoint()?,
             original: request,
         };
-        client.put(provider)
+        client.send(provider)
     }
 }
 
@@ -44,6 +45,7 @@ where
         let resource = provider.original.into()?;
         Ok(InternalRequest {
             url: provider.url,
+            method: Method::PUT,
             body: resource.body,
             // todo:
             headers: Default::default(),

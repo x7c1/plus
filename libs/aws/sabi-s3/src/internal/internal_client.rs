@@ -11,14 +11,17 @@ impl InternalClient {
         InternalClient {}
     }
 
-    pub fn put<A>(&self, request_like: A) -> S3Result<String>
+    pub fn send<A>(&self, request_like: A) -> S3Result<String>
     where
         A: Into<S3Result<InternalRequest>>,
     {
         let request = request_like.into()?;
         println!("put > request > {:#?}", request);
 
-        let builder = Client::new().put(request.url).headers(request.headers);
+        let builder = Client::new()
+            .request(request.method, request.url)
+            .headers(request.headers);
+
         let builder = match request.body {
             Some(body) => builder.body(body),
             _ => builder,
