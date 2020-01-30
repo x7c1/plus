@@ -16,7 +16,7 @@ impl InternalClient {
         A: Into<S3Result<InternalRequest>>,
     {
         let request = request_like.into()?;
-        println!("put > request > {:#?}", request);
+        println!("request > {:#?}", request);
 
         let builder = Client::new()
             .request(request.method, request.url)
@@ -28,7 +28,7 @@ impl InternalClient {
         };
         let response = builder.send()?;
 
-        println!("put > response > {:#?}", response);
+        println!("response > {:#?}", response);
         Ok("dummy result".to_string())
     }
 }
