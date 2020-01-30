@@ -6,8 +6,12 @@ pub type Result<T> = ::std::result::Result<T, Error>;
 
 #[derive(Fail, Debug)]
 pub enum Error {
-    #[fail(display = "operations::put_object::Error > {}", 0)]
-    PutObjectError(operations::put_object::Error),
+    #[fail(display = "FileNotFound > {}", 0)]
+    FileNotFound {
+        operation: operations::Kind,
+        path: String,
+        description: String,
+    },
 
     #[fail(display = "reqwest::Error > {}", 0)]
     Reqwest(reqwest::Error),

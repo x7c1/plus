@@ -1,7 +1,7 @@
-use super::error::Error::FileNotFound;
 use crate::core::S3Result;
-use crate::error::Error::{PutObjectError, StdIoError};
+use crate::error::Error::{FileNotFound, StdIoError};
 use crate::internal::RequestResource;
+use crate::operations::Kind;
 use crate::verbs::HasObjectKey;
 use reqwest::blocking::Body;
 use std::error::Error;
@@ -17,10 +17,11 @@ pub struct FileRequest {
 impl FileRequest {
     fn open_file(&self) -> S3Result<File> {
         File::open(&self.file_path).map_err(|e| match e {
-            _ if e.kind() == NotFound => PutObjectError(FileNotFound {
+            _ if e.kind() == NotFound => FileNotFound {
+                operation: Kind::PutObject,
                 path: self.file_path.to_string(),
                 description: e.description().to_string(),
-            }),
+            },
             _ => StdIoError(e),
         })
     }
