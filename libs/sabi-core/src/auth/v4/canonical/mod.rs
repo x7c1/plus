@@ -8,3 +8,6 @@ pub use uri::CanonicalUri;
 
 mod hashed_payload;
 pub use hashed_payload::HashedPayload;
+
+mod query;
+pub use query::CanonicalQueryString;
