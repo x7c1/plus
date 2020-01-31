@@ -4,6 +4,10 @@
 */
 
 mod canonical_headers;
+pub use canonical_headers::CanonicalHeaders;
+
+mod request;
+pub use request::CanonicalRequest;
 
 mod uri;
 pub use uri::CanonicalUri;
@@ -15,3 +19,4 @@ mod query;
 pub use query::CanonicalQueryString;
 
 mod signed_headers;
+pub use signed_headers::SignedHeaders;
