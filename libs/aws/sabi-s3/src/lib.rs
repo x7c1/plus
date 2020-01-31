@@ -4,11 +4,14 @@ extern crate failure;
 #[macro_use]
 pub mod operations;
 
-mod client;
-pub use client::S3Client;
+mod internal;
 
-mod errors;
-pub use errors::Result as S3Result;
+pub mod core;
+
+mod error;
+pub use error::Error;
+
+pub mod verbs;
 
 #[cfg(test)]
 mod tests {

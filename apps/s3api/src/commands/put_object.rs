@@ -3,8 +3,8 @@ use clap::{App, Arg, ArgMatches, SubCommand};
 use clap_extractor::Matcher;
 use clap_task::ClapTask;
 use futures::executor;
-use sabi_s3::operations::put_object::FileBody;
-use sabi_s3::S3Client;
+use sabi_s3::core::{S3Bucket, S3Client};
+use sabi_s3::operations::put_object::FileRequest;
 
 // see also:
 // https://docs.aws.amazon.com/cli/latest/reference/s3api/put-object.html
@@ -50,13 +50,16 @@ impl ClapTask<CommandResult> for Task {
         println!("running {}!", self.name());
         println!("matches: {:#?}", matches);
 
-        let client = S3Client {};
-        let request = FileBody {
+        let client = S3Client {
+            bucket: S3Bucket::from_string(matches.single("bucket").as_required()?),
+        };
+        let request = FileRequest {
             file_path: matches.single("body").as_required()?,
+            object_key: matches.single("key").as_required()?,
         };
         let future = client.put_object(request);
         let response = executor::block_on(future);
-        println!("response: {:?}", response);
+        println!("response: {:#?}", response);
 
         Ok(ResponseSummary::empty())
     }

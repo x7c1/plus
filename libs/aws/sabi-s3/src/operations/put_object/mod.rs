@@ -1,12 +1,13 @@
-mod file_body;
+mod file;
+pub use file::FileRequest;
 
-use crate::{S3Client, S3Result};
-pub use file_body::FileBody;
+use crate::core::{S3Client, S3Result};
+use crate::internal::{InternalClient, InternalRequest, RequestResource};
+use crate::verbs::{HasObjectKey, ToEndpoint};
+use reqwest::Method;
+use url::Url;
 
-use reqwest::blocking::Client;
-use std::fmt::Debug;
-
-pub trait Request: Debug {}
+pub trait Request: HasObjectKey + Into<S3Result<RequestResource>> {}
 
 pub trait Requester {
     fn put_object<A>(&self, request: A) -> S3Result<String>
@@ -15,15 +16,39 @@ pub trait Requester {
 }
 
 impl Requester for S3Client {
-    fn put_object<A: Request>(&self, request: A) -> S3Result<String> {
-        let client = Client::new();
-        let response = client
-            .post("https://example.com/post")
-            .body("the exact body that is sent")
-            .send()?;
+    fn put_object<A>(&self, request: A) -> S3Result<String>
+    where
+        A: Request,
+    {
+        let client = InternalClient::new();
+        let provider = RequestProvider {
+            url: (&self.bucket, &request).to_endpoint()?,
+            original: request,
+        };
+        client.send(provider)
+    }
+}
 
-        println!("put_object request..: {:?}", request);
-        println!("put_object response: {:?}", response);
-        Ok("dummy result".to_string())
+struct RequestProvider<A>
+where
+    A: Request,
+{
+    url: Url,
+    original: A,
+}
+
+impl<A> From<RequestProvider<A>> for S3Result<InternalRequest>
+where
+    A: Request,
+{
+    fn from(provider: RequestProvider<A>) -> Self {
+        let resource = provider.original.into()?;
+        Ok(InternalRequest {
+            url: provider.url,
+            method: Method::PUT,
+            body: resource.body,
+            // todo:
+            headers: Default::default(),
+        })
     }
 }

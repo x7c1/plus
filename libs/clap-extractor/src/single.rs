@@ -1,4 +1,4 @@
-use crate::errors::Error::NotFound;
+use crate::error::Error::NotFound;
 use crate::{to_parse_error, CanExtractOptional, CanExtractRequired, Error, ExtractorResult};
 use clap::ArgMatches;
 use std::fmt::Debug;
@@ -33,14 +33,15 @@ impl<'k, 'v> FromSingle<'k, 'v> {
         F1: Fn() -> ResultFromStr<Y, X>,
         F2: Fn(X) -> ResultFromStr<Y, X>,
     {
-        let value = if let Some(value) = self.matches.value_of(self.key) {
-            value
-        } else {
-            return if_not_found();
+        let to_parsed = |value| {
+            X::from_str(value)
+                .map_err(|e| to_parse_error(self.key, value, e))
+                .and_then(reify)
         };
-        let result = <X as FromStr>::from_str(value);
-        let item = result.map_err(|cause| to_parse_error(self.key, value, cause))?;
-        reify(item)
+        self.matches
+            .value_of(self.key)
+            .map(to_parsed)
+            .unwrap_or_else(if_not_found)
     }
 }
 

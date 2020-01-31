@@ -1,9 +1,9 @@
+use crate::core::{S3Bucket, S3Result};
 use crate::operations;
-use crate::S3Result;
 
 #[derive(Debug)]
 pub struct S3Client {
-    // todo: add bucket field
+    pub bucket: S3Bucket,
 }
 
 impl S3Client {
