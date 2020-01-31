@@ -9,4 +9,7 @@ edition = "2018"
 failure = "0.1"
 hex = "0.4"
 sha2 = "0.8"
+
+# determined by reqwest dependencies
+http = "0.2"
 url = "2.1"

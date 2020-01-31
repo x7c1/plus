@@ -3,6 +3,8 @@
     https://docs.aws.amazon.com/general/latest/gr/sigv4-create-canonical-request.html
 */
 
+mod canonical_headers;
+
 mod uri;
 pub use uri::CanonicalUri;
 

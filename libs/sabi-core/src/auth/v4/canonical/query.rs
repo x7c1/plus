@@ -29,7 +29,7 @@ impl From<&Url> for CanonicalQueryString {
     }
 }
 
-/// Encode a URI following the specific requirements of the AWS service.
+/// Encode a URI following the specific requirements of the AWS.
 fn uri_encode(string: &str, encode_slash: bool) -> String {
     /*
         rf.
