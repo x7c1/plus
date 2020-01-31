@@ -2,8 +2,9 @@ use crate::auth::v4::canonical::{
     CanonicalHeaders, CanonicalQueryString, CanonicalUri, HashedPayload, SignedHeaders,
 };
 use hex::ToHex;
-use http::Method;
+use http::{HeaderMap, Method};
 use sha2::{Digest, Sha256};
+use url::Url;
 
 #[derive(Debug)]
 pub struct CanonicalRequest {
@@ -16,6 +17,17 @@ pub struct CanonicalRequest {
 }
 
 impl CanonicalRequest {
+    pub fn from(method: &Method, url: &Url, headers: &HeaderMap, hash: HashedPayload) -> Self {
+        CanonicalRequest {
+            method: method.clone(),
+            uri: CanonicalUri::from(url),
+            query_string: CanonicalQueryString::from(url),
+            signed_headers: SignedHeaders::from(headers),
+            canonical_headers: CanonicalHeaders::from(headers),
+            hashed_payload: hash,
+        }
+    }
+
     pub fn to_hash(&self) -> String {
         let mut hasher = Sha256::default();
         hasher.input(self.combine().as_bytes());
