@@ -14,9 +14,7 @@ impl HashedPayload {
     }
 
     pub fn empty() -> Self {
-        Self::new(
-            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-        )
+        Self::new("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855")
     }
 
     pub fn as_str(&self) -> &str {
