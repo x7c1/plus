@@ -15,10 +15,6 @@ impl HashedPayload {
 
     pub fn empty() -> Self {
         Self::new(
-            /*
-                rf.
-                https://docs.aws.amazon.com/general/latest/gr/sigv4-create-canonical-request.html
-            */
             "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         )
     }
