@@ -6,11 +6,11 @@ use std::fs::File;
 use std::io::{BufReader, Read};
 
 #[derive(Debug)]
-pub struct PayloadHash(String);
+pub struct HashedPayload(String);
 
-impl PayloadHash {
+impl HashedPayload {
     pub fn new<A: Into<String>>(value: A) -> Self {
-        PayloadHash(value.into())
+        HashedPayload(value.into())
     }
 
     pub fn empty() -> Self {
@@ -28,7 +28,7 @@ impl PayloadHash {
     }
 }
 
-impl TryFrom<&File> for PayloadHash {
+impl TryFrom<&File> for HashedPayload {
     type Error = crate::Error;
 
     fn try_from(file: &File) -> SabiResult<Self> {

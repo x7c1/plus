@@ -1,2 +1,2 @@
-mod payload_hash;
-pub use payload_hash::PayloadHash;
+mod hashed_payload;
+pub use hashed_payload::HashedPayload;
