@@ -13,3 +13,5 @@ pub use hashed_payload::HashedPayload;
 
 mod query;
 pub use query::CanonicalQueryString;
+
+mod signed_headers;
