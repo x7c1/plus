@@ -24,6 +24,7 @@ pub use signed_headers::SignedHeaders;
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::http::Headers;
     use crate::SabiResult;
     use http::{HeaderMap, Method};
     use url::Url;
@@ -45,15 +46,14 @@ mod tests {
     }
 
     fn to_headers(url: &Url) -> SabiResult<HeaderMap> {
-        let mut headers = HeaderMap::new();
-        headers.insert(
-            "content-type",
-            "application/x-www-form-urlencoded; charset=utf-8"
-                .parse()
-                .unwrap(),
-        );
-        headers.insert("host", url.host_str().unwrap().parse().unwrap());
-        headers.insert("x-amz-date", "20150830T123600Z".parse().unwrap());
+        let headers = HeaderMap::new()
+            .push(("host", url.host_str().unwrap()))?
+            .push((
+                "content-type",
+                "application/x-www-form-urlencoded; charset=utf-8",
+            ))?
+            .push(("x-amz-date", "20150830T123600Z"))?;
+
         Ok(headers)
     }
 }
