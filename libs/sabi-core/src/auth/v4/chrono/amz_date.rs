@@ -1,3 +1,6 @@
+/// > The time stamp must be in UTC and in the following ISO 8601 format: YYYYMMDD'T'HHMMSS'Z'.
+/// > Do not include milliseconds in the time stamp.
+///
 /// ## Example
 ///  * 20150830T123600Z
 ///
