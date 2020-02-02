@@ -1,3 +1,8 @@
+/// ## Example
+///  * 20150830T123600Z
+///
+/// ## See also
+///  * [Handling Dates in Signature Version 4 - AWS General Reference](https://docs.aws.amazon.com/general/latest/gr/sigv4-date-handling.html)
 #[derive(Debug)]
 pub struct AmzDate(String);
 
