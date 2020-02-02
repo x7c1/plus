@@ -4,7 +4,7 @@ pub enum Algorithm {
 }
 
 impl Algorithm {
-    fn as_str(&self) -> &str {
+    pub fn as_str(&self) -> &str {
         match self {
             Algorithm::HmacSha256 => "AWS4-HMAC-SHA256",
         }

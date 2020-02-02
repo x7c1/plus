@@ -39,7 +39,7 @@ mod tests {
         let request = CanonicalRequest::from(&Method::GET, &url, &headers, hash);
 
         assert_eq!(
-            request.to_hash(),
+            request.as_hash(),
             "f536975d06c0309214f805bb90ccff089219ecd68b2577efef23edd43b7e1a59"
         );
         Ok({})
