@@ -1,3 +1,5 @@
+use chrono::{DateTime, Utc};
+
 /// > The date must be in the YYYYMMDD format.
 /// > Note that the date does not include a time value.
 ///
@@ -22,5 +24,25 @@ impl DateStamp {
 impl<'a> Into<&'a [u8]> for &'a DateStamp {
     fn into(self) -> &'a [u8] {
         self.0.as_bytes()
+    }
+}
+
+impl From<&DateTime<Utc>> for DateStamp {
+    fn from(time: &DateTime<Utc>) -> Self {
+        let pattern = "%Y%m%d";
+        DateStamp::new(time.format(pattern).to_string())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use chrono::TimeZone;
+
+    #[test]
+    fn it_works() {
+        let time = Utc.ymd(2020, 2, 3).and_hms(2, 3, 4);
+        let stamp = DateStamp::from(&time);
+        assert_eq!(stamp.as_str(), "20200203");
     }
 }
