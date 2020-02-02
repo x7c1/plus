@@ -4,6 +4,8 @@ use crate::internal::RequestResource;
 use crate::operations::Kind;
 use crate::verbs::HasObjectKey;
 use reqwest::blocking::Body;
+use sabi_core::auth::v4::canonical::HashedPayload;
+use std::convert::TryFrom;
 use std::error::Error;
 use std::fs::File;
 use std::io::ErrorKind::NotFound;
@@ -36,8 +38,11 @@ impl HasObjectKey for FileRequest {
 impl From<FileRequest> for S3Result<RequestResource> {
     fn from(request: FileRequest) -> Self {
         let file = request.open_file()?;
-        let body = Body::from(file);
-        let resource = RequestResource { body: Some(body) };
+        let hash = HashedPayload::try_from(&file)?;
+        let resource = RequestResource {
+            body: Some(Body::from(file)),
+            hash,
+        };
         Ok(resource)
     }
 }
