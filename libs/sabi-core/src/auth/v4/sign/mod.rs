@@ -6,9 +6,6 @@
 mod algorithm;
 pub use algorithm::Algorithm;
 
-mod scope_service;
-pub use scope_service::ScopeService;
-
 mod scope_termination;
 pub use scope_termination::ScopeTermination;
 
