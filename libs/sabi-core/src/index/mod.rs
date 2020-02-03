@@ -1,5 +1,5 @@
 mod region;
-pub use region::AwsRegion;
+pub use region::RegionCode;
 
 mod service;
 pub use service::ServiceName;

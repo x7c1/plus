@@ -1,12 +1,12 @@
 use crate::auth::v4::chrono::DateStamp;
 use crate::auth::v4::sign::ScopeTermination;
-use crate::index::AwsRegion;
+use crate::index::RegionCode;
 use crate::index::ServiceName;
 
 #[derive(Debug)]
 pub struct CredentialScope {
     pub date: DateStamp,
-    pub region: AwsRegion,
+    pub region: RegionCode,
     pub service: ServiceName,
     pub termination: ScopeTermination,
     raw: String,
@@ -15,7 +15,7 @@ pub struct CredentialScope {
 impl CredentialScope {
     pub fn from(
         date: DateStamp,
-        region: AwsRegion,
+        region: RegionCode,
         service: ServiceName,
         termination: ScopeTermination,
     ) -> Self {
