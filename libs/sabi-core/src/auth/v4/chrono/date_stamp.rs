@@ -36,8 +36,8 @@ impl From<&DateTime<Utc>> for DateStamp {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use chrono::TimeZone;
+    use super::DateStamp;
+    use chrono::{TimeZone, Utc};
 
     #[test]
     fn it_works() {

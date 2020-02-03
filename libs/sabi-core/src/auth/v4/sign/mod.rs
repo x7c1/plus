@@ -6,9 +6,6 @@
 mod algorithm;
 pub use algorithm::Algorithm;
 
-mod scope_region;
-pub use scope_region::ScopeRegion;
-
 mod scope_service;
 pub use scope_service::ScopeService;
 

@@ -31,8 +31,8 @@ impl From<&DateTime<Utc>> for AmzDate {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use chrono::TimeZone;
+    use super::AmzDate;
+    use chrono::{TimeZone, Utc};
 
     #[test]
     fn it_works() {

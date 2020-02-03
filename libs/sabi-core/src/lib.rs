@@ -8,3 +8,5 @@ pub use error::Error;
 pub use error::Result as SabiResult;
 
 mod http;
+
+mod index;
