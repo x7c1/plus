@@ -1,3 +1,6 @@
+/// see also:
+///  * [AWS Service Endpoints - AWS General Reference](https://docs.aws.amazon.com/general/latest/gr/rande.html)
+///
 #[derive(Debug)]
 pub enum RegionCode {
     ApNorthEast1,
@@ -10,7 +13,7 @@ impl RegionCode {
         match self {
             RegionCode::ApNorthEast1 => "ap-northeast-1",
             RegionCode::UsEast1 => "us-east-1",
-            RegionCode::Unknown(label) => &label,
+            RegionCode::Unknown(code) => &code,
         }
     }
 }

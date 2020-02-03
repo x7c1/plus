@@ -1,17 +1,25 @@
+/// see also:
+///  * [AWS Service Endpoints - AWS General Reference](https://docs.aws.amazon.com/general/latest/gr/rande.html)
+///
 #[derive(Debug)]
-pub struct ServiceName(String);
+pub enum ServiceCode {
+    Iam,
+    S3,
+    Unknown(String),
+}
 
-impl ServiceName {
-    pub fn new<A: Into<String>>(key: A) -> Self {
-        Self(key.into())
-    }
+impl ServiceCode {
     pub fn as_str(&self) -> &str {
-        self.0.as_str()
+        match self {
+            ServiceCode::Iam => "iam",
+            ServiceCode::S3 => "s3",
+            ServiceCode::Unknown(code) => &code,
+        }
     }
 }
 
-impl<'a> Into<&'a [u8]> for &'a ServiceName {
+impl<'a> Into<&'a [u8]> for &'a ServiceCode {
     fn into(self) -> &'a [u8] {
-        self.0.as_bytes()
+        self.as_str().as_bytes()
     }
 }
