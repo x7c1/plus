@@ -5,6 +5,10 @@ pub enum ScopeTermination {
 }
 
 impl ScopeTermination {
+    pub fn new<A: Into<String>>(key: A) -> Self {
+        Self::Unknown(key.into())
+    }
+
     pub fn as_str(&self) -> &str {
         match self {
             ScopeTermination::Aws4Request => "aws4_request",

@@ -9,6 +9,10 @@ pub enum ServiceCode {
 }
 
 impl ServiceCode {
+    pub fn new<A: Into<String>>(key: A) -> Self {
+        Self::Unknown(key.into())
+    }
+
     pub fn as_str(&self) -> &str {
         match self {
             ServiceCode::Iam => "iam",

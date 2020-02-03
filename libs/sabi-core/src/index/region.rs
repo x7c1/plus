@@ -9,6 +9,10 @@ pub enum RegionCode {
 }
 
 impl RegionCode {
+    pub fn new<A: Into<String>>(key: A) -> Self {
+        Self::Unknown(key.into())
+    }
+
     pub fn as_str(&self) -> &str {
         match self {
             RegionCode::ApNorthEast1 => "ap-northeast-1",
