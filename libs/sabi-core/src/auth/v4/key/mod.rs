@@ -9,6 +9,9 @@ pub use can_generate_mac::CanGenerateHmac;
 mod hmac_factory;
 pub use hmac_factory::HmacFactory;
 
+mod output_hmac;
+pub use output_hmac::OutputHmac;
+
 mod signer;
 pub use signer::{Signature, Signer};
 

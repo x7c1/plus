@@ -16,7 +16,7 @@ impl SigningKey {
             .hmac(&scope.service)
             .hmac(&scope.termination);
 
-        SigningKey(hmac.code())
+        SigningKey(hmac.code)
     }
 
     pub fn to_hex(&self) -> String {
