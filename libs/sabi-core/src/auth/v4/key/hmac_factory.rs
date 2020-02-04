@@ -7,7 +7,7 @@ pub trait HmacFactory: CanGenerateHmac {
     where
         A: Into<&'a [u8]>,
     {
-        let mut hmac: Hmac<Sha256> = self.generate();
+        let mut hmac: Hmac<Sha256> = self.to_hmac();
         hmac.input(target.into());
         OutputHmac {
             code: hmac.result().code().to_vec(),
@@ -15,17 +15,23 @@ pub trait HmacFactory: CanGenerateHmac {
     }
 }
 
-pub trait CanGenerateHmac {
-    fn generate(&self) -> Hmac<Sha256>;
-}
-
 impl HmacFactory for (&str, &SecretKey) {}
 
+pub trait CanGenerateHmac {
+    fn to_hmac(&self) -> Hmac<Sha256>;
+}
+
+impl CanGenerateHmac for [u8] {
+    fn to_hmac(&self) -> Hmac<Sha256> {
+        Hmac::new_varkey(self).expect("HMAC can take key of any size")
+    }
+}
+
 impl CanGenerateHmac for (&str, &SecretKey) {
-    fn generate(&self) -> Hmac<Sha256> {
+    fn to_hmac(&self) -> Hmac<Sha256> {
         let (first, second) = self;
         let key = format!("{}{}", first, second.as_str());
-        Hmac::new_varkey(key.as_bytes()).expect("HMAC can take key of any size")
+        key.as_bytes().to_hmac()
     }
 }
 
@@ -42,8 +48,7 @@ impl OutputHmac {
 impl HmacFactory for OutputHmac {}
 
 impl CanGenerateHmac for OutputHmac {
-    fn generate(&self) -> Hmac<Sha256> {
-        let key: &[u8] = &self.code;
-        Hmac::new_varkey(key).expect("HMAC can take key of any size")
+    fn to_hmac(&self) -> Hmac<Sha256> {
+        self.code.to_hmac()
     }
 }
