@@ -32,7 +32,7 @@ impl StringToSign {
     }
 }
 
-impl AsBytes for &StringToSign {
+impl AsBytes for StringToSign {
     fn as_bytes(&self) -> &[u8] {
         self.as_str().as_bytes()
     }

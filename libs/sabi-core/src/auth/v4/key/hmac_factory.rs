@@ -4,7 +4,7 @@ use hmac::{Hmac, Mac};
 use sha2::Sha256;
 
 pub trait HmacFactory: CanGenerateHmac {
-    fn hmac<A>(&self, target: A) -> OutputHmac
+    fn hmac<A>(&self, target: &A) -> OutputHmac
     where
         A: AsBytes,
     {

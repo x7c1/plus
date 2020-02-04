@@ -24,7 +24,7 @@ impl ServiceCode {
     }
 }
 
-impl AsBytes for &ServiceCode {
+impl AsBytes for ServiceCode {
     fn as_bytes(&self) -> &[u8] {
         self.as_str().as_bytes()
     }

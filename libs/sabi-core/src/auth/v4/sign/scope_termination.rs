@@ -19,7 +19,7 @@ impl ScopeTermination {
     }
 }
 
-impl AsBytes for &ScopeTermination {
+impl AsBytes for ScopeTermination {
     fn as_bytes(&self) -> &[u8] {
         self.as_str().as_bytes()
     }

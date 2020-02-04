@@ -24,7 +24,7 @@ impl RegionCode {
     }
 }
 
-impl AsBytes for &RegionCode {
+impl AsBytes for RegionCode {
     fn as_bytes(&self) -> &[u8] {
         self.as_str().as_bytes()
     }
