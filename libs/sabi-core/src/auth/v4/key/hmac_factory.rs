@@ -25,8 +25,7 @@ impl CanGenerateHmac for (&str, &SecretKey) {
     fn generate(&self) -> Hmac<Sha256> {
         let (first, second) = self;
         let key = format!("{}{}", first, second.as_str());
-        // todo: avoid unwrap
-        Hmac::new_varkey(key.as_bytes()).unwrap()
+        Hmac::new_varkey(key.as_bytes()).expect("HMAC can take key of any size")
     }
 }
 
@@ -45,7 +44,6 @@ impl HmacFactory for OutputHmac {}
 impl CanGenerateHmac for OutputHmac {
     fn generate(&self) -> Hmac<Sha256> {
         let key: &[u8] = &self.code;
-        // todo: avoid unwrap
-        Hmac::new_varkey(key).unwrap()
+        Hmac::new_varkey(key).expect("HMAC can take key of any size")
     }
 }
