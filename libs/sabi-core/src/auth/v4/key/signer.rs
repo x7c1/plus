@@ -1,9 +1,7 @@
-use crate::auth::v4::key::hmac_factory::CanGenerateHmac;
+use crate::auth::v4::key::hmac_factory::HmacFactory;
 use crate::auth::v4::key::SigningKey;
 use crate::auth::v4::sign::{CredentialScope, StringToSign};
 use crate::auth::SecretKey;
-use hex::ToHex;
-use hmac::Mac;
 
 #[derive(Debug)]
 pub struct Signer {
@@ -18,11 +16,8 @@ impl Signer {
 
     pub fn sign(&self, value: StringToSign) -> Signature {
         let key = self.key.as_bytes();
-        let mut hmac = key.to_hmac();
-        hmac.input(value.as_str().as_bytes());
-
-        let value = hmac.result().code().encode_hex();
-        Signature(value)
+        let raw = key.hmac(&value).to_hex();
+        Signature(raw)
     }
 }
 

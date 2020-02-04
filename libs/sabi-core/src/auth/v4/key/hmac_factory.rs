@@ -1,4 +1,5 @@
 use crate::auth::SecretKey;
+use hex::ToHex;
 use hmac::{Hmac, Mac};
 use sha2::Sha256;
 
@@ -14,6 +15,8 @@ pub trait HmacFactory: CanGenerateHmac {
         }
     }
 }
+
+impl HmacFactory for [u8] {}
 
 impl HmacFactory for (&str, &SecretKey) {}
 
@@ -42,6 +45,9 @@ pub struct OutputHmac {
 impl OutputHmac {
     pub fn code(self) -> Vec<u8> {
         self.code
+    }
+    pub fn to_hex(&self) -> String {
+        self.code.encode_hex()
     }
 }
 
