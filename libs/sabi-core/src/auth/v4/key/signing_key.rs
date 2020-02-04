@@ -1,6 +1,7 @@
 use crate::auth::v4::key::HmacFactory;
 use crate::auth::v4::sign::CredentialScope;
 use crate::auth::SecretKey;
+use crate::verbs::AsBytes;
 use hex::ToHex;
 
 #[derive(Debug)]
@@ -18,11 +19,13 @@ impl SigningKey {
         SigningKey(hmac.code())
     }
 
-    pub fn as_bytes(&self) -> &[u8] {
-        &self.0
-    }
-
     pub fn to_hex(&self) -> String {
         self.0.encode_hex()
+    }
+}
+
+impl AsBytes for SigningKey {
+    fn as_bytes(&self) -> &[u8] {
+        &self.0
     }
 }

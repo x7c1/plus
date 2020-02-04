@@ -10,3 +10,5 @@ pub use error::Result as SabiResult;
 mod http;
 
 mod index;
+
+pub mod verbs;

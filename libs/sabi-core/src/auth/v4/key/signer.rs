@@ -15,8 +15,7 @@ impl Signer {
     }
 
     pub fn sign(&self, value: StringToSign) -> Signature {
-        let key = self.key.as_bytes();
-        let raw = key.hmac(&value).to_hex();
+        let raw = self.key.hmac(&value).to_hex();
         Signature(raw)
     }
 }

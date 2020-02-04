@@ -4,10 +4,10 @@
 */
 
 mod hmac_factory;
-pub use hmac_factory::HmacFactory;
+pub use hmac_factory::{CanGenerateHmac, HmacFactory};
 
 mod signer;
-pub use signer::Signer;
+pub use signer::{Signature, Signer};
 
 mod signing_key;
 pub use signing_key::SigningKey;
