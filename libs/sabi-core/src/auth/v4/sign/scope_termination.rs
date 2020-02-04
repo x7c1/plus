@@ -1,3 +1,5 @@
+use crate::verbs::AsBytes;
+
 #[derive(Debug)]
 pub enum ScopeTermination {
     Aws4Request,
@@ -17,8 +19,8 @@ impl ScopeTermination {
     }
 }
 
-impl<'a> Into<&'a [u8]> for &'a ScopeTermination {
-    fn into(self) -> &'a [u8] {
+impl AsBytes for &ScopeTermination {
+    fn as_bytes(&self) -> &[u8] {
         self.as_str().as_bytes()
     }
 }

@@ -2,6 +2,7 @@ use crate::auth::v4::canonical::CanonicalRequest;
 use crate::auth::v4::chrono::AmzDate;
 use crate::auth::v4::sign::algorithm::Algorithm;
 use crate::auth::v4::sign::CredentialScope;
+use crate::verbs::AsBytes;
 
 #[derive(Debug)]
 pub struct StringToSign(String);
@@ -31,8 +32,8 @@ impl StringToSign {
     }
 }
 
-impl<'a> Into<&'a [u8]> for &'a StringToSign {
-    fn into(self) -> &'a [u8] {
+impl AsBytes for &StringToSign {
+    fn as_bytes(&self) -> &[u8] {
         self.as_str().as_bytes()
     }
 }

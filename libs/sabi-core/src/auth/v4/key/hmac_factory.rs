@@ -5,12 +5,12 @@ use hmac::{Hmac, Mac};
 use sha2::Sha256;
 
 pub trait HmacFactory: CanGenerateHmac {
-    fn hmac<'a, A>(&'a self, target: A) -> OutputHmac
+    fn hmac<A>(&self, target: A) -> OutputHmac
     where
-        A: Into<&'a [u8]>,
+        A: AsBytes,
     {
         let mut hmac: Hmac<Sha256> = self.to_hmac();
-        hmac.input(target.into());
+        hmac.input(target.as_bytes());
         OutputHmac {
             code: hmac.result().code().to_vec(),
         }
