@@ -1,4 +1,4 @@
-use crate::auth::SecretKey;
+use crate::auth::v4::key::CanGenerateHmac;
 use crate::verbs::AsBytes;
 use hex::ToHex;
 use hmac::{Hmac, Mac};
@@ -18,27 +18,6 @@ pub trait HmacFactory: CanGenerateHmac {
 }
 
 impl<A> HmacFactory for A where A: CanGenerateHmac {}
-
-pub trait CanGenerateHmac {
-    fn to_hmac(&self) -> Hmac<Sha256>;
-}
-
-impl<A> CanGenerateHmac for A
-where
-    A: AsBytes,
-{
-    fn to_hmac(&self) -> Hmac<Sha256> {
-        Hmac::new_varkey(self.as_bytes()).expect("HMAC can take key of any size")
-    }
-}
-
-impl CanGenerateHmac for (&str, &SecretKey) {
-    fn to_hmac(&self) -> Hmac<Sha256> {
-        let (first, second) = self;
-        let key = format!("{}{}", first, second.as_str());
-        key.as_bytes().to_hmac()
-    }
-}
 
 pub struct OutputHmac {
     code: Vec<u8>,

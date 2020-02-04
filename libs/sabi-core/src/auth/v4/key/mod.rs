@@ -3,8 +3,11 @@
     https://docs.aws.amazon.com/general/latest/gr/sigv4-calculate-signature.html
 */
 
+mod can_generate_mac;
+pub use can_generate_mac::CanGenerateHmac;
+
 mod hmac_factory;
-pub use hmac_factory::{CanGenerateHmac, HmacFactory};
+pub use hmac_factory::HmacFactory;
 
 mod signer;
 pub use signer::{Signature, Signer};
