@@ -1,4 +1,4 @@
-use crate::auth::v4::key::HmacFactory;
+use crate::auth::v4::calculator::HmacFactory;
 use crate::auth::v4::sign::CredentialScope;
 use crate::auth::SecretKey;
 use crate::verbs::AsBytes;

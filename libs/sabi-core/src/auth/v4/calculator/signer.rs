@@ -1,5 +1,5 @@
-use crate::auth::v4::key::hmac_factory::HmacFactory;
-use crate::auth::v4::key::SigningKey;
+use crate::auth::v4::calculator::hmac_factory::HmacFactory;
+use crate::auth::v4::calculator::SigningKey;
 use crate::auth::v4::sign::{CredentialScope, StringToSign};
 use crate::auth::SecretKey;
 

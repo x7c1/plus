@@ -1,4 +1,4 @@
-use crate::auth::v4::key::{CanGenerateHmac, OutputHmac};
+use crate::auth::v4::calculator::{CanGenerateHmac, OutputHmac};
 use crate::verbs::AsBytes;
 use hmac::{Hmac, Mac};
 use sha2::Sha256;
