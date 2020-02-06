@@ -1,3 +1,4 @@
+use crate::verbs::AsBytes;
 use chrono::{DateTime, Utc};
 
 /// > The date must be in the YYYYMMDD format.
@@ -21,8 +22,8 @@ impl DateStamp {
     }
 }
 
-impl<'a> Into<&'a [u8]> for &'a DateStamp {
-    fn into(self) -> &'a [u8] {
+impl AsBytes for DateStamp {
+    fn as_bytes(&self) -> &[u8] {
         self.0.as_bytes()
     }
 }

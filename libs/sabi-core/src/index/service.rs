@@ -1,3 +1,5 @@
+use crate::verbs::AsBytes;
+
 /// see also:
 ///  * [AWS Service Endpoints - AWS General Reference](https://docs.aws.amazon.com/general/latest/gr/rande.html)
 ///
@@ -9,6 +11,10 @@ pub enum ServiceCode {
 }
 
 impl ServiceCode {
+    pub fn new<A: Into<String>>(key: A) -> Self {
+        Self::Unknown(key.into())
+    }
+
     pub fn as_str(&self) -> &str {
         match self {
             ServiceCode::Iam => "iam",
@@ -18,8 +24,8 @@ impl ServiceCode {
     }
 }
 
-impl<'a> Into<&'a [u8]> for &'a ServiceCode {
-    fn into(self) -> &'a [u8] {
+impl AsBytes for ServiceCode {
+    fn as_bytes(&self) -> &[u8] {
         self.as_str().as_bytes()
     }
 }

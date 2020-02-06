@@ -1,3 +1,5 @@
+use crate::verbs::AsBytes;
+
 /// see also:
 ///  * [AWS Service Endpoints - AWS General Reference](https://docs.aws.amazon.com/general/latest/gr/rande.html)
 ///
@@ -9,6 +11,10 @@ pub enum RegionCode {
 }
 
 impl RegionCode {
+    pub fn new<A: Into<String>>(key: A) -> Self {
+        Self::Unknown(key.into())
+    }
+
     pub fn as_str(&self) -> &str {
         match self {
             RegionCode::ApNorthEast1 => "ap-northeast-1",
@@ -18,8 +24,8 @@ impl RegionCode {
     }
 }
 
-impl<'a> Into<&'a [u8]> for &'a RegionCode {
-    fn into(self) -> &'a [u8] {
+impl AsBytes for RegionCode {
+    fn as_bytes(&self) -> &[u8] {
         self.as_str().as_bytes()
     }
 }
