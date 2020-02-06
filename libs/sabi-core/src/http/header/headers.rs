@@ -12,7 +12,7 @@ pub trait Headers: Sized {
         K: IntoHeaderName,
         V: TryInto<HeaderValue, Error = InvalidHeaderValue>;
 
-    fn authorize_by(self, fragment: &AuthorizationFragment) -> SabiResult<Self>;
+    fn authorize_with(self, fragment: &AuthorizationFragment) -> SabiResult<Self>;
 }
 
 impl Headers for HeaderMap {
@@ -28,7 +28,7 @@ impl Headers for HeaderMap {
         Ok(self)
     }
 
-    fn authorize_by(mut self, fragment: &AuthorizationFragment) -> SabiResult<Self> {
+    fn authorize_with(mut self, fragment: &AuthorizationFragment) -> SabiResult<Self> {
         self.insert(AUTHORIZATION, fragment.to_header_value(&self)?);
         Ok(self)
     }

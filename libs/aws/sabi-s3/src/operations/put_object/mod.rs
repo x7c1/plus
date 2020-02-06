@@ -52,7 +52,7 @@ where
             hashed_payload: resource.hash,
         };
         // todo:
-        let headers: HeaderMap = HeaderMap::new().authorize_by(&fragment)?;
+        let headers: HeaderMap = HeaderMap::new().authorize_with(&fragment)?;
 
         Ok(InternalRequest {
             url: fragment.url,
