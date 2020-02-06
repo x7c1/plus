@@ -4,7 +4,10 @@ pub use file::FileRequest;
 use crate::core::{S3Client, S3Result};
 use crate::internal::{InternalClient, InternalRequest, RequestResource};
 use crate::verbs::{HasObjectKey, ToEndpoint};
+use reqwest::header::HeaderMap;
 use reqwest::Method;
+use sabi_core::auth::v4::request::AuthorizationFragment;
+use sabi_core::http::Headers;
 use url::Url;
 
 pub trait Request: HasObjectKey + Into<S3Result<RequestResource>> {}
@@ -42,13 +45,20 @@ where
     A: Request,
 {
     fn from(provider: RequestProvider<A>) -> Self {
-        let resource = provider.original.into()?;
-        Ok(InternalRequest {
+        let resource: RequestResource = provider.original.into()?;
+        let fragment = AuthorizationFragment {
             url: provider.url,
             method: Method::PUT,
+            hashed_payload: resource.hash,
+        };
+        // todo:
+        let headers: HeaderMap = HeaderMap::new().authorize_by(&fragment)?;
+
+        Ok(InternalRequest {
+            url: fragment.url,
+            method: fragment.method,
             body: resource.body,
-            // todo:
-            headers: Default::default(),
+            headers,
         })
     }
 }
