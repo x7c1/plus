@@ -10,7 +10,7 @@ impl Authorization {
         algorithm: &Algorithm,
         access_key: &AccessKey,
         scope: &CredentialScope,
-        signed_header: &SignedHeaders,
+        signed_headers: &SignedHeaders,
         signature: &Signature,
     ) -> Authorization {
         Authorization(format!(
@@ -18,7 +18,7 @@ impl Authorization {
             algorithm = algorithm.as_str(),
             access_key = access_key.as_str(),
             scope = scope.as_str(),
-            header = signed_header.as_str(),
+            header = signed_headers.as_str(),
             signature = signature.as_str(),
         ))
     }
