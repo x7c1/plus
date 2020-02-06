@@ -7,7 +7,7 @@ mod error;
 pub use error::Error;
 pub use error::Result as SabiResult;
 
-mod http;
+pub mod http;
 
 mod index;
 

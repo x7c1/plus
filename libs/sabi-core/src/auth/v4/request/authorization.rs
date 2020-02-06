@@ -14,12 +14,12 @@ impl Authorization {
         signature: &Signature,
     ) -> Authorization {
         Authorization(format!(
-            "{} Credential={}/{},SignedHeaders={},Signature={}",
-            algorithm.as_str(),
-            access_key.as_str(),
-            scope.as_str(),
-            signed_header.as_str(),
-            signature.as_str(),
+            "{algorithm} Credential={access_key}/{scope},SignedHeaders={header},Signature={signature}",
+            algorithm = algorithm.as_str(),
+            access_key = access_key.as_str(),
+            scope = scope.as_str(),
+            header = signed_header.as_str(),
+            signature = signature.as_str(),
         ))
     }
 }
