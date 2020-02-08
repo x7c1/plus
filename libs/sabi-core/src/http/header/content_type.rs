@@ -1,5 +1,5 @@
-use crate::SabiResult;
 use crate::http::HeaderFragment;
+use crate::SabiResult;
 use http::header::{HeaderName, CONTENT_TYPE};
 use std::str::FromStr;
 
@@ -42,6 +42,6 @@ impl FromStr for ContentType {
     type Err = crate::Error;
 
     fn from_str(s: &str) -> SabiResult<Self> {
-        Ok(ContentType::new(s))
+        Ok(Self::new(s))
     }
 }

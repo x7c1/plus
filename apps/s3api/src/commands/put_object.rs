@@ -44,6 +44,19 @@ impl ClapTask<CommandResult> for Task {
                     .takes_value(true)
                     .help("Object data."),
             )
+            .arg(
+                Arg::with_name("content-type")
+                    .long("content-type")
+                    .required(false)
+                    .takes_value(true)
+                    .help("A standard MIME type describing the format of the contents."),
+            )
+            .arg(
+                Arg::with_name("region")
+                    .long("region")
+                    .required(false)
+                    .takes_value(true),
+            )
     }
 
     fn run(&self, matches: &ArgMatches) -> CommandResult {
@@ -57,7 +70,7 @@ impl ClapTask<CommandResult> for Task {
             file_path: matches.single("body").as_required()?,
             object_key: matches.single("key").as_required()?,
             content_type: matches.single("content_type").as_optional()?,
-            region_code: None,
+            region_code: matches.single("region").as_optional()?,
         };
         let future = client.put_object(request);
         let response = executor::block_on(future);
