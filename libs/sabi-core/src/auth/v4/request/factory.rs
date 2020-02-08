@@ -10,8 +10,8 @@ use url::Url;
 
 pub struct AuthorizationFactory<'a> {
     pub credentials: &'a Credentials,
-    pub fragment: &'a CanonicalFragment,
-    pub scope: CredentialScope,
+    pub fragment: CanonicalFragment<'a>,
+    pub scope: &'a CredentialScope,
     pub requested_at: &'a DateTime<Utc>,
 }
 
@@ -51,20 +51,20 @@ impl AuthorizationFactory<'_> {
     }
 }
 
-pub struct CanonicalFragment {
-    pub url: Url,
-    pub method: Method,
-    pub hashed_payload: HashedPayload,
+pub struct CanonicalFragment<'a> {
+    pub url: &'a Url,
+    pub method: &'a Method,
+    pub hashed_payload: &'a HashedPayload,
 }
 
-impl CanonicalFragment {
+impl CanonicalFragment<'_> {
     pub fn to_canonical(&self, headers: &HeaderMap) -> CanonicalRequest {
         CanonicalRequest::from(&self.method, &self.url, &headers, &self.hashed_payload)
     }
 }
 
 pub trait AuthorizationRequest {
-    fn to_canonical_fragment(&self) -> &CanonicalFragment;
-    fn to_scope(&self) -> CredentialScope;
+    fn to_canonical_fragment(&self) -> CanonicalFragment;
+    fn to_scope(&self) -> &CredentialScope;
     fn to_datetime(&self) -> &DateTime<Utc>;
 }

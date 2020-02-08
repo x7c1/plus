@@ -7,6 +7,7 @@ use crate::verbs::{HasObjectKey, ToEndpoint};
 use chrono::{DateTime, Utc};
 use reqwest::header::HeaderMap;
 use reqwest::{Method, Url};
+use sabi_core::auth::v4::canonical::HashedPayload;
 use sabi_core::auth::v4::chrono::{now, DateStamp};
 use sabi_core::auth::v4::request::{AuthorizationFactory, AuthorizationRequest, CanonicalFragment};
 use sabi_core::auth::v4::sign::CredentialScope;
@@ -52,47 +53,66 @@ where
 {
     fn from(provider: RequestProvider<A>) -> Self {
         let resource: RequestResource = provider.original.into()?;
+        let request = RequestParts::new(
+            provider.url,
+            Method::PUT,
 
-        let fragment = CanonicalFragment {
-            url: provider.url,
-            method: Method::PUT,
-            hashed_payload: resource.hash,
-        };
-        let request = S3Request {
-            fragment: &fragment,
-            requested_at: now(),
-        };
+            // todo
+            RegionCode::ApNorthEast1,
+            resource.hash,
+            now(),
+        );
         let factory = AuthorizationFactory::new(provider.credentials, &request);
 
         // todo:
         let headers: HeaderMap = HeaderMap::new().authorize_with(factory)?;
 
         Ok(InternalRequest {
-            url: fragment.url,
-            method: fragment.method,
+            url: request.url,
+            method: request.method,
             body: resource.body,
             headers,
         })
     }
 }
 
-struct S3Request<'a> {
-    fragment: &'a CanonicalFragment,
+struct RequestParts {
+    url: Url,
+    method: Method,
     requested_at: DateTime<Utc>,
+    scope: CredentialScope,
+    hashed_payload: HashedPayload,
+}
+impl RequestParts {
+    fn new(
+        url: Url,
+        method: Method,
+        region: RegionCode,
+        hashed_payload: HashedPayload,
+        requested_at: DateTime<Utc>,
+    ) -> RequestParts {
+        let date = DateStamp::from(&requested_at);
+        RequestParts {
+            url,
+            method,
+            requested_at,
+            scope: CredentialScope::v4(date, region, ServiceCode::S3),
+            hashed_payload,
+        }
+    }
 }
 
-impl AuthorizationRequest for S3Request<'_> {
-    fn to_canonical_fragment(&self) -> &CanonicalFragment {
-        self.fragment
+impl AuthorizationRequest for RequestParts {
+    fn to_canonical_fragment(&self) -> CanonicalFragment {
+        CanonicalFragment {
+            url: &self.url,
+            method: &self.method,
+            hashed_payload: &self.hashed_payload,
+        }
     }
 
-    fn to_scope(&self) -> CredentialScope {
-        CredentialScope::v4(
-            DateStamp::from(&self.requested_at),
-            // todo:
-            RegionCode::ApNorthEast1,
-            ServiceCode::S3,
-        )
+    fn to_scope(&self) -> &CredentialScope {
+        &self.scope
     }
 
     fn to_datetime(&self) -> &DateTime<Utc> {
