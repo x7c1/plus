@@ -13,7 +13,7 @@ pub struct CanonicalRequest {
 }
 
 impl CanonicalRequest {
-    pub fn from(method: &Method, url: &Url, headers: &HeaderMap, hash: HashedPayload) -> Self {
+    pub fn from(method: &Method, url: &Url, headers: &HeaderMap, hash: &HashedPayload) -> Self {
         let signed_headers = SignedHeaders::from(headers);
         let combined = format!(
             "{method}\n{uri}\n{query_string}\n{canonical_headers}\n\n{signed_headers}\n{hash}",

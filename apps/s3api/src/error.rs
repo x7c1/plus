@@ -11,6 +11,9 @@ pub enum Error {
 
     #[fail(display = "clap_extractor::Error > {}", 0)]
     ClapExtractorError(String),
+
+    #[fail(display = "sabi_core::Error > {}", 0)]
+    SabiError(sabi_core::Error),
 }
 
 impl From<clap_task::Error> for Error {
@@ -22,5 +25,11 @@ impl From<clap_task::Error> for Error {
 impl<A: Debug> From<clap_extractor::Error<A>> for Error {
     fn from(e: clap_extractor::Error<A>) -> Self {
         Error::ClapExtractorError(format!("{:?}", e))
+    }
+}
+
+impl From<sabi_core::Error> for Error {
+    fn from(e: sabi_core::Error) -> Self {
+        Error::SabiError(e)
     }
 }

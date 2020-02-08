@@ -55,7 +55,7 @@ mod tests {
                 &Method::GET,
                 &url,
                 &to_headers(&url)?,
-                HashedPayload::empty(),
+                &HashedPayload::empty(),
             );
             StringToSign::from(
                 &Algorithm::HmacSha256,

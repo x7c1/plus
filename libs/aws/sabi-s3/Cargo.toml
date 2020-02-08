@@ -8,6 +8,8 @@ edition = "2018"
 [dependencies]
 sabi-core = { path = "../../sabi-core" }
 failure = "0.1"
+
+# reqwest dependencies
 url = "2.1"
 
 [dependencies.reqwest]

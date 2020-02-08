@@ -36,7 +36,7 @@ mod tests {
 
         let headers = to_headers(&url)?;
         let hash = HashedPayload::empty();
-        let request = CanonicalRequest::from(&Method::GET, &url, &headers, hash);
+        let request = CanonicalRequest::from(&Method::GET, &url, &headers, &hash);
 
         assert_eq!(
             request.as_hash(),

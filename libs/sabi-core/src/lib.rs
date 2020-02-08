@@ -9,6 +9,6 @@ pub use error::Result as SabiResult;
 
 pub mod http;
 
-mod index;
+pub mod index;
 
 pub mod verbs;

@@ -5,10 +5,12 @@ use crate::core::{S3Client, S3Result};
 use crate::internal::{InternalClient, InternalRequest, RequestResource};
 use crate::verbs::{HasObjectKey, ToEndpoint};
 use reqwest::header::HeaderMap;
-use reqwest::Method;
-use sabi_core::auth::v4::request::AuthorizationFragment;
+use reqwest::{Method, Url};
+use sabi_core::auth::v4::chrono::now;
+use sabi_core::auth::v4::request::{AuthorizationFactory, AuthorizationFragment};
+use sabi_core::auth::Credentials;
 use sabi_core::http::Headers;
-use url::Url;
+use sabi_core::index::{RegionCode, ServiceCode};
 
 pub trait Request: HasObjectKey + Into<S3Result<RequestResource>> {}
 
@@ -25,6 +27,7 @@ impl Requester for S3Client {
     {
         let client = InternalClient::new();
         let provider = RequestProvider {
+            credentials: &self.credentials,
             url: (&self.bucket, &request).to_endpoint()?,
             original: request,
         };
@@ -32,15 +35,16 @@ impl Requester for S3Client {
     }
 }
 
-struct RequestProvider<A>
+struct RequestProvider<'a, A>
 where
     A: Request,
 {
+    credentials: &'a Credentials,
     url: Url,
     original: A,
 }
 
-impl<A> From<RequestProvider<A>> for S3Result<InternalRequest>
+impl<A> From<RequestProvider<'_, A>> for S3Result<InternalRequest>
 where
     A: Request,
 {
