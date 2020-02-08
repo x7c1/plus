@@ -80,7 +80,7 @@ mod tests {
     }
 
     fn create_scope() -> CredentialScope {
-        CredentialScope::from(
+        CredentialScope::new(
             DateStamp::new("20150830"),
             RegionCode::UsEast1,
             ServiceCode::Iam,

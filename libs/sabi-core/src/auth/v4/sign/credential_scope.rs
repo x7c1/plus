@@ -13,7 +13,7 @@ pub struct CredentialScope {
 }
 
 impl CredentialScope {
-    pub fn from(
+    pub fn new(
         date: DateStamp,
         region: RegionCode,
         service: ServiceCode,
@@ -34,6 +34,11 @@ impl CredentialScope {
             raw,
         }
     }
+
+    pub fn v4(date: DateStamp, region: RegionCode, service: ServiceCode) -> Self {
+        Self::new(date, region, service, ScopeTermination::Aws4Request)
+    }
+
     pub fn as_str(&self) -> &str {
         &self.raw
     }

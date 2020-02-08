@@ -1,10 +1,9 @@
 use crate::auth::account::Credentials;
 use crate::auth::v4::calculator::Signer;
 use crate::auth::v4::canonical::{CanonicalRequest, HashedPayload};
-use crate::auth::v4::chrono::{AmzDate, DateStamp};
+use crate::auth::v4::chrono::AmzDate;
 use crate::auth::v4::request::Authorization;
-use crate::auth::v4::sign::{Algorithm, CredentialScope, ScopeTermination, StringToSign};
-use crate::index::{RegionCode, ServiceCode};
+use crate::auth::v4::sign::{Algorithm, CredentialScope, StringToSign};
 use chrono::{DateTime, Utc};
 use http::{HeaderMap, Method};
 use url::Url;
@@ -17,24 +16,15 @@ pub struct AuthorizationFactory<'a> {
 }
 
 impl AuthorizationFactory<'_> {
-    pub fn new<'a>(
-        credentials: &'a Credentials,
-        fragment: &'a CanonicalFragment,
-        region_code: RegionCode,
-        service_code: ServiceCode,
-        requested_at: &'a DateTime<Utc>,
-    ) -> AuthorizationFactory<'a> {
-        let scope = CredentialScope::from(
-            DateStamp::from(&requested_at),
-            region_code,
-            service_code,
-            ScopeTermination::Aws4Request,
-        );
+    pub fn new<'a, A>(credentials: &'a Credentials, request: &'a A) -> AuthorizationFactory<'a>
+    where
+        A: AuthorizationRequest,
+    {
         AuthorizationFactory {
             credentials,
-            fragment,
-            scope,
-            requested_at,
+            fragment: request.to_canonical_fragment(),
+            scope: request.to_scope(),
+            requested_at: request.to_datetime(),
         }
     }
 
@@ -71,4 +61,10 @@ impl CanonicalFragment {
     pub fn to_canonical(&self, headers: &HeaderMap) -> CanonicalRequest {
         CanonicalRequest::from(&self.method, &self.url, &headers, &self.hashed_payload)
     }
+}
+
+pub trait AuthorizationRequest {
+    fn to_canonical_fragment(&self) -> &CanonicalFragment;
+    fn to_scope(&self) -> CredentialScope;
+    fn to_datetime(&self) -> &DateTime<Utc>;
 }
