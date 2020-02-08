@@ -5,6 +5,7 @@ use crate::operations::Kind;
 use crate::verbs::HasObjectKey;
 use reqwest::blocking::Body;
 use sabi_core::auth::v4::canonical::HashedPayload;
+use sabi_core::auth::v4::chrono::now;
 use sabi_core::http::header::ContentType;
 use sabi_core::index::RegionCode;
 use std::convert::TryFrom;
@@ -17,6 +18,7 @@ pub struct FileRequest {
     pub file_path: String,
     pub object_key: String,
     pub content_type: ContentType,
+    pub region_code: Option<RegionCode>,
 }
 
 impl FileRequest {
@@ -45,9 +47,9 @@ impl ResourceProvider for FileRequest {
         let resource = RequestResource {
             body: Some(Body::from(file)),
             hash,
-            // todo:
-            region: RegionCode::ApNorthEast1,
+            region: self.region_code,
             content_type: self.content_type,
+            requested_at: now(),
         };
         Ok(resource)
     }

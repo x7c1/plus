@@ -1,4 +1,5 @@
 use crate::verbs::AsBytes;
+use crate::SabiResult;
 
 /// see also:
 ///  * [AWS Service Endpoints - AWS General Reference](https://docs.aws.amazon.com/general/latest/gr/rande.html)
@@ -11,6 +12,11 @@ pub enum RegionCode {
 }
 
 impl RegionCode {
+    pub fn from_env() -> SabiResult<Option<RegionCode>> {
+        // todo:
+        unimplemented!()
+    }
+
     pub fn new<A: Into<String>>(key: A) -> Self {
         Self::Unknown(key.into())
     }

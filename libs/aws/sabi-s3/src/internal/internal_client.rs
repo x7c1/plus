@@ -1,5 +1,6 @@
 use crate::core::S3Result;
-use crate::internal::InternalRequest;
+use crate::internal::{RequestProvider, ResourceProvider};
+use crate::verbs::HasObjectKey;
 use reqwest::blocking::Client;
 use std::fmt::Debug;
 
@@ -11,11 +12,12 @@ impl InternalClient {
         InternalClient {}
     }
 
-    pub fn request_by<A>(&self, request_like: A) -> S3Result<String>
+    pub fn request_by<A>(&self, provider: RequestProvider<A>) -> S3Result<String>
     where
-        A: Into<S3Result<InternalRequest>>,
+        A: ResourceProvider,
+        A: HasObjectKey,
     {
-        let request = request_like.into()?;
+        let request = provider.provide()?;
         println!("request > {:#?}", request);
 
         let builder = Client::new()

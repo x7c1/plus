@@ -56,12 +56,15 @@ impl ClapTask<CommandResult> for Task {
         let client = S3Client {
             credentials,
             bucket: S3Bucket::from_string(matches.single("bucket").as_required()?),
+            // todo:
+            default_region: None,
         };
         let request = FileRequest {
             file_path: matches.single("body").as_required()?,
             object_key: matches.single("key").as_required()?,
             // todo:
             content_type: ContentType::new("application/x-www-form-urlencoded; charset=utf-8"),
+            region_code: None,
         };
         let future = client.put_object(request);
         let response = executor::block_on(future);
