@@ -1,3 +1,4 @@
+#[derive(Debug)]
 pub struct AccessKey(String);
 
 impl AccessKey {
