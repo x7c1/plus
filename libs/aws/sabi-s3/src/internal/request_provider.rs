@@ -1,5 +1,5 @@
 use crate::core::{S3Bucket, S3Result};
-use crate::internal::{InternalRequest, RequestParts, ResourceProvider};
+use crate::internal::{InternalRequest, RequestParts, ResourceLoader};
 use crate::verbs::{HasObjectKey, ToEndpoint};
 use crate::Error::RegionNotSpecified;
 use reqwest::header::HeaderMap;
@@ -11,19 +11,19 @@ use sabi_core::index::RegionCode;
 
 pub struct RequestProvider<'a, A>
 where
-    A: ResourceProvider,
+    A: ResourceLoader,
     A: HasObjectKey,
 {
     credentials: &'a Credentials,
     url: Url,
     method: Method,
-    resource: A,
+    resource_loader: A,
     default_region: Option<RegionCode>,
 }
 
 impl<A> RequestProvider<'_, A>
 where
-    A: ResourceProvider,
+    A: ResourceLoader,
     A: HasObjectKey,
 {
     pub fn new<'a>(
@@ -37,14 +37,14 @@ where
             credentials,
             url: (bucket, &request).to_endpoint()?,
             method,
-            resource: request,
+            resource_loader: request,
             default_region: default_region.clone(),
         };
         Ok(provider)
     }
 
     pub fn provide(self) -> S3Result<InternalRequest> {
-        let resource = self.resource.provide()?;
+        let resource = self.resource_loader.load()?;
         let region_code = resource
             .region
             .or(self.default_region)

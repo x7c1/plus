@@ -1,5 +1,5 @@
 use crate::core::S3Result;
-use crate::internal::{RequestProvider, ResourceProvider};
+use crate::internal::{RequestProvider, ResourceLoader};
 use crate::verbs::HasObjectKey;
 use reqwest::blocking::Client;
 use std::fmt::Debug;
@@ -14,7 +14,7 @@ impl InternalClient {
 
     pub fn request_by<A>(&self, provider: RequestProvider<A>) -> S3Result<String>
     where
-        A: ResourceProvider,
+        A: ResourceLoader,
         A: HasObjectKey,
     {
         let request = provider.provide()?;

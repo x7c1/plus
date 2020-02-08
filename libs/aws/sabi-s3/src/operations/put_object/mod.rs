@@ -2,11 +2,11 @@ mod file;
 pub use file::FileRequest;
 
 use crate::core::{S3Client, S3Result};
-use crate::internal::{InternalClient, RequestProvider, ResourceProvider};
+use crate::internal::{InternalClient, RequestProvider, ResourceLoader};
 use crate::verbs::HasObjectKey;
 use reqwest::Method;
 
-pub trait Request: HasObjectKey + ResourceProvider {}
+pub trait Request: HasObjectKey + ResourceLoader {}
 
 pub trait Requester {
     fn put_object<A>(&self, request: A) -> S3Result<String>

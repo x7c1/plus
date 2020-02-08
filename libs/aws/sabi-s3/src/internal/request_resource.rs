@@ -13,6 +13,6 @@ pub struct RequestResource {
     pub requested_at: DateTime<Utc>,
 }
 
-pub trait ResourceProvider {
-    fn provide(self) -> S3Result<RequestResource>;
+pub trait ResourceLoader {
+    fn load(self) -> S3Result<RequestResource>;
 }
