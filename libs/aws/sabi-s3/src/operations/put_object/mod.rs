@@ -9,13 +9,13 @@ use reqwest::Method;
 pub trait Request: HasObjectKey + ResourceProvider {}
 
 pub trait Requester {
-    fn put_object<A>(self, request: A) -> S3Result<String>
+    fn put_object<A>(&self, request: A) -> S3Result<String>
     where
         A: Request;
 }
 
 impl Requester for S3Client {
-    fn put_object<A>(self, request: A) -> S3Result<String>
+    fn put_object<A>(&self, request: A) -> S3Result<String>
     where
         A: Request,
     {
@@ -25,7 +25,7 @@ impl Requester for S3Client {
             &self.credentials,
             &self.bucket,
             request,
-            self.default_region,
+            &self.default_region,
         )?;
         client.request_by(provider)
     }

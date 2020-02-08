@@ -4,7 +4,7 @@ use crate::SabiResult;
 /// see also:
 ///  * [AWS Service Endpoints - AWS General Reference](https://docs.aws.amazon.com/general/latest/gr/rande.html)
 ///
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum RegionCode {
     ApNorthEast1,
     UsEast1,

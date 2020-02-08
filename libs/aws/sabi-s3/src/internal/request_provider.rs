@@ -31,14 +31,14 @@ where
         credentials: &'a Credentials,
         bucket: &'a S3Bucket,
         request: A,
-        default_region: Option<RegionCode>,
+        default_region: &'a Option<RegionCode>,
     ) -> S3Result<RequestProvider<'a, A>> {
         let provider = RequestProvider {
             credentials,
             url: (bucket, &request).to_endpoint()?,
             method,
             resource: request,
-            default_region,
+            default_region: default_region.clone(),
         };
         Ok(provider)
     }
