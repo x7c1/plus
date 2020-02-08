@@ -9,10 +9,10 @@ use http::{HeaderMap, Method};
 use url::Url;
 
 pub struct AuthorizationFactory<'a> {
-    pub credentials: &'a Credentials,
-    pub fragment: CanonicalFragment<'a>,
-    pub scope: &'a CredentialScope,
-    pub requested_at: &'a DateTime<Utc>,
+    credentials: &'a Credentials,
+    fragment: CanonicalFragment<'a>,
+    scope: &'a CredentialScope,
+    amz_date: AmzDate,
 }
 
 impl AuthorizationFactory<'_> {
@@ -24,19 +24,18 @@ impl AuthorizationFactory<'_> {
             credentials,
             fragment: request.to_canonical_fragment(),
             scope: request.to_scope(),
-            requested_at: request.to_datetime(),
+            amz_date: AmzDate::from(request.to_datetime()),
         }
+    }
+
+    pub fn amz_date(&self) -> &AmzDate {
+        &self.amz_date
     }
 
     pub fn create_from(self, headers: &HeaderMap) -> Authorization {
         let request = self.fragment.to_canonical(headers);
         let algorithm = Algorithm::HmacSha256;
-        let string_to_sign = StringToSign::from(
-            &algorithm,
-            &AmzDate::from(&self.requested_at),
-            &self.scope,
-            &request,
-        );
+        let string_to_sign = StringToSign::from(&algorithm, &self.amz_date, &self.scope, &request);
         let signature = {
             let signer = Signer::new(&self.credentials.secret_key, &self.scope);
             signer.sign(string_to_sign)

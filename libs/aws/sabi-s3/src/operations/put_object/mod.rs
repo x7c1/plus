@@ -12,7 +12,7 @@ use sabi_core::auth::v4::chrono::{now, DateStamp};
 use sabi_core::auth::v4::request::{AuthorizationFactory, AuthorizationRequest, CanonicalFragment};
 use sabi_core::auth::v4::sign::CredentialScope;
 use sabi_core::auth::Credentials;
-use sabi_core::http::Headers;
+use sabi_core::http::{header, Headers};
 use sabi_core::index::{RegionCode, ServiceCode};
 
 pub trait Request: HasObjectKey + Into<S3Result<RequestResource>> {}
@@ -56,7 +56,6 @@ where
         let request = RequestParts::new(
             provider.url,
             Method::PUT,
-
             // todo
             RegionCode::ApNorthEast1,
             resource.hash,
@@ -64,8 +63,15 @@ where
         );
         let factory = AuthorizationFactory::new(provider.credentials, &request);
 
-        // todo:
-        let headers: HeaderMap = HeaderMap::new().authorize_with(factory)?;
+        let headers: HeaderMap = HeaderMap::new()
+            .push(header::ContentType::new(
+                "application/x-www-form-urlencoded; charset=utf-8",
+            ))?
+            .push(header::AmzContentSha256::new(
+                request.hashed_payload.as_str(),
+            ))?
+            .push(header::AmzDate::new(factory.amz_date().as_str()))?
+            .authorize_with(factory)?;
 
         Ok(InternalRequest {
             url: request.url,
