@@ -22,4 +22,11 @@ impl Authorization {
             signature = signature.as_str(),
         ))
     }
+    pub fn as_str(&self) -> &str {
+        &self.0
+    }
+    pub fn to_header_value(&self) -> SabiResult<HeaderValue> {
+        let value = self.as_str().parse()?;
+        Ok(value)
+    }
 }

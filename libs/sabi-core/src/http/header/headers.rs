@@ -1,4 +1,4 @@
-use crate::auth::v4::request::AuthorizationFragment;
+use crate::auth::v4::request::AuthorizationFactory;
 use crate::http::HeaderFragment;
 use crate::SabiResult;
 use http::header::{IntoHeaderName, InvalidHeaderValue, AUTHORIZATION};
@@ -12,7 +12,7 @@ pub trait Headers: Sized {
         K: IntoHeaderName,
         V: TryInto<HeaderValue, Error = InvalidHeaderValue>;
 
-    fn authorize_with(self, fragment: &AuthorizationFragment) -> SabiResult<Self>;
+    fn authorize_with(self, factory: AuthorizationFactory) -> SabiResult<Self>;
 }
 
 impl Headers for HeaderMap {
@@ -28,8 +28,8 @@ impl Headers for HeaderMap {
         Ok(self)
     }
 
-    fn authorize_with(mut self, fragment: &AuthorizationFragment) -> SabiResult<Self> {
-        self.insert(AUTHORIZATION, fragment.to_header_value(&self)?);
+    fn authorize_with(mut self, factory: AuthorizationFactory) -> SabiResult<Self> {
+        self.insert(AUTHORIZATION, factory.create(&self).to_header_value()?);
         Ok(self)
     }
 }

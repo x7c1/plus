@@ -50,9 +50,16 @@ where
             url: provider.url,
             method: Method::PUT,
             hashed_payload: resource.hash,
+            requested_at: now(),
+        };
+        let factory = AuthorizationFactory {
+            credentials: provider.credentials,
+            fragment: &fragment,
+            region_code: RegionCode::ApNorthEast1,
+            service_code: ServiceCode::Iam,
         };
         // todo:
-        let headers: HeaderMap = HeaderMap::new().authorize_with(&fragment)?;
+        let headers: HeaderMap = HeaderMap::new().authorize_with(factory)?;
 
         Ok(InternalRequest {
             url: fragment.url,

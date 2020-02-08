@@ -1,5 +1,6 @@
 mod authorization;
 pub use authorization::Authorization;
 
-mod fragment;
-pub use fragment::AuthorizationFragment;
+mod factory;
+pub use factory::AuthorizationFactory;
+pub use factory::AuthorizationFragment;
