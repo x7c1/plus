@@ -3,8 +3,6 @@ use clap::{App, Arg, ArgMatches, SubCommand};
 use clap_extractor::Matcher;
 use clap_task::ClapTask;
 use futures::executor;
-use sabi_core::auth::Credentials;
-use sabi_core::http::header::ContentType;
 use sabi_s3::core::{S3Bucket, S3Client};
 use sabi_s3::operations::put_object::FileRequest;
 
@@ -52,13 +50,9 @@ impl ClapTask<CommandResult> for Task {
         println!("running {}!", self.name());
         println!("matches: {:#?}", matches);
 
-        let credentials = Credentials::from_env()?;
-        let client = S3Client {
-            credentials,
-            bucket: S3Bucket::from_string(matches.single("bucket").as_required()?),
-            // todo:
-            default_region: None,
-        };
+        let client = S3Client::from_env(S3Bucket::from_string(
+            matches.single("bucket").as_required()?,
+        ))?;
         let request = FileRequest {
             file_path: matches.single("body").as_required()?,
             object_key: matches.single("key").as_required()?,
