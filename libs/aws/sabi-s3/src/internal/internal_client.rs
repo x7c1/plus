@@ -11,7 +11,7 @@ impl InternalClient {
         InternalClient {}
     }
 
-    pub fn send<A>(&self, request_like: A) -> S3Result<String>
+    pub fn request_by<A>(&self, request_like: A) -> S3Result<String>
     where
         A: Into<S3Result<InternalRequest>>,
     {

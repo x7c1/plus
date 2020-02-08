@@ -4,6 +4,7 @@ use clap_extractor::Matcher;
 use clap_task::ClapTask;
 use futures::executor;
 use sabi_core::auth::Credentials;
+use sabi_core::http::header::ContentType;
 use sabi_s3::core::{S3Bucket, S3Client};
 use sabi_s3::operations::put_object::FileRequest;
 
@@ -59,6 +60,8 @@ impl ClapTask<CommandResult> for Task {
         let request = FileRequest {
             file_path: matches.single("body").as_required()?,
             object_key: matches.single("key").as_required()?,
+            // todo:
+            content_type: ContentType::new("application/x-www-form-urlencoded; charset=utf-8"),
         };
         let future = client.put_object(request);
         let response = executor::block_on(future);

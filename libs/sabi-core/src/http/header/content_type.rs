@@ -22,3 +22,12 @@ impl<'a> Into<HeaderFragment<HeaderName, String>> for ContentType {
         }
     }
 }
+
+impl<'a> Into<HeaderFragment<HeaderName, String>> for &ContentType {
+    fn into(self) -> HeaderFragment<HeaderName, String> {
+        HeaderFragment {
+            key: CONTENT_TYPE,
+            value: self.0.to_string(),
+        }
+    }
+}
