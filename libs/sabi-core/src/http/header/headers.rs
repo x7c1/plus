@@ -29,7 +29,7 @@ impl Headers for HeaderMap {
     }
 
     fn authorize_with(mut self, factory: AuthorizationFactory) -> SabiResult<Self> {
-        self.insert(AUTHORIZATION, factory.create(&self).to_header_value()?);
+        self.insert(AUTHORIZATION, factory.create_from(&self).to_header_value()?);
         Ok(self)
     }
 }

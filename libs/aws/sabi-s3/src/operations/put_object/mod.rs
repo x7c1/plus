@@ -7,7 +7,7 @@ use crate::verbs::{HasObjectKey, ToEndpoint};
 use reqwest::header::HeaderMap;
 use reqwest::{Method, Url};
 use sabi_core::auth::v4::chrono::now;
-use sabi_core::auth::v4::request::{AuthorizationFactory, AuthorizationFragment};
+use sabi_core::auth::v4::request::{AuthorizationFactory, CanonicalFragment};
 use sabi_core::auth::Credentials;
 use sabi_core::http::Headers;
 use sabi_core::index::{RegionCode, ServiceCode};
@@ -50,18 +50,19 @@ where
 {
     fn from(provider: RequestProvider<A>) -> Self {
         let resource: RequestResource = provider.original.into()?;
-        let fragment = AuthorizationFragment {
+        let fragment = CanonicalFragment {
             url: provider.url,
             method: Method::PUT,
             hashed_payload: resource.hash,
-            requested_at: now(),
         };
-        let factory = AuthorizationFactory {
-            credentials: provider.credentials,
-            fragment: &fragment,
-            region_code: RegionCode::ApNorthEast1,
-            service_code: ServiceCode::Iam,
-        };
+        let time = now();
+        let factory = AuthorizationFactory::new(
+            provider.credentials,
+            &fragment,
+            RegionCode::ApNorthEast1,
+            ServiceCode::Iam,
+            &time,
+        );
         // todo:
         let headers: HeaderMap = HeaderMap::new().authorize_with(factory)?;
 
