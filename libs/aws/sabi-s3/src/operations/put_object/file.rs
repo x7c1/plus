@@ -17,7 +17,7 @@ use std::io::ErrorKind::NotFound;
 pub struct FileRequest {
     pub file_path: String,
     pub object_key: String,
-    pub content_type: ContentType,
+    pub content_type: Option<ContentType>,
     pub region_code: Option<RegionCode>,
 }
 
@@ -48,7 +48,10 @@ impl ResourceProvider for FileRequest {
             body: Some(Body::from(file)),
             hash,
             region: self.region_code,
-            content_type: self.content_type,
+            content_type: self
+                .content_type
+                .unwrap_or_else(|| ContentType::application_octet_stream()),
+
             requested_at: now(),
         };
         Ok(resource)

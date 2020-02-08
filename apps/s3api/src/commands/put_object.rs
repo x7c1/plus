@@ -56,8 +56,7 @@ impl ClapTask<CommandResult> for Task {
         let request = FileRequest {
             file_path: matches.single("body").as_required()?,
             object_key: matches.single("key").as_required()?,
-            // todo:
-            content_type: ContentType::new("application/x-www-form-urlencoded; charset=utf-8"),
+            content_type: matches.single("content_type").as_optional()?,
             region_code: None,
         };
         let future = client.put_object(request);

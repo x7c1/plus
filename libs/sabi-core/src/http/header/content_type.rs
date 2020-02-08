@@ -1,5 +1,7 @@
+use crate::SabiResult;
 use crate::http::HeaderFragment;
 use http::header::{HeaderName, CONTENT_TYPE};
+use std::str::FromStr;
 
 #[derive(Debug)]
 pub struct ContentType(String);
@@ -11,6 +13,10 @@ impl ContentType {
 
     pub fn as_str(&self) -> &str {
         self.0.as_str()
+    }
+
+    pub fn application_octet_stream() -> ContentType {
+        ContentType::new("application/octet-stream")
     }
 }
 
@@ -29,5 +35,13 @@ impl<'a> Into<HeaderFragment<HeaderName, String>> for &ContentType {
             key: CONTENT_TYPE,
             value: self.0.to_string(),
         }
+    }
+}
+
+impl FromStr for ContentType {
+    type Err = crate::Error;
+
+    fn from_str(s: &str) -> SabiResult<Self> {
+        Ok(ContentType::new(s))
     }
 }
