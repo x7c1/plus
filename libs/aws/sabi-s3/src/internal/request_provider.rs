@@ -6,7 +6,8 @@ use reqwest::header::HeaderMap;
 use reqwest::{Method, Url};
 use sabi_core::auth::v4::request::AuthorizationFactory;
 use sabi_core::auth::Credentials;
-use sabi_core::http::{header, Headers};
+use sabi_core::http::header;
+use sabi_core::http::Headers;
 use sabi_core::index::RegionCode;
 
 pub struct RequestProvider<'a, A>

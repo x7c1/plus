@@ -1,3 +1,4 @@
+mod headers;
+pub use headers::HeaderFragment;
+pub use headers::Headers;
 pub mod header;
-pub use header::HeaderFragment;
-pub use header::Headers;
