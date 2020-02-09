@@ -44,18 +44,33 @@ impl ClapTask<CommandResult> for Task {
                     .takes_value(true)
                     .help("Object data."),
             )
+            .arg(
+                Arg::with_name("content-type")
+                    .long("content-type")
+                    .required(false)
+                    .takes_value(true)
+                    .help("A standard MIME type describing the format of the contents."),
+            )
+            .arg(
+                Arg::with_name("region")
+                    .long("region")
+                    .required(false)
+                    .takes_value(true),
+            )
     }
 
     fn run(&self, matches: &ArgMatches) -> CommandResult {
         println!("running {}!", self.name());
         println!("matches: {:#?}", matches);
 
-        let client = S3Client {
-            bucket: S3Bucket::from_string(matches.single("bucket").as_required()?),
-        };
+        let client = S3Client::from_env(S3Bucket::from_string(
+            matches.single("bucket").as_required()?,
+        ))?;
         let request = FileRequest {
             file_path: matches.single("body").as_required()?,
             object_key: matches.single("key").as_required()?,
+            content_type: matches.single("content_type").as_optional()?,
+            region_code: matches.single("region").as_optional()?,
         };
         let future = client.put_object(request);
         let response = executor::block_on(future);

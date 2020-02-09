@@ -1,10 +1,13 @@
 use crate::core::S3Result;
 use crate::error::Error::{FileNotFound, StdIoError};
-use crate::internal::RequestResource;
+use crate::internal::{RequestResource, ResourceLoader};
 use crate::operations::Kind;
 use crate::verbs::HasObjectKey;
 use reqwest::blocking::Body;
 use sabi_core::auth::v4::canonical::HashedPayload;
+use sabi_core::auth::v4::chrono::now;
+use sabi_core::http::header::ContentType;
+use sabi_core::index::RegionCode;
 use std::convert::TryFrom;
 use std::error::Error;
 use std::fs::File;
@@ -14,6 +17,8 @@ use std::io::ErrorKind::NotFound;
 pub struct FileRequest {
     pub file_path: String,
     pub object_key: String,
+    pub content_type: Option<ContentType>,
+    pub region_code: Option<RegionCode>,
 }
 
 impl FileRequest {
@@ -35,13 +40,19 @@ impl HasObjectKey for FileRequest {
     }
 }
 
-impl From<FileRequest> for S3Result<RequestResource> {
-    fn from(request: FileRequest) -> Self {
-        let file = request.open_file()?;
+impl ResourceLoader for FileRequest {
+    fn load(self) -> S3Result<RequestResource> {
+        let file = self.open_file()?;
         let hash = HashedPayload::try_from(&file)?;
         let resource = RequestResource {
             body: Some(Body::from(file)),
             hash,
+            region: self.region_code,
+            content_type: self
+                .content_type
+                .unwrap_or_else(|| ContentType::application_octet_stream()),
+
+            requested_at: now(),
         };
         Ok(resource)
     }

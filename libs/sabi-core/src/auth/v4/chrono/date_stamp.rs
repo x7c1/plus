@@ -17,21 +17,20 @@ impl DateStamp {
     pub fn new<A: Into<String>>(key: A) -> DateStamp {
         DateStamp(key.into())
     }
+
     pub fn as_str(&self) -> &str {
         self.0.as_str()
+    }
+
+    pub fn from(time: &DateTime<Utc>) -> Self {
+        let pattern = "%Y%m%d";
+        DateStamp::new(time.format(pattern).to_string())
     }
 }
 
 impl AsBytes for DateStamp {
     fn as_bytes(&self) -> &[u8] {
         self.0.as_bytes()
-    }
-}
-
-impl From<&DateTime<Utc>> for DateStamp {
-    fn from(time: &DateTime<Utc>) -> Self {
-        let pattern = "%Y%m%d";
-        DateStamp::new(time.format(pattern).to_string())
     }
 }
 

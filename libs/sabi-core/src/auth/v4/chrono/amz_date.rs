@@ -20,10 +20,8 @@ impl AmzDate {
     pub fn as_str(&self) -> &str {
         self.0.as_str()
     }
-}
 
-impl From<&DateTime<Utc>> for AmzDate {
-    fn from(time: &DateTime<Utc>) -> Self {
+    pub fn from(time: &DateTime<Utc>) -> Self {
         let pattern = "%Y%m%dT%H%M%SZ";
         AmzDate::new(time.format(pattern).to_string())
     }

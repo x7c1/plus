@@ -25,7 +25,7 @@ mod tests {
     use crate::auth::v4::chrono::{AmzDate, DateStamp};
     use crate::auth::v4::sign::{Algorithm, CredentialScope, ScopeTermination, StringToSign};
     use crate::auth::SecretKey;
-    use crate::http::Headers;
+    use crate::http::RichHeaderMap;
     use crate::index::{RegionCode, ServiceCode};
     use crate::SabiResult;
     use http::{HeaderMap, Method};
@@ -55,7 +55,7 @@ mod tests {
                 &Method::GET,
                 &url,
                 &to_headers(&url)?,
-                HashedPayload::empty(),
+                &HashedPayload::empty(),
             );
             StringToSign::from(
                 &Algorithm::HmacSha256,
@@ -79,11 +79,11 @@ mod tests {
         SecretKey::new("wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY")
     }
 
-    fn create_scope() -> CredentialScope {
-        CredentialScope::from(
+    fn create_scope<'a>() -> CredentialScope<'a> {
+        CredentialScope::new(
             DateStamp::new("20150830"),
-            RegionCode::UsEast1,
-            ServiceCode::Iam,
+            &RegionCode::UsEast1,
+            &ServiceCode::Iam,
             ScopeTermination::Aws4Request,
         )
     }

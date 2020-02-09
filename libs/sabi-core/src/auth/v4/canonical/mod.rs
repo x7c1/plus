@@ -24,7 +24,7 @@ pub use signed_headers::SignedHeaders;
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::http::Headers;
+    use crate::http::RichHeaderMap;
     use crate::SabiResult;
     use http::{HeaderMap, Method};
     use url::Url;
@@ -36,7 +36,7 @@ mod tests {
 
         let headers = to_headers(&url)?;
         let hash = HashedPayload::empty();
-        let request = CanonicalRequest::from(&Method::GET, &url, &headers, hash);
+        let request = CanonicalRequest::from(&Method::GET, &url, &headers, &hash);
 
         assert_eq!(
             request.as_hash(),

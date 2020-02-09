@@ -12,6 +12,6 @@ hex = "0.4"
 hmac = "0.7"
 sha2 = "0.8"
 
-# determined by reqwest dependencies
+# reqwest dependencies
 http = "0.2"
 url = "2.1"

@@ -16,5 +16,4 @@ before_script:
 script:
   - |
     ./scripts/run_tests.sh &&
-    ./scripts/build.sh &&
-    ./scripts/run_builder.sh release-test.sh
+    ./scripts/build.sh

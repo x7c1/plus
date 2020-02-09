@@ -12,6 +12,8 @@ pub enum Error {
         path: String,
         description: String,
     },
+    #[fail(display = "region not specified")]
+    RegionNotSpecified,
 
     #[fail(display = "reqwest::Error > {}", 0)]
     Reqwest(reqwest::Error),
