@@ -79,10 +79,10 @@ mod tests {
         SecretKey::new("wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY")
     }
 
-    fn create_scope() -> CredentialScope {
+    fn create_scope<'a>() -> CredentialScope<'a> {
         CredentialScope::new(
             DateStamp::new("20150830"),
-            RegionCode::UsEast1,
+            &RegionCode::UsEast1,
             ServiceCode::Iam,
             ScopeTermination::Aws4Request,
         )

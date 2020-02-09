@@ -4,18 +4,18 @@ use crate::index::RegionCode;
 use crate::index::ServiceCode;
 
 #[derive(Debug)]
-pub struct CredentialScope {
+pub struct CredentialScope<'a> {
     pub date: DateStamp,
-    pub region: RegionCode,
+    pub region: &'a RegionCode,
     pub service: ServiceCode,
     pub termination: ScopeTermination,
     raw: String,
 }
 
-impl CredentialScope {
+impl<'a> CredentialScope<'a> {
     pub fn new(
         date: DateStamp,
-        region: RegionCode,
+        region: &'a RegionCode,
         service: ServiceCode,
         termination: ScopeTermination,
     ) -> Self {
@@ -35,7 +35,7 @@ impl CredentialScope {
         }
     }
 
-    pub fn v4(date: DateStamp, region: RegionCode, service: ServiceCode) -> Self {
+    pub fn v4(date: DateStamp, region: &'a RegionCode, service: ServiceCode) -> Self {
         Self::new(date, region, service, ScopeTermination::Aws4Request)
     }
 

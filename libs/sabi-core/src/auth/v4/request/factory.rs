@@ -11,7 +11,7 @@ use url::Url;
 pub struct AuthorizationFactory<'a> {
     credentials: &'a Credentials,
     fragment: CanonicalFragment<'a>,
-    scope: &'a CredentialScope,
+    scope: &'a CredentialScope<'a>,
     amz_date: AmzDate,
 }
 

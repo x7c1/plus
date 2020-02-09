@@ -19,7 +19,7 @@ where
     url: Url,
     method: Method,
     resource_loader: A,
-    default_region: Option<RegionCode>,
+    default_region: &'a Option<RegionCode>,
 }
 
 impl<A> RequestProvider<'_, A>
@@ -39,7 +39,7 @@ where
             url: (bucket, &request).to_endpoint()?,
             method,
             resource_loader: request,
-            default_region: default_region.clone(),
+            default_region,
         };
         Ok(provider)
     }
@@ -48,13 +48,14 @@ where
         let resource = self.resource_loader.load()?;
         let region_code = resource
             .region
-            .or(self.default_region)
+            .as_ref()
+            .or(self.default_region.as_ref())
             .ok_or_else(|| RegionNotSpecified)?;
 
         let parts = RequestParts::new(
             self.url,
             self.method,
-            region_code,
+            &region_code,
             resource.hash,
             resource.requested_at,
         );
