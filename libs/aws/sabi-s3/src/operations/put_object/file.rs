@@ -12,6 +12,7 @@ use std::convert::TryFrom;
 use std::error::Error;
 use std::fs::File;
 use std::io::ErrorKind::NotFound;
+use std::io::{Seek, SeekFrom};
 
 #[derive(Debug)]
 pub struct FileRequest {
@@ -42,8 +43,12 @@ impl HasObjectKey for FileRequest {
 
 impl ResourceLoader for FileRequest {
     fn load(self) -> S3Result<RequestResource> {
-        let file = self.open_file()?;
-        let hash = HashedPayload::try_from(&file)?;
+        let mut file = self.open_file()?;
+        let hash = {
+            let tmp = HashedPayload::try_from(&file)?;
+            file.seek(SeekFrom::Start(0))?;
+            tmp
+        };
         let resource = RequestResource {
             body: Some(Body::from(file)),
             hash,
