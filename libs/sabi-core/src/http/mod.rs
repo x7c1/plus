@@ -1,4 +1,4 @@
 mod headers;
 pub use headers::HeaderFragment;
-pub use headers::Headers;
+pub use headers::RichHeaderMap;
 pub mod header;

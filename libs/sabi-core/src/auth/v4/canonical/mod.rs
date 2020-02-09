@@ -24,7 +24,7 @@ pub use signed_headers::SignedHeaders;
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::http::Headers;
+    use crate::http::RichHeaderMap;
     use crate::SabiResult;
     use http::{HeaderMap, Method};
     use url::Url;

@@ -5,7 +5,7 @@ use http::header::{IntoHeaderName, InvalidHeaderValue, AUTHORIZATION};
 use http::{HeaderMap, HeaderValue};
 use std::convert::TryInto;
 
-pub trait Headers: Sized {
+pub trait RichHeaderMap: Sized {
     fn push<A, K, V>(self, header: A) -> SabiResult<Self>
     where
         A: Into<HeaderFragment<K, V>>,
@@ -15,7 +15,7 @@ pub trait Headers: Sized {
     fn authorize_with(self, factory: AuthorizationFactory) -> SabiResult<Self>;
 }
 
-impl Headers for HeaderMap {
+impl RichHeaderMap for HeaderMap {
     fn push<A, K, V>(mut self, header: A) -> SabiResult<Self>
     where
         A: Into<HeaderFragment<K, V>>,
