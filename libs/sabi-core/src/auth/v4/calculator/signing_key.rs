@@ -12,8 +12,8 @@ impl SigningKey {
     pub fn new(secret_key: &SecretKey, scope: &CredentialScope) -> SigningKey {
         let hmac = ("AWS4", secret_key)
             .hmac(&scope.date)
-            .hmac(&scope.region)
-            .hmac(&scope.service)
+            .hmac(scope.region)
+            .hmac(scope.service)
             .hmac(&scope.termination);
 
         SigningKey(hmac.code)

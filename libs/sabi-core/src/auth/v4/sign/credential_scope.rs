@@ -7,7 +7,7 @@ use crate::index::ServiceCode;
 pub struct CredentialScope<'a> {
     pub date: DateStamp,
     pub region: &'a RegionCode,
-    pub service: ServiceCode,
+    pub service: &'a ServiceCode,
     pub termination: ScopeTermination,
     raw: String,
 }
@@ -16,7 +16,7 @@ impl<'a> CredentialScope<'a> {
     pub fn new(
         date: DateStamp,
         region: &'a RegionCode,
-        service: ServiceCode,
+        service: &'a ServiceCode,
         termination: ScopeTermination,
     ) -> Self {
         let raw = format!(
@@ -35,7 +35,7 @@ impl<'a> CredentialScope<'a> {
         }
     }
 
-    pub fn v4(date: DateStamp, region: &'a RegionCode, service: ServiceCode) -> Self {
+    pub fn v4(date: DateStamp, region: &'a RegionCode, service: &'a ServiceCode) -> Self {
         Self::new(date, region, service, ScopeTermination::Aws4Request)
     }
 

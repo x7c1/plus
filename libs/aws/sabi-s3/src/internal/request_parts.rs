@@ -26,7 +26,7 @@ impl<'a> RequestParts<'a> {
             url,
             method,
             requested_at,
-            scope: CredentialScope::v4(date, region, ServiceCode::S3),
+            scope: CredentialScope::v4(date, region, &ServiceCode::S3),
             hashed_payload,
         }
     }

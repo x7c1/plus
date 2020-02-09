@@ -83,7 +83,7 @@ mod tests {
         CredentialScope::new(
             DateStamp::new("20150830"),
             &RegionCode::UsEast1,
-            ServiceCode::Iam,
+            &ServiceCode::Iam,
             ScopeTermination::Aws4Request,
         )
     }
