@@ -1,16 +1,22 @@
-use http::header::IntoHeaderName;
+use crate::SabiResult;
+use http::header::HeaderName;
+use http::HeaderValue;
 
-pub struct HeaderFragment<K, V>
-where
-    K: IntoHeaderName,
-{
-    pub key: K,
-    pub value: V,
+pub struct HeaderFragment {
+    pub key: HeaderName,
+    pub value: HeaderValue,
 }
 
-impl<'a> Into<HeaderFragment<&'static str, &'a str>> for (&'static str, &'a str) {
-    fn into(self) -> HeaderFragment<&'static str, &'a str> {
+pub trait ToHeaderFragment {
+    fn into(self) -> SabiResult<HeaderFragment>;
+}
+
+impl<'a> ToHeaderFragment for (&'static str, &'a str) {
+    fn into(self) -> SabiResult<HeaderFragment> {
         let (key, value) = self;
-        HeaderFragment { key, value }
+        Ok(HeaderFragment {
+            key: key.parse()?,
+            value: value.parse()?,
+        })
     }
 }

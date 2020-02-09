@@ -1,5 +1,9 @@
 use crate::http::HeaderFragment;
+use crate::http::ToHeaderFragment;
+use crate::SabiResult;
+
 use http::header::HeaderName;
+use std::str::FromStr;
 
 pub struct AmzDate(String);
 
@@ -13,11 +17,11 @@ impl AmzDate {
     }
 }
 
-impl Into<HeaderFragment<HeaderName, String>> for AmzDate {
-    fn into(self) -> HeaderFragment<HeaderName, String> {
-        HeaderFragment {
-            key: HeaderName::from_static("X-Amz-Date"),
-            value: self.0,
-        }
+impl ToHeaderFragment for AmzDate {
+    fn into(self) -> SabiResult<HeaderFragment> {
+        Ok(HeaderFragment {
+            key: HeaderName::from_str("X-Amz-Date").unwrap(),
+            value: self.as_str().parse()?,
+        })
     }
 }

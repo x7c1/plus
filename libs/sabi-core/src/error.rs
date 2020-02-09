@@ -6,16 +6,25 @@ pub type Result<T> = ::std::result::Result<T, Error>;
 
 #[derive(Fail, Debug)]
 pub enum Error {
+    #[fail(display = "InvalidHeaderName > {}", 0)]
+    InvalidHeaderName(header::InvalidHeaderName),
+
     #[fail(display = "InvalidHeaderValue > {}", 0)]
-    InvalidHeader(header::InvalidHeaderValue),
+    InvalidHeaderValue(header::InvalidHeaderValue),
 
     #[fail(display = "std::io::Error > {}", 0)]
     StdIoError(std::io::Error),
 }
 
+impl From<header::InvalidHeaderName> for Error {
+    fn from(e: header::InvalidHeaderName) -> Self {
+        Error::InvalidHeaderName(e)
+    }
+}
+
 impl From<header::InvalidHeaderValue> for Error {
     fn from(e: header::InvalidHeaderValue) -> Self {
-        Error::InvalidHeader(e)
+        Error::InvalidHeaderValue(e)
     }
 }
 
