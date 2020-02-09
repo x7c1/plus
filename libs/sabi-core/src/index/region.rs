@@ -1,5 +1,6 @@
 use crate::verbs::AsBytes;
 use crate::SabiResult;
+use std::env;
 use std::str::FromStr;
 
 /// see also:
@@ -14,8 +15,9 @@ pub enum RegionCode {
 
 impl RegionCode {
     pub fn from_env() -> SabiResult<Option<RegionCode>> {
-        // todo:
-        unimplemented!()
+        // todo: remove unwrap
+        let region = env::var("AWS_DEFAULT_REGION").unwrap();
+        Ok(Some(RegionCode::new(region)))
     }
 
     pub fn new<A: Into<String>>(key: A) -> Self {

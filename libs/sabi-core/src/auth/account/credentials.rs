@@ -1,5 +1,6 @@
 use crate::auth::{AccessKey, SecretKey};
 use crate::SabiResult;
+use std::env;
 
 #[derive(Debug)]
 pub struct Credentials {
@@ -9,8 +10,13 @@ pub struct Credentials {
 
 impl Credentials {
     pub fn from_env() -> SabiResult<Credentials> {
-        // todo:
-        unimplemented!()
+        // todo: remove unwrap
+        let credentials = Self::builder()
+            .access_key(AccessKey::new(env::var("AWS_ACCESS_KEY_ID").unwrap()))
+            .secret_key(SecretKey::new(env::var("AWS_SECRET_ACCESS_KEY").unwrap()))
+            .build();
+
+        Ok(credentials)
     }
     pub fn builder() -> CredentialsBuilder<(), ()> {
         CredentialsBuilder {
