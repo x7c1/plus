@@ -8,7 +8,6 @@ pub type Result<T> = ::std::result::Result<T, Error>;
 
 #[derive(Fail, Debug)]
 pub enum Error {
-
     #[fail(display = "env_extractor::Error > {}", 0)]
     EnvExtractorError(String),
 
