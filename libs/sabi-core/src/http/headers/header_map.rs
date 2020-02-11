@@ -27,7 +27,7 @@ impl RichHeaderMap for HeaderMap {
 
     fn host(mut self, url: &Url) -> SabiResult<Self> {
         // todo:
-        self.insert(HOST, url.host_str().unwrap().parse().unwrap());
+        self.insert(HOST, url.host_str().unwrap().parse()?);
         Ok(self)
     }
 

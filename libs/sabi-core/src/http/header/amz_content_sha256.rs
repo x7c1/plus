@@ -19,7 +19,7 @@ impl AmzContentSha256 {
 impl ToHeaderFragment for AmzContentSha256 {
     fn into(self) -> SabiResult<HeaderFragment> {
         Ok(HeaderFragment {
-            key: HeaderName::from_str("X-Amz-Content-Sha256").unwrap(),
+            key: HeaderName::from_str("X-Amz-Content-Sha256")?,
             value: self.as_str().parse()?,
         })
     }

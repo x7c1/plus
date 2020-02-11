@@ -20,7 +20,7 @@ impl AmzDate {
 impl ToHeaderFragment for AmzDate {
     fn into(self) -> SabiResult<HeaderFragment> {
         Ok(HeaderFragment {
-            key: HeaderName::from_str("X-Amz-Date").unwrap(),
+            key: HeaderName::from_str("X-Amz-Date")?,
             value: self.as_str().parse()?,
         })
     }
