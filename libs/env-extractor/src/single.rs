@@ -2,7 +2,7 @@ use crate::to_parse_error;
 use crate::CanExtractOptional;
 use crate::CanExtractRequired;
 use crate::Error;
-use crate::Error::NotFound;
+use crate::Error::NotPresent;
 use crate::ExtractorResult;
 
 use std::env;
@@ -50,7 +50,7 @@ impl FromSingle {
         let maybe = match env::var(&self.key) {
             Ok(x1) => Some(x1),
             Err(VarError::NotPresent) => None,
-            Err(e @ VarError::NotUnicode(_)) => Err(Error::EnvVarError(e))?,
+            Err(e @ _) => Err(Error::EnvVarError(e))?,
         };
         maybe.map(to_parsed).unwrap_or_else(if_not_found)
     }
@@ -76,7 +76,7 @@ where
     type Err = Error<<A as FromStr>::Err>;
 
     fn get_required(&self) -> Result<A, Self::Err> {
-        let if_not_found = || Err(NotFound(self.key.to_string()));
+        let if_not_found = || Err(NotPresent(self.key.to_string()));
         let reify = |item| Ok(item);
         self.parse(if_not_found, reify)
     }

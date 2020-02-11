@@ -11,7 +11,6 @@ pub struct Credentials {
 impl Credentials {
     pub fn from_env() -> SabiResult<Credentials> {
         let credentials = Self::builder()
-            // TODO:
             .access_key(aws::access_key().as_required()?)
             .secret_key(aws::secret_key().as_required()?)
             .build();

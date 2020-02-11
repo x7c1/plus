@@ -9,11 +9,11 @@ pub enum Error<E>
 where
     E: Debug,
 {
-    NotFound(String),
+    EnvVarError(VarError),
+    NotPresent(String),
     ParseError {
         key: String,
         value: String,
         cause: E,
     },
-    EnvVarError(VarError),
 }

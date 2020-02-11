@@ -11,6 +11,9 @@ pub enum Error {
     #[fail(display = "env_extractor::Error > {}", 0)]
     EnvExtractorError(String),
 
+    #[fail(display = "EnvVarNotPresent > {}", 0)]
+    EnvVarNotPresent(String),
+
     #[fail(display = "HostNotFound > {}", 0)]
     HostNotFound(Url),
 
@@ -26,7 +29,10 @@ pub enum Error {
 
 impl<A: Debug> From<env_extractor::Error<A>> for Error {
     fn from(e: env_extractor::Error<A>) -> Self {
-        Error::EnvExtractorError(format!("{:?}", e))
+        match e {
+            env_extractor::Error::NotPresent(key) => Error::EnvVarNotPresent(key),
+            _ => Error::EnvExtractorError(format!("{:?}", e)),
+        }
     }
 }
 
