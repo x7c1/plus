@@ -1,6 +1,7 @@
 use crate::core::S3Result;
 use crate::error::Error::{FileNotFound, StdIoError};
 use crate::internal::{RequestResource, ResourceLoader};
+use crate::operations::put_object::RichFile;
 use crate::operations::Kind;
 use crate::verbs::HasObjectKey;
 use reqwest::blocking::Body;
@@ -12,7 +13,6 @@ use std::convert::TryFrom;
 use std::error::Error;
 use std::fs::File;
 use std::io::ErrorKind::NotFound;
-use std::io::{Seek, SeekFrom};
 
 #[derive(Debug)]
 pub struct FileRequest {
@@ -44,11 +44,8 @@ impl HasObjectKey for FileRequest {
 impl ResourceLoader for FileRequest {
     fn load(self) -> S3Result<RequestResource> {
         let mut file = self.open_file()?;
-        let hash = {
-            let tmp = HashedPayload::try_from(&file)?;
-            file.seek(SeekFrom::Start(0))?;
-            tmp
-        };
+        let hash = file.reset_cursor_after(|file| HashedPayload::try_from(file))?;
+
         let resource = RequestResource {
             body: Some(Body::from(file)),
             hash,

@@ -46,7 +46,7 @@ mod tests {
 
     #[test]
     fn it_should_be_masked_even_if_multibyte_given() {
-        let key = SecretKey("wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAM途中に日本語".to_string());
+        let key = SecretKey::new("wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAM途中に日本語");
         let masked = format!("{:?}", key);
 
         assert_eq!(masked, r#"SecretKey("****************に日本語")"#);
