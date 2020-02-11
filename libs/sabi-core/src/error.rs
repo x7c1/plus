@@ -1,12 +1,17 @@
 extern crate failure;
 
 use http::header;
+use std::fmt::Debug;
 use url::Url;
 
 pub type Result<T> = ::std::result::Result<T, Error>;
 
 #[derive(Fail, Debug)]
 pub enum Error {
+
+    #[fail(display = "env_extractor::Error > {}", 0)]
+    EnvExtractorError(String),
+
     #[fail(display = "HostNotFound > {}", 0)]
     HostNotFound(Url),
 
@@ -18,6 +23,12 @@ pub enum Error {
 
     #[fail(display = "std::io::Error > {}", 0)]
     StdIoError(std::io::Error),
+}
+
+impl<A: Debug> From<env_extractor::Error<A>> for Error {
+    fn from(e: env_extractor::Error<A>) -> Self {
+        Error::EnvExtractorError(format!("{:?}", e))
+    }
 }
 
 impl From<header::InvalidHeaderName> for Error {

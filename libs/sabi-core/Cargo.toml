@@ -7,6 +7,7 @@ edition = "2018"
 
 [dependencies]
 characters = { path = "../characters" }
+env-extractor = { path = "../env-extractor" }
 
 chrono = "0.4"
 failure = "0.1"

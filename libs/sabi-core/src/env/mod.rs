@@ -1,6 +1,3 @@
-mod error;
-pub use error::Error;
-
 pub mod aws {
     use env_extractor::FromSingle;
 

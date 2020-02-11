@@ -1,6 +1,8 @@
 use crate::verbs::AsBytes;
+use crate::SabiResult;
 use characters::{AsStr, MultiByte};
 use std::fmt;
+use std::str::FromStr;
 
 pub struct SecretKey(String);
 
@@ -28,6 +30,14 @@ impl fmt::Debug for SecretKey {
     fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
         let masked = format!("{:*>20}", &self.tail(4));
         f.debug_tuple("SecretKey").field(&masked).finish()
+    }
+}
+
+impl FromStr for SecretKey {
+    type Err = crate::Error;
+
+    fn from_str(s: &str) -> SabiResult<Self> {
+        Ok(Self::new(s))
     }
 }
 
