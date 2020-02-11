@@ -1,5 +1,6 @@
 use crate::auth::v4::request::AuthorizationFactory;
 use crate::http::ToHeaderFragment;
+use crate::Error::HostNotFound;
 use crate::SabiResult;
 use http::header::{AUTHORIZATION, HOST};
 use http::HeaderMap;
@@ -26,8 +27,12 @@ impl RichHeaderMap for HeaderMap {
     }
 
     fn host(mut self, url: &Url) -> SabiResult<Self> {
-        // todo:
-        self.insert(HOST, url.host_str().unwrap().parse()?);
+        let host = url
+            .host_str()
+            .ok_or_else(|| HostNotFound(url.clone()))?
+            .parse()?;
+
+        self.insert(HOST, host);
         Ok(self)
     }
 

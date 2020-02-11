@@ -1,11 +1,15 @@
 extern crate failure;
 
 use http::header;
+use url::Url;
 
 pub type Result<T> = ::std::result::Result<T, Error>;
 
 #[derive(Fail, Debug)]
 pub enum Error {
+    #[fail(display = "HostNotFound > {}", 0)]
+    HostNotFound(Url),
+
     #[fail(display = "InvalidHeaderName > {}", 0)]
     InvalidHeaderName(header::InvalidHeaderName),
 
