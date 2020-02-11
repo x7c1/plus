@@ -10,6 +10,9 @@ pub enum Error {
     #[fail(display = "env_extractor::Error > {}", 0)]
     EnvExtractorError(String),
 
+    #[fail(display = "EnvVarNotPresent > {}", 0)]
+    EnvVarNotPresent(String),
+
     #[fail(display = "FileNotFound > {}", 0)]
     FileNotFound {
         operation: operations::Kind,
@@ -46,7 +49,10 @@ impl From<reqwest::Error> for Error {
 
 impl From<sabi_core::Error> for Error {
     fn from(e: sabi_core::Error) -> Self {
-        Error::SabiCoreError(e)
+        match e {
+            sabi_core::Error::EnvVarNotPresent(key) => Error::EnvVarNotPresent(key),
+            _ => Error::SabiCoreError(e),
+        }
     }
 }
 
