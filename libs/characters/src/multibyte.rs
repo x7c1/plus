@@ -10,7 +10,7 @@ pub trait MultiByte: AsStr {
         let original = self.as_str();
         let pair = {
             let start = self.length() - length;
-            original.char_indices().skip(start).next()
+            original.char_indices().nth(start)
         };
         if let Some((index, _)) = pair {
             &original[index..]
