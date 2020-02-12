@@ -8,15 +8,15 @@ pub trait MultiByte: AsStr {
 
     fn tail(&self, length: usize) -> &str {
         let original = self.as_str();
-        let head_length = {
-            let char_counts = self.length() - length;
-            original
-                .chars()
-                .skip(char_counts)
-                .fold(0, |size, x| size + x.len_utf8())
+        let pair = {
+            let start = self.length() - length;
+            original.char_indices().skip(start).next()
         };
-        let start = original.len() - head_length;
-        &original[start..]
+        if let Some((index, _)) = pair {
+            &original[index..]
+        } else {
+            ""
+        }
     }
 }
 
