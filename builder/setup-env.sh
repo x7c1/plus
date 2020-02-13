@@ -6,47 +6,7 @@ set -e
 # not allow undefined values.
 set -u
 
-# enable alias on bash
-shopt -s expand_aliases
-
-get_opt_level() {
-  while getopts ":-:" OPT; do
-    case "${OPT}" in
-      -)  case "${OPTARG}" in
-            opt-level=*)
-              echo ${OPTARG#*=}
-              exit
-              ;;
-          esac
-          ;;
-    esac
-  done
-  echo 2
-}
-
-get_build_mode() {
-  while getopts ":-:" OPT; do
-    case "${OPT}" in
-      -)  case "${OPTARG}" in
-            debug)
-              echo ""
-              exit
-              ;;
-          esac
-          ;;
-    esac
-  done
-  echo "--release"
-}
-
-is_osx_sdk_installed() {
-  target=${OSXCROSS_ROOT}/target/bin/${OSX_SDK_CC}
-  if [[ -f ${target} ]]; then
-    return 0
-  else
-    return 1
-  fi
-}
+. ./builder/setup-functions.sh
 
 OPT_LEVEL=$(get_opt_level "$@")
 BUILD_MODE=$(get_build_mode "$@")
