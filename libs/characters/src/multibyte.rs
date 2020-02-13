@@ -8,11 +8,11 @@ pub trait MultiByte: AsStr {
 
     fn tail(&self, length: usize) -> &str {
         let original = self.as_str();
-        let pair = {
-            let start = self.length() - length;
-            original.char_indices().nth(start)
-        };
-        if let Some((index, _)) = pair {
+        let mut indices = original.char_indices();
+        for _ in 1..length {
+            indices.next_back();
+        }
+        if let Some((index, _)) = indices.next_back() {
             &original[index..]
         } else {
             ""
