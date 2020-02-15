@@ -7,19 +7,19 @@ use crate::verbs::AsBytes;
 pub enum ServiceCode {
     Iam,
     S3,
-    Unknown(String),
+    Any(String),
 }
 
 impl ServiceCode {
-    pub fn new<A: Into<String>>(key: A) -> Self {
-        Self::Unknown(key.into())
+    pub fn any<A: Into<String>>(key: A) -> Self {
+        Self::Any(key.into())
     }
 
     pub fn as_str(&self) -> &str {
         match self {
             ServiceCode::Iam => "iam",
             ServiceCode::S3 => "s3",
-            ServiceCode::Unknown(code) => &code,
+            ServiceCode::Any(code) => &code,
         }
     }
 }

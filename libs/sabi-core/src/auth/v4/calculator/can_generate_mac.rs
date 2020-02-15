@@ -1,5 +1,6 @@
 use crate::auth::SecretKey;
 use crate::verbs::AsBytes;
+use characters::AsStr;
 use hmac::{Hmac, Mac};
 use sha2::Sha256;
 

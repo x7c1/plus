@@ -1,6 +1,9 @@
 mod file;
 pub use file::FileRequest;
 
+mod rich_file;
+pub use rich_file::RichFile;
+
 use crate::core::{S3Client, S3Result};
 use crate::internal::{InternalClient, RequestProvider, ResourceLoader};
 use crate::verbs::HasObjectKey;

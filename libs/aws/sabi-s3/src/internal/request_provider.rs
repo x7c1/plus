@@ -61,10 +61,12 @@ where
         );
         let factory = AuthorizationFactory::new(self.credentials, &parts);
         let headers: HeaderMap = HeaderMap::new()
+            .host(&parts.url)?
             .push(resource.content_type)?
             .push(header::AmzContentSha256::new(parts.hashed_payload.as_str()))?
             .push(header::AmzDate::new(factory.amz_date().as_str()))?
-            .authorize_with(factory)?;
+            .authorize_with(factory)?
+            .push(header::Date::from(&parts.requested_at))?;
 
         Ok(InternalRequest {
             url: parts.url,

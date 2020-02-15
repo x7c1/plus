@@ -1,30 +1,38 @@
 use crate::auth::v4::request::AuthorizationFactory;
-use crate::http::HeaderFragment;
+use crate::http::ToHeaderFragment;
+use crate::Error::HostNotFound;
 use crate::SabiResult;
-use http::header::{IntoHeaderName, InvalidHeaderValue, AUTHORIZATION};
-use http::{HeaderMap, HeaderValue};
-use std::convert::TryInto;
+use http::header::{AUTHORIZATION, HOST};
+use http::HeaderMap;
+use url::Url;
 
 pub trait RichHeaderMap: Sized {
-    fn push<A, K, V>(self, header: A) -> SabiResult<Self>
+    fn push<A>(self, header: A) -> SabiResult<Self>
     where
-        A: Into<HeaderFragment<K, V>>,
-        K: IntoHeaderName,
-        V: TryInto<HeaderValue, Error = InvalidHeaderValue>;
+        A: ToHeaderFragment;
+
+    fn host(self, url: &Url) -> SabiResult<Self>;
 
     fn authorize_with(self, factory: AuthorizationFactory) -> SabiResult<Self>;
 }
 
 impl RichHeaderMap for HeaderMap {
-    fn push<A, K, V>(mut self, header: A) -> SabiResult<Self>
+    fn push<A>(mut self, header: A) -> SabiResult<Self>
     where
-        A: Into<HeaderFragment<K, V>>,
-        K: IntoHeaderName,
-        V: TryInto<HeaderValue, Error = InvalidHeaderValue>,
+        A: ToHeaderFragment,
     {
-        let fragment = header.into();
-        let value = fragment.value.try_into()?;
-        self.insert(fragment.key, value);
+        let fragment = header.into()?;
+        self.insert(fragment.key, fragment.value);
+        Ok(self)
+    }
+
+    fn host(mut self, url: &Url) -> SabiResult<Self> {
+        let host = url
+            .host_str()
+            .ok_or_else(|| HostNotFound(url.clone()))?
+            .parse()?;
+
+        self.insert(HOST, host);
         Ok(self)
     }
 

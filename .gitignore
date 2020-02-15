@@ -2,6 +2,7 @@
 *.tmp
 builder/*.gen.sh
 builder/*.local.sh
+scripts/*.local.sh
 
 # OSXCross
 builder/MacOSX*.sdk.tar.bz2

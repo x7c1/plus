@@ -9,24 +9,19 @@ use std::str::FromStr;
 pub enum RegionCode {
     ApNorthEast1,
     UsEast1,
-    Unknown(String),
+    Any(String),
 }
 
 impl RegionCode {
-    pub fn from_env() -> SabiResult<Option<RegionCode>> {
-        // todo:
-        unimplemented!()
-    }
-
-    pub fn new<A: Into<String>>(key: A) -> Self {
-        Self::Unknown(key.into())
+    pub fn any<A: Into<String>>(key: A) -> Self {
+        Self::Any(key.into())
     }
 
     pub fn as_str(&self) -> &str {
         match self {
             RegionCode::ApNorthEast1 => "ap-northeast-1",
             RegionCode::UsEast1 => "us-east-1",
-            RegionCode::Unknown(code) => &code,
+            RegionCode::Any(code) => &code,
         }
     }
 }
@@ -41,6 +36,6 @@ impl FromStr for RegionCode {
     type Err = crate::Error;
 
     fn from_str(s: &str) -> SabiResult<Self> {
-        Ok(Self::new(s))
+        Ok(Self::any(s))
     }
 }

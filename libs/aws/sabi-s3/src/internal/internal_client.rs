@@ -1,8 +1,9 @@
 use crate::core::S3Result;
 use crate::internal::{RequestProvider, ResourceLoader};
 use crate::verbs::HasObjectKey;
-use reqwest::blocking::Client;
+use reqwest::blocking::{Client, Response};
 use std::fmt::Debug;
+use std::time::Duration;
 
 #[derive(Debug)]
 pub struct InternalClient {}
@@ -20,7 +21,9 @@ impl InternalClient {
         let request = provider.provide()?;
         println!("request > {:#?}", request);
 
-        let builder = Client::new()
+        let builder = Client::builder()
+            .timeout(Duration::from_secs(5))
+            .build()?
             .request(request.method, request.url)
             .headers(request.headers);
 
@@ -28,7 +31,7 @@ impl InternalClient {
             Some(body) => builder.body(body),
             _ => builder,
         };
-        let response = builder.send()?;
+        let response: Response = builder.send()?;
 
         println!("response > {:#?}", response);
         Ok("dummy result".to_string())

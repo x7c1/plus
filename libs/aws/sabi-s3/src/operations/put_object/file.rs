@@ -1,6 +1,7 @@
 use crate::core::S3Result;
 use crate::error::Error::{FileNotFound, StdIoError};
 use crate::internal::{RequestResource, ResourceLoader};
+use crate::operations::put_object::RichFile;
 use crate::operations::Kind;
 use crate::verbs::HasObjectKey;
 use reqwest::blocking::Body;
@@ -42,8 +43,9 @@ impl HasObjectKey for FileRequest {
 
 impl ResourceLoader for FileRequest {
     fn load(self) -> S3Result<RequestResource> {
-        let file = self.open_file()?;
-        let hash = HashedPayload::try_from(&file)?;
+        let mut file = self.open_file()?;
+        let hash = file.reset_cursor_after(|file| HashedPayload::try_from(file))?;
+
         let resource = RequestResource {
             body: Some(Body::from(file)),
             hash,

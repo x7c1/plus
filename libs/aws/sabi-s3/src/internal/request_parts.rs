@@ -9,7 +9,7 @@ use sabi_core::index::{RegionCode, ServiceCode};
 pub struct RequestParts<'a> {
     pub url: Url,
     pub method: Method,
-    requested_at: DateTime<Utc>,
+    pub requested_at: DateTime<Utc>,
     scope: CredentialScope<'a>,
     pub hashed_payload: HashedPayload,
 }

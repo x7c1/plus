@@ -1,6 +1,8 @@
 use crate::http::HeaderFragment;
+use crate::http::ToHeaderFragment;
 use crate::SabiResult;
-use http::header::{HeaderName, CONTENT_TYPE};
+
+use http::header::CONTENT_TYPE;
 use std::str::FromStr;
 
 #[derive(Debug)]
@@ -20,21 +22,21 @@ impl ContentType {
     }
 }
 
-impl<'a> Into<HeaderFragment<HeaderName, String>> for ContentType {
-    fn into(self) -> HeaderFragment<HeaderName, String> {
-        HeaderFragment {
+impl ToHeaderFragment for ContentType {
+    fn into(self) -> SabiResult<HeaderFragment> {
+        Ok(HeaderFragment {
             key: CONTENT_TYPE,
-            value: self.0,
-        }
+            value: self.as_str().parse()?,
+        })
     }
 }
 
-impl<'a> Into<HeaderFragment<HeaderName, String>> for &ContentType {
-    fn into(self) -> HeaderFragment<HeaderName, String> {
-        HeaderFragment {
+impl ToHeaderFragment for &ContentType {
+    fn into(self) -> SabiResult<HeaderFragment> {
+        Ok(HeaderFragment {
             key: CONTENT_TYPE,
-            value: self.0.to_string(),
-        }
+            value: self.as_str().parse()?,
+        })
     }
 }
 

@@ -1,11 +1,18 @@
 extern crate failure;
 
 use crate::operations;
+use std::fmt::Debug;
 
 pub type Result<T> = ::std::result::Result<T, Error>;
 
 #[derive(Fail, Debug)]
 pub enum Error {
+    #[fail(display = "env_extractor::Error > {}", 0)]
+    EnvExtractorError(String),
+
+    #[fail(display = "EnvVarNotPresent > {}", 0)]
+    EnvVarNotPresent(String),
+
     #[fail(display = "FileNotFound > {}", 0)]
     FileNotFound {
         operation: operations::Kind,
@@ -19,13 +26,19 @@ pub enum Error {
     Reqwest(reqwest::Error),
 
     #[fail(display = "sabi_core::Error > {}", 0)]
-    SabiError(sabi_core::Error),
+    SabiCoreError(sabi_core::Error),
 
     #[fail(display = "std::io::Error > {}", 0)]
     StdIoError(std::io::Error),
 
     #[fail(display = "url::ParseError > {}", 0)]
     UrlParseError(url::ParseError),
+}
+
+impl<A: Debug> From<env_extractor::Error<A>> for Error {
+    fn from(e: env_extractor::Error<A>) -> Self {
+        Error::EnvExtractorError(format!("{:?}", e))
+    }
 }
 
 impl From<reqwest::Error> for Error {
@@ -36,7 +49,10 @@ impl From<reqwest::Error> for Error {
 
 impl From<sabi_core::Error> for Error {
     fn from(e: sabi_core::Error) -> Self {
-        Error::SabiError(e)
+        match e {
+            sabi_core::Error::EnvVarNotPresent(key) => Error::EnvVarNotPresent(key),
+            _ => Error::SabiCoreError(e),
+        }
     }
 }
 
