@@ -60,7 +60,23 @@ build_apps() {
     --target=$1
 }
 
+
 build_e2e_tests() {
+  build_pilot $1
+  build_pilot_and_output_json $1
+}
+
+build_pilot() {
+  cargo test \
+    ${BUILD_MODE} \
+    --target=$1 \
+    --package=wsb-pilot \
+    --no-run
+}
+
+# call build_pilot in advance to see compilation errors,
+# since this function hides them by the --message-format option.
+build_pilot_and_output_json() {
   cargo test \
     ${BUILD_MODE} \
     --target=$1 \
