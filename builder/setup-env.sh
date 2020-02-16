@@ -6,6 +6,9 @@ set -e
 # not allow undefined values.
 set -u
 
+# enable alias on bash
+shopt -s expand_aliases
+
 . ./builder/setup-functions.sh
 
 OPT_LEVEL=$(get_opt_level "$@")
