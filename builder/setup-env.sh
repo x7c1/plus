@@ -26,6 +26,7 @@ export TARGET_X86="x86_64-unknown-linux-musl"
 export TARGET_ARMV7="armv7-unknown-linux-musleabihf"
 export TARGET_MACOS="x86_64-apple-darwin"
 
+export ARMV7_CC="arm-linux-gnueabihf-gcc"
 export MAX_PARALLEL=$(getconf _NPROCESSORS_ONLN)
 
 # used by rustc

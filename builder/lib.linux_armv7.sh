@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 build_apps_for_linux_armv7() {
+  CC=${ARMV7_CC} \
   build_apps ${TARGET_ARMV7}
 }
 
