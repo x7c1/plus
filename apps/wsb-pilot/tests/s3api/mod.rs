@@ -8,7 +8,7 @@ lazy_static! {
 }
 
 #[test]
-fn s3api_works1() -> PilotResult<()> {
+fn exits_with_0_if_succeeded() -> PilotResult<()> {
     let output = s3api()
         .arg("put-object")
         .args(&["--bucket", &TEST_BUCKET])
@@ -20,7 +20,11 @@ fn s3api_works1() -> PilotResult<()> {
         println!("{}", String::from_utf8(output.stdout).unwrap());
         println!("stderr: {}", String::from_utf8(output.stderr).unwrap());
     }
-    assert_eq!(Some(0), output.status.code(), "exit with non-zero status.");
+    assert_eq!(
+        Some(0),
+        output.status.code(),
+        "exit with non-zero status if failed."
+    );
     Ok({})
 }
 
