@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-
 # stop if non-zero returned.
 set -e
 
