@@ -48,6 +48,10 @@ is_osx_sdk_installed() {
   fi
 }
 
+cargo_fmt() {
+  cargo fmt --verbose -- --emit files
+}
+
 build_for_x86_linux() {
   cargo build \
     --verbose \
