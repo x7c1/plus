@@ -4,7 +4,7 @@
 cd "$PROJECT_ROOT" || exit 1
 
 . ./builder/lib.linux_x86.sh
-run_unit_tests
+run_unit_tests_for_linux_x86
 
 # usage:
 # $ ./scripts/run_tests.sh
