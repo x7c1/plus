@@ -3,7 +3,9 @@
 . ./builder/setup-env.sh
 cd "$PROJECT_ROOT" || exit 1
 
-cargo test \
-  ${BUILD_MODE} \
-  --target="${TARGET_X86}" \
-  -- --nocapture
+run_unit_tests
+
+# usage:
+# $ ./scripts/run_tests.sh
+# or
+# $ ./scripts/run_builder.sh cargo-test.sh --debug --opt-level=0

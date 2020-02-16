@@ -74,6 +74,14 @@ build_for_macos() {
   fi
 }
 
+run_unit_tests() {
+  cargo test \
+    ${BUILD_MODE} \
+    --target="${TARGET_X86}" \
+    --workspace --exclude=wsb-pilot \
+    -- --nocapture
+}
+
 build_e2e_tests() {
   cargo test \
     ${BUILD_MODE} \
@@ -82,7 +90,7 @@ build_e2e_tests() {
     --no-run \
     --message-format=json \
     | jq -r "select(.profile.test == true) | .filenames[]" \
-    > ${PROJECT_ROOT}/draft.txt
+    > ${PROJECT_ROOT}/draft.tmp
 
-    cat ${PROJECT_ROOT}/draft.txt
+    cat ${PROJECT_ROOT}/draft.tmp
 }
