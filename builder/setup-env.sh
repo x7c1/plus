@@ -17,6 +17,7 @@ BUILD_MODE=$(get_build_mode "$@")
 # defined for this project
 export BUILD_MODE
 export PROJECT_ROOT="/wasabi"
+export ARTIFACTS_DIR="${PROJECT_ROOT}/dist"
 
 export OSX_SDK="MacOSX10.15.sdk.tar.bz2"
 export OSX_SDK_CC="x86_64-apple-darwin19-clang"
@@ -31,6 +32,8 @@ export MAX_PARALLEL=$(getconf _NPROCESSORS_ONLN)
 
 # used by rustc
 export RUSTFLAGS="-C opt-level=$OPT_LEVEL"
+
+setup_artifacts_directory
 
 cd ${PROJECT_ROOT}
 . ./builder/build-osxcross.sh
