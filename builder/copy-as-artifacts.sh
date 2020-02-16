@@ -7,8 +7,6 @@ cd "$PROJECT_ROOT" || exit 1
 set -x
 
 for arch in $(get_arch_labels); do
-  arch_dir="${ARTIFACTS_DIR}/${arch}"
-
   . ./builder/lib.${arch}.sh
   copy_release_apps_for_${arch}
 done
