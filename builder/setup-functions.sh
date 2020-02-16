@@ -45,6 +45,24 @@ get_build_mode() {
   echo "--release"
 }
 
+build_apps() {
+  cargo build \
+    --verbose \
+    ${BUILD_MODE} \
+    --target=$1
+}
+
+build_e2e_tests() {
+  cargo test \
+    ${BUILD_MODE} \
+    --target=$1 \
+    --package=wsb-pilot \
+    --no-run \
+    --message-format=json \
+    | jq -r "select(.profile.test == true) | .filenames[]" \
+    | grep wsb_pilot_tests
+}
+
 is_osx_sdk_installed() {
   target=${OSXCROSS_ROOT}/target/bin/${OSX_SDK_CC}
   if [[ -f ${target} ]]; then

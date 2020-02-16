@@ -9,5 +9,6 @@ set -x
 for arch in $(get_arch_labels); do
   . ./builder/lib.${arch}.sh
   build_apps_for_${arch}
-  build_e2e_tests_for_${arch}
+
+  file_path=$(build_e2e_tests_for_${arch})
 done
