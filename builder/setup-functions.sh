@@ -6,9 +6,6 @@ set -e
 # not allow undefined values.
 set -u
 
-# enable alias on bash
-shopt -s expand_aliases
-
 get_arch_labels() {
   labels=(
     "linux_x86"
