@@ -1,5 +1,15 @@
 #!/usr/bin/env bash
 
+# Usage:
+#
+# 1.
+#   $ cp ./scripts/run_pilot.local.template ./scripts/run_pilot.local.sh
+# 2.
+#   Modify environment variables in run_pilot.local.sh
+# 3.
+#   $ ./scripts/run_pilot.sh
+
+
 # stop if non-zero returned.
 set -e
 

@@ -2,4 +2,9 @@
 
 export WSB_TEST_BUCKET="your-bucket-for-tests"
 
-$(cat ./scripts/${output}) --nocapture
+# Notes:
+#
+# Enable to print stdout if necessary
+# $(cat ./scripts/${output}) --nocapture
+
+$(cat ./scripts/${output})
