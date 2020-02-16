@@ -19,3 +19,7 @@ copy_release_apps_for_linux_armv7() {
 strip_release_files_for_linux_armv7() {
   strip_release_files "linux_armv7" arm-linux-gnueabihf-strip
 }
+
+show_artifacts_for_linux_armv7() {
+  show_artifacts "linux_armv7"
+}

@@ -28,3 +28,7 @@ strip_release_files_for_macos_x86() {
   fi
   strip_release_files "macos_x86" x86_64-apple-darwin19-strip
 }
+
+show_artifacts_for_macos_x86() {
+  show_artifacts "macos_x86"
+}

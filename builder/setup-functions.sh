@@ -89,6 +89,16 @@ strip_release_files() {
   done
 }
 
+show_artifacts() {
+  echo -e "\n>> about artifacts for $1"
+
+  target_dir=${ARTIFACTS_DIR}/$1
+  for name in $(get_artifact_names); do
+    cd ${target_dir}
+    file ${name} | sed $'s/,/,\\\n /g'
+  done
+}
+
 is_osx_sdk_installed() {
   target=${OSXCROSS_ROOT}/target/bin/${OSX_SDK_CC}
   if [[ -f ${target} ]]; then

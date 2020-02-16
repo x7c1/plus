@@ -10,25 +10,19 @@ main() {
   build_for_release
 
   println "copying apps..."
-  copy_apps
+  ./scripts/run_builder.sh copy-as-artifacts.sh
 
   println "before strip"
   show_file_size
 
   println "stripping..."
-  strip_files
+  ./scripts/run_builder.sh strip-files.sh
 
   println "after strip"
   show_file_size
 
-  println "about linux (x86_64) binary"
-  show_detail "x86_64-unknown-linux"
-
-  println "about linux (armv7) binary"
-  show_detail "armv7"
-
-  println "about macOS (x86_64) binary"
-  show_detail "apple"
+  println "artifact details"
+  ./scripts/run_builder.sh show-artifacts.sh
 
   println "done."
 }
@@ -45,39 +39,8 @@ build_for_release() {
     build-all.sh --release --opt-level=z
 }
 
-copy_apps() {
-  ./scripts/run_builder.sh \
-    copy-as-artifacts.sh
-}
-
-list_artifacts() {
-  find ./ -type f -name "s3api" -o -regex ".*/release/wsb_pilot_tests.*[^d]" \
-    | grep release
-}
-
 show_file_size() {
   ls -lh dist/**
-}
-
-strip_files() {
-  ./scripts/run_builder.sh \
-    strip-files.sh
-}
-
-show_detail() {
-  set +e # ignore errors
-
-  list=$(list_artifacts | grep $1)
-  if [[ ! $? -eq 0 ]]; then
-    echo "artifact not found: $1"
-    return
-  fi
-
-  # rf.
-  # [How to add new line using sed on MacOS? - Stack Overflow]
-  # https://stackoverflow.com/questions/16576197/how-to-add-new-line-using-sed-on-macos
-  echo "$list" | xargs file | sed $'s/,/,\\\n /g'
-  set -e
 }
 
 main

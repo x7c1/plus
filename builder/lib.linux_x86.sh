@@ -16,6 +16,10 @@ strip_release_files_for_linux_x86() {
   strip_release_files "linux_x86" strip
 }
 
+show_artifacts_for_linux_x86() {
+  show_artifacts "linux_x86"
+}
+
 run_unit_tests_for_linux_x86() {
   cargo test \
     ${BUILD_MODE} \
