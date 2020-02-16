@@ -5,9 +5,12 @@ cd "$PROJECT_ROOT" || exit 1
 
 . ./builder/lib.linux_x86.sh
 
-set -x
-
 main() {
+  pilot_output_path=$(get_pilot_output_path $@)
+
+  # show executed commands.
+  set -x
+
   cargo_fmt
 
   build_apps_for_linux_x86
@@ -16,7 +19,7 @@ main() {
 
   build_e2e_tests_for_linux_x86 \
     | sed s/^\\${PROJECT_ROOT}/\\./ \
-    > ${PROJECT_ROOT}/scripts/$(get_pilot_output_path $@)
+    > ${PROJECT_ROOT}/scripts/${pilot_output_path}
 }
 
 get_pilot_output_path() {

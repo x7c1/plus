@@ -17,4 +17,6 @@ output=run_pilot_path.tmp
     --opt-level=0 \
     --pilot-output=${output}
 
-$(cat ./scripts/${output})
+export WSB_APPS_DIR="./target/x86_64-unknown-linux-musl/debug"
+
+. ./scripts/run_pilot.local.sh
