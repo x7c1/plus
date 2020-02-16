@@ -3,6 +3,7 @@
 . ./builder/setup-env.sh
 cd "$PROJECT_ROOT" || exit 1
 
+. ./builder/lib.linux_x86.sh
 run_unit_tests
 
 # usage:
