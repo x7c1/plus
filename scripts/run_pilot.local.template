@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+export WSB_TEST_BUCKET="your-bucket-for-tests"
+
+$(cat ./scripts/${output}) --nocapture
