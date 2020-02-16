@@ -9,4 +9,5 @@ set -x
 for arch in $(get_arch_labels); do
   . ./builder/lib.${arch}.sh
   build_apps
+  build_e2e_tests
 done

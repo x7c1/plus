@@ -39,11 +39,11 @@ build_for_release() {
   # [What do the optimization levels `-Os` and `-Oz` do in rustc? - Stack Overflow]
   # https://stackoverflow.com/questions/45608392/what-do-the-optimization-levels-os-and-oz-do-in-rustc
   ./scripts/run_builder.sh \
-    cargo-build-all.sh --release --opt-level=z
+    build-all.sh --release --opt-level=z
 }
 
 list_artifacts() {
-  find ./ -type f -name "s3api" \
+  find ./ -type f -name "s3api" -o -regex ".*/release/wsb_pilot_tests.*[^d]" \
     | grep release
 }
 
