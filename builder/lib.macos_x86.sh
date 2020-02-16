@@ -14,3 +14,10 @@ build_e2e_tests_for_macos_x86() {
   fi
   build_e2e_tests ${TARGET_MACOS}
 }
+
+copy_release_apps_for_macos_x86() {
+  if ! is_osx_sdk_installed; then
+    return
+  fi
+  copy_release_apps ${TARGET_MACOS} "macos_x86"
+}

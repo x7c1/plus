@@ -9,6 +9,9 @@ set -u
 main() {
   build_for_release
 
+  println "copying apps..."
+  copy_apps
+
   println "before strip"
   show_file_size
 
@@ -42,13 +45,18 @@ build_for_release() {
     build-all.sh --release --opt-level=z
 }
 
+copy_apps() {
+  ./scripts/run_builder.sh \
+    copy-as-artifacts.sh --release --opt-level=z
+}
+
 list_artifacts() {
   find ./ -type f -name "s3api" -o -regex ".*/release/wsb_pilot_tests.*[^d]" \
     | grep release
 }
 
 show_file_size() {
-  list_artifacts | xargs ls -lh
+  ls -lh dist/**
 }
 
 strip_files() {

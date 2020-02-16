@@ -15,6 +15,14 @@ get_arch_labels() {
   echo ${labels[@]}
 }
 
+get_artifact_names() {
+  names=(
+    "wsb_pilot_tests"
+    "s3api"
+  )
+  echo ${names[@]}
+}
+
 get_opt_level() {
   while getopts ":-:" OPT; do
     case "${OPT}" in
@@ -61,6 +69,16 @@ build_e2e_tests() {
     --message-format=json \
     | jq -r "select(.profile.test == true) | .filenames[]" \
     | grep wsb_pilot_tests
+}
+
+copy_release_apps() {
+  target_dir=${PROJECT_ROOT}/target/$1/release
+  for name in $(get_artifact_names); do
+    app=${target_dir}/${name}
+    if [[ -f ${app} ]]; then
+      cp ${app} ${ARTIFACTS_DIR}/$2/${name}
+    fi
+  done
 }
 
 is_osx_sdk_installed() {
