@@ -73,3 +73,16 @@ build_for_macos() {
       --target="${TARGET_MACOS}"
   fi
 }
+
+build_e2e_tests() {
+  cargo test \
+    ${BUILD_MODE} \
+    --target="${TARGET_X86}" \
+    --package=wsb-pilot \
+    --no-run \
+    --message-format=json \
+    | jq -r "select(.profile.test == true) | .filenames[]" \
+    > ${PROJECT_ROOT}/draft.txt
+
+    cat ${PROJECT_ROOT}/draft.txt
+}
