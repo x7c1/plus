@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
-build_apps() {
+build_apps_for_linux_armv7() {
   cargo build \
     --verbose \
     ${BUILD_MODE} \
     --target="${TARGET_ARMV7}"
 }
 
-build_e2e_tests() {
+build_e2e_tests_for_linux_armv7() {
   cargo test \
     ${BUILD_MODE} \
     --target="${TARGET_ARMV7}" \

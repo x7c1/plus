@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
-build_apps() {
+build_apps_for_linux_x86() {
   cargo build \
     --verbose \
     ${BUILD_MODE} \
     --target="${TARGET_X86}"
 }
 
-build_e2e_tests() {
+build_e2e_tests_for_linux_x86() {
   cargo test \
     ${BUILD_MODE} \
     --target="${TARGET_X86}" \

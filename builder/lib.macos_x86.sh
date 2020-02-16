@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-build_apps() {
+build_apps_for_macos_x86() {
   if ! is_osx_sdk_installed; then
     return
   fi
@@ -10,7 +10,7 @@ build_apps() {
     --target="${TARGET_MACOS}"
 }
 
-build_e2e_tests() {
+build_e2e_tests_for_macos_x86() {
   if ! is_osx_sdk_installed; then
     return
   fi
