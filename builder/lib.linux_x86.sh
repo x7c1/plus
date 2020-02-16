@@ -12,6 +12,10 @@ copy_release_apps_for_linux_x86() {
   copy_release_apps ${TARGET_X86} "linux_x86"
 }
 
+strip_release_files_for_linux_x86() {
+  strip_release_files "linux_x86" strip
+}
+
 run_unit_tests_for_linux_x86() {
   cargo test \
     ${BUILD_MODE} \

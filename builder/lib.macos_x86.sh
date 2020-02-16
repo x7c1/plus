@@ -21,3 +21,10 @@ copy_release_apps_for_macos_x86() {
   fi
   copy_release_apps ${TARGET_MACOS} "macos_x86"
 }
+
+strip_release_files_for_macos_x86() {
+  if ! is_osx_sdk_installed; then
+    return
+  fi
+  strip_release_files "macos_x86" x86_64-apple-darwin19-strip
+}

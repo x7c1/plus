@@ -81,6 +81,14 @@ copy_release_apps() {
   done
 }
 
+strip_release_files() {
+  target_dir=${ARTIFACTS_DIR}/$1
+  for name in $(get_artifact_names); do
+    app=${target_dir}/${name}
+    $2 ${app}
+  done
+}
+
 is_osx_sdk_installed() {
   target=${OSXCROSS_ROOT}/target/bin/${OSX_SDK_CC}
   if [[ -f ${target} ]]; then

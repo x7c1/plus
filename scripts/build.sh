@@ -47,7 +47,7 @@ build_for_release() {
 
 copy_apps() {
   ./scripts/run_builder.sh \
-    copy-as-artifacts.sh --release --opt-level=z
+    copy-as-artifacts.sh
 }
 
 list_artifacts() {
@@ -60,7 +60,8 @@ show_file_size() {
 }
 
 strip_files() {
-  ./scripts/run_builder.sh strip-files.sh
+  ./scripts/run_builder.sh \
+    strip-files.sh
 }
 
 show_detail() {
