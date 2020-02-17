@@ -1,5 +1,5 @@
 use env_extractor::{FromSingle, InfallibleResult};
-use std::process::Command;
+use std::process::{Command, Output};
 use wsb_pilot::PilotResult;
 
 lazy_static! {
@@ -8,7 +8,7 @@ lazy_static! {
 }
 
 #[test]
-fn exits_with_0_if_succeeded() -> PilotResult<()> {
+fn return_0_if_succeeded() -> PilotResult<()> {
     let output = s3api()
         .arg("put-object")
         .args(&["--bucket", &TEST_BUCKET])
@@ -16,14 +16,11 @@ fn exits_with_0_if_succeeded() -> PilotResult<()> {
         .args(&["--body", "./README.md"])
         .output()?;
 
-    if !output.status.success() {
-        println!("{}", String::from_utf8(output.stdout).unwrap());
-        println!("stderr: {}", String::from_utf8(output.stderr).unwrap());
-    }
+    dump(&output);
     assert_eq!(
         Some(0),
         output.status.code(),
-        "exit with non-zero status if failed."
+        "return non-zero status if it failed."
     );
     Ok({})
 }
@@ -31,6 +28,14 @@ fn exits_with_0_if_succeeded() -> PilotResult<()> {
 #[test]
 fn s3api_works2() {
     assert_eq!(2 + 2, 4);
+}
+
+fn dump(output: &Output) {
+    if !output.status.success() {
+        let to_string = |vec| String::from_utf8_lossy(vec).to_string();
+        println!("{}", to_string(&output.stdout));
+        println!("stderr: {}", to_string(&output.stderr));
+    }
 }
 
 fn s3api() -> Command {
