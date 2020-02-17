@@ -1,10 +1,3 @@
 #!/usr/bin/env bash
 
 export WSB_TEST_BUCKET="your-bucket-for-tests"
-
-# Notes:
-#
-# Enable to print stdout if necessary
-# $(cat ./scripts/${output}) --nocapture
-
-$(cat ./scripts/${output})
