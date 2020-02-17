@@ -106,8 +106,6 @@ strip_release_files() {
 }
 
 show_artifacts() {
-  echo -e "\n>> about artifacts for $1"
-
   target_dir=${ARTIFACTS_DIR}/$1
   for name in $(get_artifact_names); do
     cd ${target_dir}

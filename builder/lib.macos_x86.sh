@@ -30,5 +30,9 @@ strip_release_files_for_macos_x86() {
 }
 
 show_artifacts_for_macos_x86() {
+  if ! is_osx_sdk_installed; then
+    echo "OSX SDK not installed."
+    return
+  fi
   show_artifacts "macos_x86"
 }
