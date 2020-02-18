@@ -24,7 +24,7 @@ set -x
 output=run_pilot_path.tmp
 
 ./scripts/run_builder.sh \
-  build-pilot.sh \
+  build-pilot.linux_x86.sh \
     --debug \
     --opt-level=0 \
     --pilot-output=${output}
