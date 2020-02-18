@@ -60,9 +60,6 @@ impl ClapTask<CommandResult> for Task {
     }
 
     fn run(&self, matches: &ArgMatches) -> CommandResult {
-        println!("running {}!", self.name());
-        println!("matches: {:#?}", matches);
-
         let client = S3Client::from_env(S3Bucket::from_string(
             matches.single("bucket").as_required()?,
         ))?;
