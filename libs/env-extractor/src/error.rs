@@ -1,11 +1,11 @@
-use std::convert;
 use std::env::VarError;
 use std::fmt::Debug;
+use std::str::FromStr;
 
 #[allow(unused)]
 pub type Result<T, E> = ::std::result::Result<T, Error<E>>;
 
-pub type InfallibleResult<T> = Result<T, convert::Infallible>;
+pub type FromStrResult<T> = Result<T, <String as FromStr>::Err>;
 
 #[derive(Debug)]
 pub enum Error<E>

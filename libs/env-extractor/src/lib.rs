@@ -1,6 +1,6 @@
 mod error;
 pub use error::Error;
-pub use error::InfallibleResult;
+pub use error::FromStrResult;
 pub use error::Result as ExtractorResult;
 
 mod single;

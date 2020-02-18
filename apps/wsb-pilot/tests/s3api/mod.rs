@@ -1,4 +1,4 @@
-use env_extractor::{FromSingle, InfallibleResult};
+use env_extractor::{FromSingle, FromStrResult};
 use std::process::{Command, Output};
 
 mod put_object;
@@ -13,15 +13,15 @@ fn s3api() -> Command {
     Command::new(format!("{}/s3api", *TEST_APPS_DIR))
 }
 
-fn load_test_bucket() -> InfallibleResult<String> {
+fn load_test_bucket() -> FromStrResult<String> {
     FromSingle::new("WSB_TEST_BUCKET").as_required()
 }
 
-fn load_apps_dir() -> InfallibleResult<String> {
+fn load_apps_dir() -> FromStrResult<String> {
     FromSingle::new("WSB_APPS_DIR").as_required()
 }
 
-fn load_workspace_dir() -> InfallibleResult<String> {
+fn load_workspace_dir() -> FromStrResult<String> {
     FromSingle::new("WSB_WORKSPACE_DIR").as_required()
 }
 
