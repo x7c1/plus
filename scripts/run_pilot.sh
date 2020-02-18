@@ -21,6 +21,11 @@ set -u
 # show executed commands.
 set -x
 
+./scripts/run_builder.sh \
+  test.linux_x86.sh \
+    --debug \
+    --opt-level=0
+
 output=run_pilot_path.tmp
 
 ./scripts/run_builder.sh \
