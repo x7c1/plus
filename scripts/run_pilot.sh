@@ -22,7 +22,7 @@ set -u
 set -x
 
 ./scripts/run_builder.sh \
-  test.linux_x86.sh \
+  build-and-test.linux_x86.sh \
     --debug \
     --opt-level=0
 
