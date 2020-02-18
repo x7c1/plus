@@ -1,13 +1,13 @@
 pub mod aws {
-    use env_extractor::FromSingle;
+    use env_extractor::SingleValue;
 
-    pub fn default_region() -> FromSingle {
-        FromSingle::new("AWS_DEFAULT_REGION")
+    pub fn default_region() -> SingleValue {
+        SingleValue::new("AWS_DEFAULT_REGION")
     }
-    pub fn access_key() -> FromSingle {
-        FromSingle::new("AWS_ACCESS_KEY_ID")
+    pub fn access_key() -> SingleValue {
+        SingleValue::new("AWS_ACCESS_KEY_ID")
     }
-    pub fn secret_key() -> FromSingle {
-        FromSingle::new("AWS_SECRET_ACCESS_KEY")
+    pub fn secret_key() -> SingleValue {
+        SingleValue::new("AWS_SECRET_ACCESS_KEY")
     }
 }

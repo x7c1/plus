@@ -10,15 +10,15 @@ use std::env::VarError;
 use std::fmt::Debug;
 use std::str::FromStr;
 
-pub struct FromSingle {
+pub struct SingleValue {
     pub key: String,
 }
 
 type ResultFromStr<Y, X> = ExtractorResult<Y, <X as FromStr>::Err>;
 
-impl FromSingle {
-    pub fn new<A: Into<String>>(key: A) -> FromSingle {
-        FromSingle { key: key.into() }
+impl SingleValue {
+    pub fn new<A: Into<String>>(key: A) -> SingleValue {
+        SingleValue { key: key.into() }
     }
 
     pub fn as_optional<A>(&self) -> Result<A, <Self as CanExtractOptional<A>>::Err>
@@ -56,7 +56,7 @@ impl FromSingle {
     }
 }
 
-impl<A: FromStr> CanExtractOptional<Option<A>> for FromSingle
+impl<A: FromStr> CanExtractOptional<Option<A>> for SingleValue
 where
     <A as FromStr>::Err: Debug,
 {
@@ -69,7 +69,7 @@ where
     }
 }
 
-impl<A: FromStr> CanExtractRequired<A> for FromSingle
+impl<A: FromStr> CanExtractRequired<A> for SingleValue
 where
     <A as FromStr>::Err: Debug,
 {
