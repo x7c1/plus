@@ -6,8 +6,22 @@ set -e
 # not allow undefined values.
 set -u
 
-# enable alias on bash
-shopt -s expand_aliases
+get_arch_labels() {
+  labels=(
+    "linux_x86"
+    "linux_armv7"
+    "macos_x86"
+  )
+  echo ${labels[@]}
+}
+
+get_artifact_names() {
+  names=(
+    "wsb_pilot_tests"
+    "s3api"
+  )
+  echo ${names[@]}
+}
 
 get_opt_level() {
   while getopts ":-:" OPT; do
@@ -39,6 +53,66 @@ get_build_mode() {
   echo "--release"
 }
 
+build_apps() {
+  cargo build \
+    --verbose \
+    ${BUILD_MODE} \
+    --target=$1
+}
+
+
+build_e2e_tests() {
+  build_pilot $1
+  build_pilot_and_output_json $1
+}
+
+build_pilot() {
+  cargo test \
+    ${BUILD_MODE} \
+    --target=$1 \
+    --package=wsb-pilot \
+    --no-run
+}
+
+# call build_pilot in advance to see compilation errors,
+# since this function hides them by the --message-format option.
+build_pilot_and_output_json() {
+  cargo test \
+    ${BUILD_MODE} \
+    --target=$1 \
+    --package=wsb-pilot \
+    --no-run \
+    --message-format=json \
+    | jq -r "select(.profile.test == true) | .filenames[]" \
+    | grep wsb_pilot_tests
+}
+
+copy_release_apps() {
+  target_dir=${PROJECT_ROOT}/target/$1/release
+  for name in $(get_artifact_names); do
+    app=${target_dir}/${name}
+    if [[ -f ${app} ]]; then
+      cp ${app} ${ARTIFACTS_DIR}/$2/${name}
+    fi
+  done
+}
+
+strip_release_files() {
+  target_dir=${ARTIFACTS_DIR}/$1
+  for name in $(get_artifact_names); do
+    app=${target_dir}/${name}
+    $2 ${app}
+  done
+}
+
+show_artifacts() {
+  target_dir=${ARTIFACTS_DIR}/$1
+  for name in $(get_artifact_names); do
+    cd ${target_dir}
+    file ${name} | sed $'s/,/,\\\n /g'
+  done
+}
+
 is_osx_sdk_installed() {
   target=${OSXCROSS_ROOT}/target/bin/${OSX_SDK_CC}
   if [[ -f ${target} ]]; then
@@ -48,28 +122,11 @@ is_osx_sdk_installed() {
   fi
 }
 
-build_for_x86_linux() {
-  cargo build \
-    --verbose \
-    ${BUILD_MODE} \
-    --target="${TARGET_X86}"
-}
+setup_artifacts_directory() {
+  [[ -d ${ARTIFACTS_DIR} ]] || mkdir ${ARTIFACTS_DIR}
 
-build_for_armv7_linux() {
-  CC=arm-linux-gnueabihf-gcc \
-  PKG_CONFIG_ALLOW_CROSS=1 \
-  cargo build \
-    --verbose \
-    ${BUILD_MODE} \
-    --target="${TARGET_ARMV7}"
-}
-
-build_for_macos() {
-  if is_osx_sdk_installed; then
-    CC=${OSX_SDK_CC} \
-    cargo build \
-      --verbose \
-      ${BUILD_MODE} \
-      --target="${TARGET_MACOS}"
-  fi
+  for arch in $(get_arch_labels); do
+    arch_dir="${ARTIFACTS_DIR}/${arch}"
+    [[ -d ${arch_dir} ]] || mkdir ${arch_dir}
+  done
 }

@@ -1,9 +1,10 @@
 mod error;
 pub use error::Error;
+pub use error::FromStrResult;
 pub use error::Result as ExtractorResult;
 
 mod single;
-pub use single::FromSingle;
+pub use single::SingleValue;
 
 use crate::Error::ParseError;
 use std::fmt::Debug;

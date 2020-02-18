@@ -17,6 +17,7 @@ RUN set -x && \
 RUN set -x && \
   apt-get update && \
   apt-get install -y \
+    jq \
     musl-tools \
     clang \
     cmake

@@ -4,6 +4,9 @@ builder/*.gen.sh
 builder/*.local.sh
 scripts/*.local.sh
 
+# artifacts
+dist
+
 # OSXCross
 builder/MacOSX*.sdk.tar.bz2
 

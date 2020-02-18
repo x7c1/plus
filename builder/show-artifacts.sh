@@ -4,6 +4,8 @@
 cd "$PROJECT_ROOT" || exit 1
 
 for arch in $(get_arch_labels); do
-  . ./builder/lib.${arch}.sh
-  strip_release_files_for_${arch}
+  . ${PROJECT_ROOT}/builder/lib.${arch}.sh
+
+  echo -e "\n>> about artifacts for $arch"
+  show_artifacts_for_${arch}
 done
