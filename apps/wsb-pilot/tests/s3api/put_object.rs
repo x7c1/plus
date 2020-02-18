@@ -39,7 +39,7 @@ fn return_zero_on_succeeded() -> PilotResult<()> {
         output.status.code(),
         "return non-zero if it failed."
     );
-    let output = Command::new("aws")
+    let output = aws()
         .arg("s3api")
         .arg("get-object")
         .args(&["--bucket", &TEST_BUCKET])
@@ -51,7 +51,35 @@ fn return_zero_on_succeeded() -> PilotResult<()> {
 
     let expected = fs::read_to_string(&sample.upload_src)?;
     let actual = fs::read_to_string(&sample.download_dst)?;
-    assert_eq!(expected, actual);
+    assert_eq!(expected, actual, "correctly uploaded.");
+    Ok({})
+}
+
+#[test]
+fn stdout_is_backward_compatible_with_aws_cli() -> PilotResult<()> {
+    to_workspace()?;
+
+    let sample = get_sample1();
+    let original = aws()
+        .arg("s3api")
+        .arg("put-object")
+        .args(&["--bucket", &TEST_BUCKET])
+        .args(&["--key", &sample.key])
+        .args(&["--body", &sample.upload_src.to_string_lossy()])
+        .args(&["--output", "text"])
+        .output()?;
+
+    dump(&original);
+
+    let wsb = s3api()
+        .arg("put-object")
+        .args(&["--bucket", &TEST_BUCKET])
+        .args(&["--key", &sample.key])
+        .args(&["--body", &sample.upload_src.to_string_lossy()])
+        .output()?;
+
+    dump(&wsb);
+
     Ok({})
 }
 
@@ -72,4 +100,8 @@ struct Sample {
     key: String,
     upload_src: PathBuf,
     download_dst: PathBuf,
+}
+
+struct PutObjectOutput {
+    raw: String,
 }
