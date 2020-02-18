@@ -22,14 +22,14 @@ set -u
 set -x
 
 ./scripts/run_builder.sh \
-  build-and-test.linux_x86.sh \
+  build-and-test.sh \
     --debug \
     --opt-level=0
 
 output=run_pilot_path.tmp
 
 ./scripts/run_builder.sh \
-  build-pilot.linux_x86.sh \
+  build-pilot.sh \
     --debug \
     --opt-level=0 \
     --pilot-output=${output}
