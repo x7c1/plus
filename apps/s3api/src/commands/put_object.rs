@@ -82,7 +82,8 @@ impl ClapTask<CommandResult> for Task {
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct Content {
+struct Content {
+    #[serde(rename = "ETag")]
     e_tag: String,
 }
 
