@@ -1,12 +1,12 @@
 use crate::S3ApiResult;
 
-pub type CommandResult = S3ApiResult<ResponseSummary>;
+pub type CommandResult = S3ApiResult<CommandOutput>;
 
 #[derive(Debug)]
-pub struct ResponseSummary {}
+pub struct CommandOutput {}
 
-impl ResponseSummary {
-    pub fn empty() -> ResponseSummary {
-        ResponseSummary {}
+impl CommandOutput {
+    pub fn empty() -> CommandOutput {
+        CommandOutput {}
     }
 }

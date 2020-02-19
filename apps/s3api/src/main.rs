@@ -11,20 +11,18 @@ pub use error::Result as S3ApiResult;
 
 mod summary;
 use clap_task::{ClapTasks, TaskRunner};
-pub use summary::{CommandResult, ResponseSummary};
+pub use summary::{CommandOutput, CommandResult};
 
 use clap::App;
 use std::process::exit;
 
 fn main() {
-    println!("Hello, world!");
-
     match run() {
-        Ok(response) => {
-            println!("succeeded: {:#?}", response);
+        Ok(output) => {
+            println!("{:?}", output);
         }
         Err(e) => {
-            println!("failed: {:#?}", e);
+            eprintln!("failed: {:#?}", e);
             exit(1);
         }
     }

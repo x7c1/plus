@@ -56,7 +56,7 @@ fn return_zero_on_succeeded() -> PilotResult<()> {
 }
 
 #[test]
-fn stdout_is_backward_compatible_with_aws_cli() -> PilotResult<()> {
+fn output_etag_is_same_as_one_by_aws_cli() -> PilotResult<()> {
     to_workspace()?;
 
     let sample = get_sample1();
@@ -66,7 +66,7 @@ fn stdout_is_backward_compatible_with_aws_cli() -> PilotResult<()> {
         .args(&["--bucket", &TEST_BUCKET])
         .args(&["--key", &sample.key])
         .args(&["--body", &sample.upload_src.to_string_lossy()])
-        .args(&["--output", "text"])
+        //        .args(&["--output", "text"])
         .output()?;
 
     dump(&original);

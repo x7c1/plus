@@ -1,4 +1,4 @@
-use crate::{CommandResult, ResponseSummary};
+use crate::{CommandOutput, CommandResult};
 use clap::{App, Arg, ArgMatches, SubCommand};
 use clap_extractor::Matcher;
 use clap_task::ClapTask;
@@ -71,8 +71,8 @@ impl ClapTask<CommandResult> for Task {
         };
         let future = client.put_object(request);
         let response = executor::block_on(future);
-        println!("response: {:#?}", response);
+        eprintln!("response: {:#?}", response);
 
-        Ok(ResponseSummary::empty())
+        Ok(CommandOutput::empty())
     }
 }
