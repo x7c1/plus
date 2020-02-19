@@ -25,21 +25,21 @@ fn return_zero_on_succeeded() -> PilotResult<()> {
     to_workspace()?;
 
     let sample = get_sample1();
-    let output = s3api()
+    let wsb_output = s3api()
         .arg("put-object")
         .args(&["--bucket", &TEST_BUCKET])
         .args(&["--key", &sample.object_key])
         .args(&["--body", &sample.upload_src.to_string_lossy()])
         .output()?;
 
-    dump(&output);
+    dump(&wsb_output);
 
     assert_eq!(
         Some(0),
-        output.status.code(),
+        wsb_output.status.code(),
         "return non-zero if it failed."
     );
-    let output = aws()
+    let aws_output = aws()
         .arg("s3api")
         .arg("get-object")
         .args(&["--bucket", &TEST_BUCKET])
@@ -47,16 +47,16 @@ fn return_zero_on_succeeded() -> PilotResult<()> {
         .arg(&sample.download_dst)
         .output()?;
 
-    dump_if_failed(&output);
+    dump_if_failed(&aws_output);
 
     let expected = fs::read_to_string(&sample.upload_src)?;
     let actual = fs::read_to_string(&sample.download_dst)?;
-    assert_eq!(expected, actual, "correctly uploaded.");
+    assert_eq!(actual, expected, "correctly uploaded.");
     Ok({})
 }
 
 #[test]
-fn output_etag_is_same_as_one_by_aws_cli() -> PilotResult<()> {
+fn output_e_tag_is_correct() -> PilotResult<()> {
     to_workspace()?;
 
     let sample = get_sample1();
