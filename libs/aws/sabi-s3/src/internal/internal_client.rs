@@ -13,13 +13,13 @@ impl InternalClient {
         InternalClient {}
     }
 
-    pub fn request_by<A>(&self, provider: RequestProvider<A>) -> S3Result<String>
+    pub fn request_by<A>(&self, provider: RequestProvider<A>) -> S3Result<Response>
     where
         A: ResourceLoader,
         A: HasObjectKey,
     {
         let request = provider.provide()?;
-        println!("request > {:#?}", request);
+        eprintln!("request > {:#?}", request);
 
         let builder = Client::builder()
             .timeout(Duration::from_secs(5))
@@ -32,8 +32,8 @@ impl InternalClient {
             _ => builder,
         };
         let response: Response = builder.send()?;
+        eprintln!("response > {:#?}", response);
 
-        println!("response > {:#?}", response);
-        Ok("dummy result".to_string())
+        Ok(response)
     }
 }
