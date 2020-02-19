@@ -1,3 +1,6 @@
+mod error;
+pub use error::Error;
+
 mod file;
 pub use file::FileRequest;
 
