@@ -6,7 +6,7 @@ use wsb_pilot::PilotResult;
 
 fn get_sample1() -> Sample {
     Sample {
-        key: "s3api/put-object/foo/bar/sample.txt".to_string(),
+        object_key: "s3api/put-object/foo/bar/sample.txt".to_string(),
         upload_src: "./sample.txt".into(),
         download_dst: "./downloaded.tmp".into(),
     }
@@ -27,7 +27,7 @@ fn return_zero_on_succeeded() -> PilotResult<()> {
     let output = s3api()
         .arg("put-object")
         .args(&["--bucket", &TEST_BUCKET])
-        .args(&["--key", &sample.key])
+        .args(&["--key", &sample.object_key])
         .args(&["--body", &sample.upload_src.to_string_lossy()])
         .output()?;
 
@@ -42,7 +42,7 @@ fn return_zero_on_succeeded() -> PilotResult<()> {
         .arg("s3api")
         .arg("get-object")
         .args(&["--bucket", &TEST_BUCKET])
-        .args(&["--key", &sample.key])
+        .args(&["--key", &sample.object_key])
         .arg(&sample.download_dst)
         .output()?;
 
@@ -63,9 +63,8 @@ fn output_etag_is_same_as_one_by_aws_cli() -> PilotResult<()> {
         .arg("s3api")
         .arg("put-object")
         .args(&["--bucket", &TEST_BUCKET])
-        .args(&["--key", &sample.key])
+        .args(&["--key", &sample.object_key])
         .args(&["--body", &sample.upload_src.to_string_lossy()])
-        //        .args(&["--output", "text"])
         .output()?;
 
     dump(&original);
@@ -73,7 +72,7 @@ fn output_etag_is_same_as_one_by_aws_cli() -> PilotResult<()> {
     let wsb = s3api()
         .arg("put-object")
         .args(&["--bucket", &TEST_BUCKET])
-        .args(&["--key", &sample.key])
+        .args(&["--key", &sample.object_key])
         .args(&["--body", &sample.upload_src.to_string_lossy()])
         .output()?;
 
@@ -96,7 +95,7 @@ fn return_non_zero_on_failed() -> PilotResult<()> {
 }
 
 struct Sample {
-    key: String,
+    object_key: String,
     upload_src: PathBuf,
     download_dst: PathBuf,
 }
