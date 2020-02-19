@@ -1,4 +1,5 @@
 use crate::s3api::*;
+use serde_json::Value;
 use std::env::set_current_dir;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -59,7 +60,7 @@ fn output_etag_is_same_as_one_by_aws_cli() -> PilotResult<()> {
     to_workspace()?;
 
     let sample = get_sample1();
-    let original = aws()
+    let aws_output = aws()
         .arg("s3api")
         .arg("put-object")
         .args(&["--bucket", &TEST_BUCKET])
@@ -67,16 +68,20 @@ fn output_etag_is_same_as_one_by_aws_cli() -> PilotResult<()> {
         .args(&["--body", &sample.upload_src.to_string_lossy()])
         .output()?;
 
-    dump(&original);
+    dump(&aws_output);
 
-    let wsb = s3api()
+    let wsb_output = s3api()
         .arg("put-object")
         .args(&["--bucket", &TEST_BUCKET])
         .args(&["--key", &sample.object_key])
         .args(&["--body", &sample.upload_src.to_string_lossy()])
         .output()?;
 
-    dump(&wsb);
+    dump(&wsb_output);
+
+    let aws_json: Value = serde_json::from_slice(&aws_output.stdout)?;
+    let wsb_json: Value = serde_json::from_slice(&wsb_output.stdout)?;
+    assert_eq!(wsb_json["ETag"], aws_json["ETag"]);
 
     Ok({})
 }
