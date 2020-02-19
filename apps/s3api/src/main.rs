@@ -9,17 +9,17 @@ mod commands;
 mod error;
 pub use error::Result as S3ApiResult;
 
-mod summary;
-use clap_task::{ClapTasks, TaskRunner};
-pub use summary::{CommandOutput, CommandResult};
+mod output;
+pub use output::{CommandOutput, CommandResult};
 
 use clap::App;
+use clap_task::{ClapTasks, TaskRunner};
 use std::process::exit;
 
 fn main() {
     match run() {
         Ok(output) => {
-            println!("{:?}", output);
+            println!("{}", output.as_str());
         }
         Err(e) => {
             eprintln!("failed: {:#?}", e);
