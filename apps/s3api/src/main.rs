@@ -15,6 +15,8 @@ pub use error::Result as S3ApiResult;
 mod output;
 pub use output::{CommandOutput, CommandResult};
 
+mod serialize;
+
 use clap::App;
 use clap_task::{ClapTasks, TaskRunner};
 use std::process::exit;

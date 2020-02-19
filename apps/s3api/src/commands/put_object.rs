@@ -1,4 +1,5 @@
-use crate::{CommandOutput, CommandResult, S3ApiResult};
+use crate::serialize::AwsJsonSerialize;
+use crate::{CommandOutput, CommandResult};
 use clap::{App, Arg, ArgMatches, SubCommand};
 use clap_extractor::Matcher;
 use clap_task::ClapTask;
@@ -6,7 +7,6 @@ use futures::executor;
 use sabi_s3::core::{S3Bucket, S3Client};
 use sabi_s3::operations::put_object;
 use sabi_s3::operations::put_object::FileRequest;
-use serde::ser::Serialize;
 
 // see also:
 // https://docs.aws.amazon.com/cli/latest/reference/s3api/put-object.html
@@ -78,7 +78,7 @@ impl ClapTask<CommandResult> for Task {
         let content = Content {
             e_tag: response.e_tag.as_str().to_string(),
         };
-        Ok(CommandOutput::new(content.to_json()?))
+        Ok(CommandOutput::new(content.to_aws_json()?))
     }
 }
 
@@ -86,17 +86,4 @@ impl ClapTask<CommandResult> for Task {
 struct Content {
     #[serde(rename = "ETag")]
     e_tag: String,
-}
-
-impl Content {
-    fn to_json(&self) -> S3ApiResult<String> {
-        let buf = Vec::new();
-        let formatter = serde_json::ser::PrettyFormatter::with_indent(b"    ");
-        let mut serializer = serde_json::Serializer::with_formatter(buf, formatter);
-        self.serialize(&mut serializer)?;
-        let json = String::from_utf8(serializer.into_inner()).unwrap();
-
-        //        let json = serde_json::to_string_pretty(self)?;
-        Ok(json)
-    }
 }
