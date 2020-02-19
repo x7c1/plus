@@ -2,7 +2,6 @@ use crate::s3api::*;
 use std::env::set_current_dir;
 use std::fs;
 use std::path::{Path, PathBuf};
-use std::process::Command;
 use wsb_pilot::PilotResult;
 
 fn get_sample1() -> Sample {
@@ -100,8 +99,4 @@ struct Sample {
     key: String,
     upload_src: PathBuf,
     download_dst: PathBuf,
-}
-
-struct PutObjectOutput {
-    raw: String,
 }

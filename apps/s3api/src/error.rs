@@ -17,6 +17,9 @@ pub enum Error {
 
     #[fail(display = "sabi_s3::Error > {}", 0)]
     SabiS3Error(sabi_s3::Error),
+
+    #[fail(display = "serde_json::Error > {}", 0)]
+    SerdeJsonError(serde_json::Error),
 }
 
 impl From<clap_task::Error> for Error {
@@ -40,5 +43,11 @@ impl From<sabi_core::Error> for Error {
 impl From<sabi_s3::Error> for Error {
     fn from(e: sabi_s3::Error) -> Self {
         Error::SabiS3Error(e)
+    }
+}
+
+impl From<serde_json::Error> for Error {
+    fn from(e: serde_json::Error) -> Self {
+        Error::SerdeJsonError(e)
     }
 }

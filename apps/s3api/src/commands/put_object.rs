@@ -1,9 +1,10 @@
-use crate::{CommandOutput, CommandResult};
+use crate::{CommandOutput, CommandResult, S3ApiResult};
 use clap::{App, Arg, ArgMatches, SubCommand};
 use clap_extractor::Matcher;
 use clap_task::ClapTask;
 use futures::executor;
 use sabi_s3::core::{S3Bucket, S3Client};
+use sabi_s3::operations::put_object;
 use sabi_s3::operations::put_object::FileRequest;
 
 // see also:
@@ -69,10 +70,25 @@ impl ClapTask<CommandResult> for Task {
             content_type: matches.single("content_type").as_optional()?,
             region_code: matches.single("region").as_optional()?,
         };
-        let future = client.put_object(request);
-        let response = executor::block_on(future);
-        eprintln!("response: {:#?}", response);
+        let response: put_object::Response = {
+            let future = client.put_object(request);
+            executor::block_on(future)?
+        };
+        let content = Content {
+            e_tag: response.e_tag.as_str().to_string(),
+        };
+        Ok(CommandOutput::new(content.to_json()?))
+    }
+}
 
-        Ok(CommandOutput::empty())
+#[derive(Serialize, Deserialize)]
+pub struct Content {
+    e_tag: String,
+}
+
+impl Content {
+    fn to_json(&self) -> S3ApiResult<String> {
+        let json = serde_json::to_string_pretty(self)?;
+        Ok(json)
     }
 }

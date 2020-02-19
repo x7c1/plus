@@ -4,6 +4,9 @@ extern crate clap;
 #[macro_use]
 extern crate failure;
 
+#[macro_use]
+extern crate serde_derive;
+
 mod commands;
 
 mod error;
