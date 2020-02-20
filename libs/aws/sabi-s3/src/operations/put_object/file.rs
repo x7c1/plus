@@ -50,10 +50,7 @@ impl ResourceLoader for FileRequest {
             body: Some(Body::from(file)),
             hash,
             region: self.region_code,
-            content_type: self
-                .content_type
-                .unwrap_or_else(|| ContentType::application_octet_stream()),
-
+            content_type: self.content_type,
             requested_at: now(),
         };
         Ok(resource)

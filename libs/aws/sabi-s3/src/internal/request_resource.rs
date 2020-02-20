@@ -9,7 +9,7 @@ pub struct RequestResource {
     pub body: Option<Body>,
     pub hash: HashedPayload,
     pub region: Option<RegionCode>,
-    pub content_type: ContentType,
+    pub content_type: Option<ContentType>,
     pub requested_at: DateTime<Utc>,
 }
 

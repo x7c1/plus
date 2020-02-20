@@ -62,7 +62,7 @@ where
         let factory = AuthorizationFactory::new(self.credentials, &parts);
         let headers: HeaderMap = HeaderMap::new()
             .host(&parts.url)?
-            .push(resource.content_type)?
+            .push_if_exists(resource.content_type)?
             .push(header::AmzContentSha256::new(parts.hashed_payload.as_str()))?
             .push(header::AmzDate::new(factory.amz_date().as_str()))?
             .authorize_with(factory)?
