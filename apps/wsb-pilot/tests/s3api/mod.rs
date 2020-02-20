@@ -1,6 +1,7 @@
 use env_extractor::{FromStrResult, SingleValue};
 use std::process::{Command, Output};
 
+mod get_object;
 mod put_object;
 
 lazy_static! {

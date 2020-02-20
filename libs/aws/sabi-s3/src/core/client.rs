@@ -26,4 +26,11 @@ impl S3Client {
     {
         operations::put_object::Requester::put_object(self, request)
     }
+
+    pub async fn get_object<A>(&self, request: A) -> S3Result<operations::get_object::Response>
+    where
+        A: operations::get_object::Request,
+    {
+        operations::get_object::Requester::get_object(self, request)
+    }
 }
