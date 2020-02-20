@@ -42,15 +42,15 @@ impl HasObjectKey for FileRequest {
 }
 
 impl ResourceLoader for FileRequest {
-    fn load(self) -> S3Result<RequestResource> {
+    fn load(&self) -> S3Result<RequestResource> {
         let mut file = self.open_file()?;
         let hash = file.reset_cursor_after(|file| HashedPayload::try_from(file))?;
 
         let resource = RequestResource {
             body: Some(Body::from(file)),
             hash,
-            region: self.region_code,
-            content_type: self.content_type,
+            region: self.region_code.as_ref(),
+            content_type: self.content_type.as_ref(),
             requested_at: now(),
         };
         Ok(resource)

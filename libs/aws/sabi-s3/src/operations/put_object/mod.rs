@@ -36,7 +36,7 @@ impl Requester for S3Client {
             Method::PUT,
             &self.credentials,
             &self.bucket,
-            request,
+            &request,
             &self.default_region,
         )?;
         let raw = client.request_by(provider)?;

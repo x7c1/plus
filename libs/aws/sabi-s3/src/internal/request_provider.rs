@@ -18,7 +18,7 @@ where
     credentials: &'a Credentials,
     url: Url,
     method: Method,
-    resource_loader: A,
+    resource_loader: &'a A,
     default_region: &'a Option<RegionCode>,
 }
 
@@ -31,12 +31,12 @@ where
         method: Method,
         credentials: &'a Credentials,
         bucket: &'a S3Bucket,
-        request: A,
+        request: &'a A,
         default_region: &'a Option<RegionCode>,
     ) -> S3Result<RequestProvider<'a, A>> {
         let provider = RequestProvider {
             credentials,
-            url: (bucket, &request).to_endpoint()?,
+            url: (bucket, request).to_endpoint()?,
             method,
             resource_loader: request,
             default_region,
@@ -48,7 +48,6 @@ where
         let resource = self.resource_loader.load()?;
         let region_code = resource
             .region
-            .as_ref()
             .or(self.default_region.as_ref())
             .ok_or_else(|| RegionNotSpecified)?;
 

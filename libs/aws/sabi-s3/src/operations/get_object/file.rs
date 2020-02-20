@@ -27,7 +27,7 @@ impl HasObjectKey for FileRequest {
 }
 
 impl ResourceLoader for FileRequest {
-    fn load(self) -> S3Result<RequestResource> {
+    fn load(&self) -> S3Result<RequestResource> {
         let resource = RequestResource {
             body: None,
             hash: HashedPayload::empty(),
