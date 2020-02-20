@@ -3,7 +3,7 @@ use std::env::set_current_dir;
 use std::path::{Path, PathBuf};
 use std::process::exit;
 use std::sync::Once;
-use wsb_pilot::PilotResult;
+use wsb_pilot::{MutableSelf, PilotResult};
 
 fn go_to_workspace() -> PilotResult<()> {
     let workspace = Path::new(&*TEST_WORKSPACE_DIR).join("s3api/get-object");
@@ -141,18 +141,6 @@ fn sample2() {
 fn sample3() {
     setup();
 }
-
-trait MutableSelf: Sized {
-    fn mutate<F>(mut self, f: F) -> Self
-    where
-        F: Fn(&mut Self),
-    {
-        f(&mut self);
-        self
-    }
-}
-
-impl<A: Sized> MutableSelf for A {}
 
 struct Sample {
     object_key: String,
