@@ -1,4 +1,3 @@
-use crate::serialize::AwsJsonSerialize;
 use crate::{CommandOutput, CommandResult};
 use clap::{App, Arg, ArgMatches, SubCommand};
 use clap_extractor::Matcher;
@@ -78,7 +77,7 @@ impl ClapTask<CommandResult> for Task {
         let content = Content {
             e_tag: response.e_tag.as_str().to_string(),
         };
-        Ok(CommandOutput::new(content.to_aws_json()?))
+        Ok(CommandOutput::json(content)?)
     }
 }
 

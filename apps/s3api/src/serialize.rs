@@ -6,13 +6,14 @@ pub trait AwsJsonSerialize: Serialize {
     /// according to the behavior of AWS CLI.
     fn to_aws_json(&self) -> S3ApiResult<String> {
         let mut serializer = {
-            let buf = Vec::new();
+            let inner = Vec::<u8>::new();
             let formatter = serde_json::ser::PrettyFormatter::with_indent(b"    ");
-            serde_json::Serializer::with_formatter(buf, formatter)
+            serde_json::Serializer::with_formatter(inner, formatter)
         };
-        self.serialize(&mut serializer)?;
-
-        let json = String::from_utf8(serializer.into_inner()).unwrap();
+        let json = {
+            self.serialize(&mut serializer)?;
+            String::from_utf8(serializer.into_inner())?
+        };
         Ok(json)
     }
 }
