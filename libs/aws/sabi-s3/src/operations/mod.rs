@@ -1,4 +1,4 @@
-#[macro_use]
+pub mod get_object;
 pub mod put_object;
 
 use std::fmt;
