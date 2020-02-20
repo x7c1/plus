@@ -8,8 +8,12 @@ clap-extractor = { path = "../../libs/clap-extractor" }
 clap-task = { path = "../../libs/clap-task" }
 sabi-s3 = { path = "../../libs/aws/sabi-s3" }
 sabi-core = { path = "../../libs/sabi-core" }
+
 clap = "2.33"
 failure = "0.1"
 futures = "0.3"
+serde = "1.0"
+serde_derive = "1.0"
+serde_json = "1.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

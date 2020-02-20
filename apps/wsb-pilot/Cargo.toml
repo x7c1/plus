@@ -11,3 +11,4 @@ lazy_static = "1.4"
 
 [dependencies]
 failure = "0.1"
+serde_json = "1.0"

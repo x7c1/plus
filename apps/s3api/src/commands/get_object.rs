@@ -1,4 +1,4 @@
-use crate::{CommandResult, ResponseSummary};
+use crate::{CommandOutput, CommandResult};
 use clap::{App, Arg, ArgMatches, SubCommand};
 use clap_task::ClapTask;
 
@@ -44,6 +44,6 @@ impl ClapTask<CommandResult> for Task {
     fn run(&self, matches: &ArgMatches) -> CommandResult {
         println!("running {}!", self.name());
         println!("matches: {:#?}", matches);
-        Ok(ResponseSummary::empty())
+        Ok(CommandOutput::empty())
     }
 }

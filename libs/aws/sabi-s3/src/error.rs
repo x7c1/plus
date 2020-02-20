@@ -19,6 +19,10 @@ pub enum Error {
         path: String,
         description: String,
     },
+
+    #[fail(display = "PutObjectError > {}", 0)]
+    PutObjectError(operations::put_object::Error),
+
     #[fail(display = "region not specified")]
     RegionNotSpecified,
 
@@ -38,6 +42,12 @@ pub enum Error {
 impl<A: Debug> From<env_extractor::Error<A>> for Error {
     fn from(e: env_extractor::Error<A>) -> Self {
         Error::EnvExtractorError(format!("{:?}", e))
+    }
+}
+
+impl From<operations::put_object::Error> for Error {
+    fn from(e: operations::put_object::Error) -> Self {
+        Error::PutObjectError(e)
     }
 }
 

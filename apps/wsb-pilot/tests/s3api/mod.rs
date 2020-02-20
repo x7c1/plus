@@ -9,6 +9,10 @@ lazy_static! {
     static ref TEST_WORKSPACE_DIR: String = load_workspace_dir().unwrap();
 }
 
+fn aws() -> Command {
+    Command::new("aws")
+}
+
 fn s3api() -> Command {
     Command::new(format!("{}/s3api", *TEST_APPS_DIR))
 }

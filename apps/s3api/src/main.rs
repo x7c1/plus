@@ -4,27 +4,30 @@ extern crate clap;
 #[macro_use]
 extern crate failure;
 
+#[macro_use]
+extern crate serde_derive;
+
 mod commands;
 
 mod error;
 pub use error::Result as S3ApiResult;
 
-mod summary;
-use clap_task::{ClapTasks, TaskRunner};
-pub use summary::{CommandResult, ResponseSummary};
+mod output;
+pub use output::{CommandOutput, CommandResult};
+
+mod serialize;
 
 use clap::App;
+use clap_task::{ClapTasks, TaskRunner};
 use std::process::exit;
 
 fn main() {
-    println!("Hello, world!");
-
     match run() {
-        Ok(response) => {
-            println!("succeeded: {:#?}", response);
+        Ok(output) => {
+            println!("{}", output.as_str());
         }
         Err(e) => {
-            println!("failed: {:#?}", e);
+            eprintln!("failed: {:#?}", e);
             exit(1);
         }
     }
