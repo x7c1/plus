@@ -1,13 +1,10 @@
-mod error;
-pub use error::Error;
-
 mod file;
 pub use file::FileRequest;
 
 mod rich_file;
 pub use rich_file::RichFile;
 
-use crate::core::{ETag, S3Client, S3Result};
+use crate::core::{ETag, S3Client, S3HeaderMap, S3Result};
 use crate::internal::{InternalClient, RequestProvider, ResourceLoader};
 use crate::verbs::HasObjectKey;
 use reqwest::header::HeaderMap;

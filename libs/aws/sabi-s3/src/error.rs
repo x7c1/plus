@@ -1,5 +1,6 @@
 extern crate failure;
 
+use crate::core::headers;
 use crate::operations;
 use std::fmt::Debug;
 
@@ -20,14 +21,14 @@ pub enum Error {
         description: String,
     },
 
-    #[fail(display = "PutObjectError > {}", 0)]
-    PutObjectError(operations::put_object::Error),
-
     #[fail(display = "region not specified")]
     RegionNotSpecified,
 
     #[fail(display = "reqwest::Error > {}", 0)]
     Reqwest(reqwest::Error),
+
+    #[fail(display = "headers::Error > {}", 0)]
+    S3HeaderError(headers::Error),
 
     #[fail(display = "sabi_core::Error > {}", 0)]
     SabiCoreError(sabi_core::Error),
@@ -45,15 +46,15 @@ impl<A: Debug> From<env_extractor::Error<A>> for Error {
     }
 }
 
-impl From<operations::put_object::Error> for Error {
-    fn from(e: operations::put_object::Error) -> Self {
-        Error::PutObjectError(e)
-    }
-}
-
 impl From<reqwest::Error> for Error {
     fn from(e: reqwest::Error) -> Self {
         Error::Reqwest(e)
+    }
+}
+
+impl From<headers::Error> for Error {
+    fn from(e: headers::Error) -> Self {
+        Error::S3HeaderError(e)
     }
 }
 
