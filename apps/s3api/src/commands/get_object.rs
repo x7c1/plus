@@ -1,6 +1,10 @@
 use crate::{CommandOutput, CommandResult};
 use clap::{App, Arg, ArgMatches, SubCommand};
+use clap_extractor::Matcher;
 use clap_task::ClapTask;
+use futures::executor;
+use sabi_s3::core::{S3Bucket, S3Client};
+use sabi_s3::operations::get_object;
 
 // see also:
 // https://docs.aws.amazon.com/cli/latest/reference/s3api/get-object.html
@@ -42,8 +46,29 @@ impl ClapTask<CommandResult> for Task {
     }
 
     fn run(&self, matches: &ArgMatches) -> CommandResult {
-        println!("running {}!", self.name());
-        println!("matches: {:#?}", matches);
-        Ok(CommandOutput::empty())
+        eprintln!("running {}!", self.name());
+        eprintln!("matches: {:#?}", matches);
+
+        let client = S3Client::from_env(S3Bucket::from_string(
+            matches.single("bucket").as_required()?,
+        ))?;
+        let request = get_object::FileRequest {
+            object_key: matches.single("key").as_required()?,
+            file_path: matches.single("outfile").as_required()?,
+        };
+        let response: get_object::Response = {
+            let future = client.get_object(request);
+            executor::block_on(future)?
+        };
+        let content = Content {
+            e_tag: response.e_tag.as_str().to_string(),
+        };
+        Ok(CommandOutput::json(content)?)
     }
+}
+
+#[derive(Serialize, Deserialize)]
+struct Content {
+    #[serde(rename = "ETag")]
+    e_tag: String,
 }
