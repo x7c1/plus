@@ -12,12 +12,24 @@ use sabi_core::index::RegionCode;
 use std::convert::TryFrom;
 use std::error::Error;
 use std::fs::File;
+use std::io;
 use std::io::ErrorKind::NotFound;
+use std::io::Write;
 
 #[derive(Debug)]
 pub struct FileRequest {
-    pub file_path: String,
-    pub object_key: String,
+    object_key: String,
+    // todo: use BufWriter
+    outfile: File,
+}
+
+impl FileRequest {
+    pub fn new(object_key: String, file_path: String) -> S3Result<Self> {
+        Ok(FileRequest {
+            object_key,
+            outfile: File::create(file_path)?,
+        })
+    }
 }
 
 impl HasObjectKey for FileRequest {
@@ -36,6 +48,16 @@ impl ResourceLoader for FileRequest {
             requested_at: now(),
         };
         Ok(resource)
+    }
+}
+
+impl Write for FileRequest {
+    fn write(&mut self, buf: &[u8]) -> std::io::Result<usize> {
+        self.outfile.write(buf)
+    }
+
+    fn flush(&mut self) -> std::io::Result<()> {
+        self.outfile.flush()
     }
 }
 

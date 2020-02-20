@@ -44,6 +44,7 @@ fn get_sample_for_wsb() -> Sample {
     get_sample().mutate(|mut x| x.outfile_dst = "./sample1.wsb.tmp".into())
 }
 
+// workaround to emulate singleton initializer
 lazy_static! {
     static ref setup_result: () = init().unwrap();
 }

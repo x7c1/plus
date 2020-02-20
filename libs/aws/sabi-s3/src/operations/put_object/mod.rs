@@ -37,14 +37,9 @@ impl Requester for S3Client {
             &self.default_region,
         )?;
         let raw = client.request_by(provider)?;
-        let headers: &HeaderMap = raw.headers();
-        let e_tag = headers
-            .get("ETag")
-            .ok_or_else(|| Error::ETagHeaderNotFound)?
-            .to_str()
-            .or_else(|e| Err(Error::InvalidETagHeader(e)))
-            .map(|value| ETag::new(value))?;
 
+        let headers: &HeaderMap = raw.headers();
+        let e_tag = headers.get_e_tag()?;
         Ok(Response { e_tag })
     }
 }

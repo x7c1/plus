@@ -52,10 +52,10 @@ impl ClapTask<CommandResult> for Task {
         let client = S3Client::from_env(S3Bucket::from_string(
             matches.single("bucket").as_required()?,
         ))?;
-        let request = get_object::FileRequest {
-            object_key: matches.single("key").as_required()?,
-            file_path: matches.single("outfile").as_required()?,
-        };
+        let request = get_object::FileRequest::new(
+            matches.single("key").as_required()?,
+            matches.single("outfile").as_required()?,
+        )?;
         let response: get_object::Response = {
             let future = client.get_object(request);
             executor::block_on(future)?
