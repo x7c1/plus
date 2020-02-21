@@ -6,7 +6,7 @@ use crate::internal::{InternalClient, RequestProvider, ResourceLoader};
 use crate::verbs::HasObjectKey;
 use reqwest::header::HeaderMap;
 use reqwest::Method;
-use sabi_core::io::RichReader;
+use sabi_core::io::Copier;
 use std::io::Write;
 
 /// [GetObject - Amazon Simple Storage Service](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObject.html)
@@ -46,7 +46,7 @@ impl Requester for S3Client {
         let headers = Headers {
             e_tag: header_map.get_e_tag()?,
         };
-        response.write_gradually_to(&mut request)?;
+        response.copy_to(&mut request)?;
         Ok(Response { headers })
     }
 }

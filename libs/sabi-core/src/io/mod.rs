@@ -1,2 +1,2 @@
-mod reader;
-pub use reader::RichReader;
+mod copier;
+pub use copier::Copier;
