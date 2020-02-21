@@ -5,22 +5,19 @@ use crate::verbs::HasObjectKey;
 use sabi_core::auth::v4::canonical::HashedPayload;
 use sabi_core::auth::v4::chrono::now;
 use std::fs::File;
-use std::io;
-use std::io::ErrorKind::NotFound;
-use std::io::Write;
+use std::io::{BufWriter, Write};
 
 #[derive(Debug)]
 pub struct FileRequest {
     object_key: String,
-    // todo: use BufWriter
-    outfile: File,
+    outfile: BufWriter<File>,
 }
 
 impl FileRequest {
     pub fn new(object_key: String, file_path: String) -> S3Result<Self> {
         Ok(FileRequest {
             object_key,
-            outfile: File::create(file_path)?,
+            outfile: BufWriter::new(File::create(file_path)?),
         })
     }
 }
