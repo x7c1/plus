@@ -9,6 +9,7 @@ edition = "2018"
 env-extractor = { path = "../../env-extractor" }
 sabi-core = { path = "../../sabi-core" }
 failure = "0.1"
+tempfile = "3.1"
 
 # sabi-core dependencies
 chrono = "0.4"
