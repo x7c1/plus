@@ -28,7 +28,7 @@ impl RichHeaderMap for HeaderMap {
         Ok(self)
     }
 
-    fn push_if_exists<A>(mut self, header: Option<A>) -> SabiResult<Self>
+    fn push_if_exists<A>(self, header: Option<A>) -> SabiResult<Self>
     where
         A: ToHeaderFragment,
     {

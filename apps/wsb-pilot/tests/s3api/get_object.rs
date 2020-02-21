@@ -1,8 +1,7 @@
 use crate::s3api::{aws, dump, s3api, TEST_BUCKET, TEST_WORKSPACE_DIR};
+use serde_json::Value;
 use std::env::set_current_dir;
 use std::path::{Path, PathBuf};
-use std::process::exit;
-use std::sync::Once;
 use wsb_pilot::{MutableSelf, PilotResult};
 
 fn go_to_workspace() -> PilotResult<()> {
@@ -46,25 +45,11 @@ fn get_sample_for_wsb() -> Sample {
 
 // workaround to emulate singleton initializer
 lazy_static! {
-    static ref setup_result: () = init().unwrap();
+    static ref SETUP_RESULT: () = init().unwrap();
 }
 
 fn setup() -> () {
-    let _ = &*setup_result;
-
-    /*
-    let mut result: PilotResult<()> = Ok({});
-
-    SETUP.call_once(move || {
-        result = init();
-        //        if let Err(e) = init() {
-        //            eprintln!("setup failed: {:?}", e);
-        //            exit(1)
-        //        }
-    });
-    result;
-    Ok({})
-    */
+    let _ = &*SETUP_RESULT;
 }
 
 fn init() -> PilotResult<()> {

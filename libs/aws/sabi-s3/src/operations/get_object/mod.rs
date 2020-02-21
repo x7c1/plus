@@ -2,7 +2,6 @@ mod file;
 pub use file::FileRequest;
 
 use crate::core::{ETag, S3Client, S3HeaderMap, S3Result};
-use crate::internal;
 use crate::internal::{InternalClient, RequestProvider, ResourceLoader};
 use crate::verbs::HasObjectKey;
 use reqwest::header::HeaderMap;
@@ -29,7 +28,7 @@ impl Requester for S3Client {
         A: Request,
     {
         let client = InternalClient::new();
-        let mut provider = RequestProvider::new(
+        let provider = RequestProvider::new(
             Method::GET,
             &self.credentials,
             &self.bucket,
