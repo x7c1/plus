@@ -48,12 +48,13 @@ lazy_static! {
     static ref SETUP_RESULT: () = init().unwrap();
 }
 
-fn setup() -> () {
+fn setup() -> PilotResult<()> {
+    go_to_workspace()?;
     let _ = &*SETUP_RESULT;
+    Ok({})
 }
 
 fn init() -> PilotResult<()> {
-    go_to_workspace()?;
     println!("[get-object] init");
 
     /*
@@ -74,7 +75,7 @@ fn init() -> PilotResult<()> {
 
 #[test]
 fn return_zero_on_succeeded() -> PilotResult<()> {
-    setup();
+    setup()?;
 
     let aws_sample = get_sample_for_aws();
     let aws_output = aws()
