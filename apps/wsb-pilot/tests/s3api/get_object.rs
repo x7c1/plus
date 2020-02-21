@@ -76,7 +76,6 @@ fn init() -> PilotResult<()> {
 fn return_zero_on_succeeded() -> PilotResult<()> {
     setup();
 
-    /*
     let aws_sample = get_sample_for_aws();
     let aws_output = aws()
         .arg("s3api")
@@ -87,7 +86,6 @@ fn return_zero_on_succeeded() -> PilotResult<()> {
         .output()?;
 
     dump(&aws_output);
-    */
 
     /*
     {
@@ -109,6 +107,10 @@ fn return_zero_on_succeeded() -> PilotResult<()> {
         .output()?;
 
     dump(&wsb_output);
+
+    let aws_json: Value = serde_json::from_slice(&aws_output.stdout)?;
+    let wsb_json: Value = serde_json::from_slice(&wsb_output.stdout)?;
+    assert_eq!(wsb_json["ETag"], aws_json["ETag"]);
 
     Ok({})
 }
