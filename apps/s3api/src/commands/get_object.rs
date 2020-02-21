@@ -61,7 +61,7 @@ impl ClapTask<CommandResult> for Task {
             executor::block_on(future)?
         };
         let content = Content {
-            e_tag: response.e_tag.as_str().to_string(),
+            e_tag: response.headers.e_tag.into_string(),
         };
         Ok(CommandOutput::json(content)?)
     }

@@ -13,6 +13,11 @@ pub trait Request: HasObjectKey + ResourceLoader + Write {}
 
 #[derive(Debug)]
 pub struct Response {
+    pub headers: Headers,
+}
+
+#[derive(Debug)]
+pub struct Headers {
     pub e_tag: ETag,
 }
 
@@ -37,8 +42,10 @@ impl Requester for S3Client {
         )?;
         let raw: reqwest::blocking::Response = client.request_by(provider)?;
 
-        let headers: &HeaderMap = raw.headers();
-        let e_tag = headers.get_e_tag()?;
+        let header_map: &HeaderMap = raw.headers();
+        let headers = Headers {
+            e_tag: header_map.get_e_tag()?,
+        };
 
         let mut reader = BufReader::new(raw);
 
@@ -55,6 +62,6 @@ impl Requester for S3Client {
         }
         request.flush()?;
 
-        Ok(Response { e_tag })
+        Ok(Response { headers })
     }
 }
