@@ -42,7 +42,6 @@ impl Requester for S3Client {
             &self.default_region,
         )?;
         let response: reqwest::blocking::Response = client.request_by(provider)?;
-
         let header_map: &HeaderMap = response.headers();
         let headers = Headers {
             e_tag: header_map.get_e_tag()?,

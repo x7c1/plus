@@ -1,6 +1,9 @@
 use std::io;
 use std::io::{BufReader, Read, Write};
 
+// copied from private std::io::DEFAULT_BUF_SIZE
+const DEFAULT_BUF_SIZE: usize = 8 * 1024;
+
 pub trait RichReader {
     fn write_gradually_to<W: Write>(self, out: &mut W) -> io::Result<()>;
 }
@@ -11,9 +14,7 @@ where
 {
     fn write_gradually_to<W: Write>(self, out: &mut W) -> io::Result<()> {
         let mut reader = BufReader::new(self);
-
-        // todo: use DEFAULT_BUF_SIZE?
-        let mut buffer = [0; 8 * 1024];
+        let mut buffer = [0; DEFAULT_BUF_SIZE];
         loop {
             match reader.read(&mut buffer)? {
                 0 => break,
