@@ -6,6 +6,7 @@ use crate::core::verbs::HasObjectKey;
 use crate::internal;
 use crate::internal::{RequestResource, ResourceLoader};
 use crate::operations::get_object;
+use crate::operations::get_object::error::Error::FailedToReceiveBody;
 use sabi_core::auth::v4::canonical::HashedPayload;
 use sabi_core::auth::v4::chrono::now;
 use sabi_core::io::BodyReceiver;
@@ -53,45 +54,14 @@ impl BodyReceiver for FileRequest {
 
     fn receive_body_from<A: Read>(&mut self, mut body: A) -> crate::Result<u64> {
         let dir = self.outfile.directory();
-
-        /*
-        let mut tmp = NamedTempFile::new_in(dir)?;
-        let size = io::copy(&mut body, &mut tmp)?;
-        tmp.persist(&self.outfile).map_err(|e| io::Error::from(e))?;
-        */
-
-        /*let size: crate::Result<u64> = get_object::Error::cover(|| {
+        (|| {
             let mut tmp = NamedTempFile::new_in(dir)?;
             let size = io::copy(&mut body, &mut tmp)?;
             tmp.persist(&self.outfile).map_err(|e| io::Error::from(e))?;
             Ok(size)
-        });
-
-        // let mut tmp = NamedTempFile::new_in(dir)?;
-        // let size = io::copy(&mut body, &mut tmp)?;
-        // tmp.persist(&self.outfile).map_err(|e| io::Error::from(e))?;
-
-        Ok(size?)*/
-
-        get_object::Error::cover(|| {
-            let mut tmp = NamedTempFile::new_in(dir)?;
-            let size = io::copy(&mut body, &mut tmp)?;
-            tmp.persist(&self.outfile).map_err(|e| io::Error::from(e))?;
-            Ok(size)
-        })
+        })()
+        .map_err(|e| crate::Error::from(FailedToReceiveBody(e)))
     }
 }
 
 impl super::Request for FileRequest {}
-
-trait Piyo: Sized {
-    fn cover<F, A, E>(mut f: F) -> Result<A, E>
-    where
-        F: FnMut() -> Result<A, Self>,
-        E: From<Self>,
-    {
-        Ok(f()?)
-    }
-}
-
-impl<A> Piyo for A {}
