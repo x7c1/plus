@@ -12,3 +12,5 @@ pub use e_tag::ETag;
 
 pub mod headers;
 pub use headers::S3HeaderMap;
+
+pub mod verbs;

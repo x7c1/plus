@@ -17,9 +17,6 @@ pub enum Error {
 
     #[fail(display = "std::io::Error > {}", 0)]
     StdIoError(std::io::Error),
-
-    #[fail(display = "url::ParseError > {}", 0)]
-    UrlParseError(url::ParseError),
 }
 
 impl From<operations::get_object::Error> for Error {
@@ -43,11 +40,5 @@ impl From<operations::S3ClientError> for Error {
 impl From<std::io::Error> for Error {
     fn from(e: std::io::Error) -> Self {
         Error::StdIoError(e)
-    }
-}
-
-impl From<url::ParseError> for Error {
-    fn from(e: url::ParseError) -> Self {
-        Error::UrlParseError(e)
     }
 }

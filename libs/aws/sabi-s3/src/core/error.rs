@@ -10,6 +10,9 @@ pub enum Error {
 
     #[fail(display = "headers::Error > {}", 0)]
     S3HeaderError(headers::Error),
+
+    #[fail(display = "url::ParseError > {}", 0)]
+    UrlParseError(url::ParseError),
 }
 
 impl<A: Debug> From<env_extractor::Error<A>> for Error {
@@ -21,5 +24,11 @@ impl<A: Debug> From<env_extractor::Error<A>> for Error {
 impl From<headers::Error> for Error {
     fn from(e: headers::Error) -> Self {
         Error::S3HeaderError(e)
+    }
+}
+
+impl From<url::ParseError> for Error {
+    fn from(e: url::ParseError) -> Self {
+        Error::UrlParseError(e)
     }
 }

@@ -1,8 +1,8 @@
-use crate::core::{S3Bucket, S3Result};
+use crate::core::verbs::{HasObjectKey, ToEndpoint};
+use crate::core::S3Bucket;
 use crate::internal;
 use crate::internal::Error::RegionNotSpecified;
 use crate::internal::{InternalRequest, RequestParts, ResourceLoader};
-use crate::verbs::{HasObjectKey, ToEndpoint};
 use reqwest::header::HeaderMap;
 use reqwest::{Method, Url};
 use sabi_core::auth::v4::request::AuthorizationFactory;
@@ -34,7 +34,7 @@ where
         bucket: &'a S3Bucket,
         request: &'a A,
         default_region: &'a Option<RegionCode>,
-    ) -> S3Result<RequestProvider<'a, A>> {
+    ) -> internal::Result<RequestProvider<'a, A>> {
         let provider = RequestProvider {
             credentials,
             url: (bucket, request).to_endpoint()?,

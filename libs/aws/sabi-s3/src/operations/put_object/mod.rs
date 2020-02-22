@@ -8,10 +8,10 @@ mod rich_file;
 pub use rich_file::RichFile;
 
 use crate::core;
+use crate::core::verbs::HasObjectKey;
 use crate::core::{ETag, S3HeaderMap, S3Result};
 use crate::internal::{InternalClient, RequestProvider, ResourceLoader};
 use crate::operations::{put_object, S3Client};
-use crate::verbs::HasObjectKey;
 use reqwest::header::HeaderMap;
 use reqwest::Method;
 
@@ -45,7 +45,9 @@ impl Requester for S3Client {
             &self.bucket,
             &request,
             &self.default_region,
-        )?;
+        )
+        .map_err(|e| put_object::Error::from(e))?;
+
         let response = client
             .request_by(provider)
             .map_err(|e| put_object::Error::from(e))?;

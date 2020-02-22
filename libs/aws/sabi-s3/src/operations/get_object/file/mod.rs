@@ -2,11 +2,11 @@ mod outfile;
 pub use outfile::Error as OutfileError;
 pub use outfile::Outfile;
 
+use crate::core::verbs::HasObjectKey;
 use crate::core::S3Result;
 use crate::internal;
 use crate::internal::{RequestResource, ResourceLoader};
 use crate::operations::get_object;
-use crate::verbs::HasObjectKey;
 use sabi_core::auth::v4::canonical::HashedPayload;
 use sabi_core::auth::v4::chrono::now;
 use sabi_core::io::BodyReceiver;

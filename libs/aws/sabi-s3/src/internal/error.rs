@@ -14,6 +14,9 @@ pub enum Error {
     #[fail(display = "sabi_core::Error > {}", 0)]
     SabiCoreError(sabi_core::Error),
 
+    #[fail(display = "crate::core::Error > {}", 0)]
+    S3CoreError(crate::core::Error),
+
     #[fail(display = "std::io::Error > {}", 0)]
     StdIoError(std::io::Error),
 }
@@ -27,5 +30,11 @@ impl From<reqwest::Error> for Error {
 impl From<sabi_core::Error> for Error {
     fn from(e: sabi_core::Error) -> Self {
         Error::SabiCoreError(e)
+    }
+}
+
+impl From<crate::core::Error> for Error {
+    fn from(e: crate::core::Error) -> Self {
+        Error::S3CoreError(e)
     }
 }

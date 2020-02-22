@@ -6,10 +6,10 @@ pub use file::FileRequest;
 pub use file::{Outfile, OutfileError};
 
 use crate::core;
+use crate::core::verbs::HasObjectKey;
 use crate::core::{ETag, S3HeaderMap, S3Result};
 use crate::internal::{InternalClient, RequestProvider, ResourceLoader};
 use crate::operations::{get_object, S3Client};
-use crate::verbs::HasObjectKey;
 use reqwest::header::HeaderMap;
 use reqwest::Method;
 use sabi_core::io::BodyReceiver;
@@ -47,7 +47,9 @@ impl Requester for S3Client {
             &self.bucket,
             &request,
             &self.default_region,
-        )?;
+        )
+        .map_err(|e| get_object::Error::from(e))?;
+
         let response: reqwest::blocking::Response = client
             .request_by(provider)
             .map_err(|e| get_object::Error::from(e))?;

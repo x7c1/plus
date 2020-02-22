@@ -1,6 +1,6 @@
+use crate::core::verbs::HasObjectKey;
 use crate::internal;
 use crate::internal::{RequestProvider, ResourceLoader};
-use crate::verbs::HasObjectKey;
 use reqwest::blocking::{Client, Response};
 use std::fmt::Debug;
 use std::time::Duration;
