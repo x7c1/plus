@@ -1,7 +1,7 @@
 mod error;
 pub use error::Error;
 
-use crate::core::{S3Bucket, S3Result};
+use crate::core::S3Bucket;
 use crate::operations;
 use crate::operations::client::error::Error::{CredentialsError, RegionCodeError};
 use sabi_core::auth::Credentials;
@@ -16,7 +16,7 @@ pub struct S3Client {
 }
 
 impl S3Client {
-    pub fn from_env(bucket: S3Bucket) -> S3Result<S3Client> {
+    pub fn from_env(bucket: S3Bucket) -> crate::Result<S3Client> {
         Ok(S3Client {
             credentials: Credentials::from_env().map_err(|e| CredentialsError(e))?,
             default_region: RegionCode::find_from_env().map_err(|e| RegionCodeError(e))?,
@@ -24,14 +24,14 @@ impl S3Client {
         })
     }
 
-    pub async fn put_object<A>(&self, request: A) -> S3Result<operations::put_object::Response>
+    pub async fn put_object<A>(&self, request: A) -> crate::Result<operations::put_object::Response>
     where
         A: operations::put_object::Request,
     {
         operations::put_object::Requester::put_object(self, request)
     }
 
-    pub async fn get_object<A>(&self, request: A) -> S3Result<operations::get_object::Response>
+    pub async fn get_object<A>(&self, request: A) -> crate::Result<operations::get_object::Response>
     where
         A: operations::get_object::Request,
         crate::Error: From<<A as BodyReceiver>::Err>,

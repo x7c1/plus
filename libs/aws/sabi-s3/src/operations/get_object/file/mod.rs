@@ -3,7 +3,6 @@ pub use outfile::Error as OutfileError;
 pub use outfile::Outfile;
 
 use crate::core::verbs::HasObjectKey;
-use crate::core::S3Result;
 use crate::internal;
 use crate::internal::{RequestResource, ResourceLoader};
 use crate::operations::get_object;
@@ -22,7 +21,7 @@ pub struct FileRequest {
 }
 
 impl FileRequest {
-    pub fn create(object_key: String, file_path: PathBuf) -> S3Result<Self> {
+    pub fn create(object_key: String, file_path: PathBuf) -> crate::Result<Self> {
         Ok(FileRequest {
             object_key,
             outfile: Outfile::create(file_path).map_err(|e| get_object::Error::from(e))?,
@@ -52,7 +51,7 @@ impl ResourceLoader for FileRequest {
 impl BodyReceiver for FileRequest {
     type Err = crate::Error;
 
-    fn receive_body_from<A: Read>(&mut self, mut body: A) -> S3Result<u64> {
+    fn receive_body_from<A: Read>(&mut self, mut body: A) -> crate::Result<u64> {
         let dir = self.outfile.directory();
         let mut tmp = NamedTempFile::new_in(dir)?;
         let size = io::copy(&mut body, &mut tmp)?;

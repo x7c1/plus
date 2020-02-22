@@ -7,7 +7,7 @@ pub use file::{Outfile, OutfileError};
 
 use crate::core;
 use crate::core::verbs::HasObjectKey;
-use crate::core::{ETag, S3HeaderMap, S3Result};
+use crate::core::{ETag, S3HeaderMap};
 use crate::internal::{InternalClient, RequestProvider, ResourceLoader};
 use crate::operations::{get_object, S3Client};
 use reqwest::header::HeaderMap;
@@ -28,14 +28,14 @@ pub struct Headers {
 }
 
 pub trait Requester {
-    fn get_object<A>(&self, request: A) -> S3Result<Response>
+    fn get_object<A>(&self, request: A) -> crate::Result<Response>
     where
         A: Request,
         crate::Error: From<<A as BodyReceiver>::Err>;
 }
 
 impl Requester for S3Client {
-    fn get_object<A>(&self, mut request: A) -> S3Result<Response>
+    fn get_object<A>(&self, mut request: A) -> crate::Result<Response>
     where
         A: Request,
         crate::Error: From<<A as BodyReceiver>::Err>,
