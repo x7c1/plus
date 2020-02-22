@@ -52,7 +52,7 @@ impl ClapTask<CommandResult> for Task {
         let client = S3Client::from_env(S3Bucket::from_string(
             matches.single("bucket").as_required()?,
         ))?;
-        let request = get_object::FileRequest::new(
+        let request = get_object::FileRequest::create(
             matches.single("key").as_required()?,
             matches.single("outfile").as_required()?,
         )?;

@@ -1,10 +1,13 @@
+mod error;
+pub use error::Error;
+
 mod file;
 pub use file::FileRequest;
+pub use file::{Outfile, OutfileError};
 
 use crate::core::{ETag, S3Client, S3HeaderMap, S3Result};
 use crate::internal::{InternalClient, RequestProvider, ResourceLoader};
 use crate::verbs::HasObjectKey;
-use crate::Error;
 use reqwest::header::HeaderMap;
 use reqwest::Method;
 use sabi_core::io::BodyReceiver;
@@ -26,14 +29,14 @@ pub trait Requester {
     fn get_object<A>(&self, request: A) -> S3Result<Response>
     where
         A: Request,
-        Error: From<<A as BodyReceiver>::Err>;
+        crate::Error: From<<A as BodyReceiver>::Err>;
 }
 
 impl Requester for S3Client {
     fn get_object<A>(&self, mut request: A) -> S3Result<Response>
     where
         A: Request,
-        Error: From<<A as BodyReceiver>::Err>,
+        crate::Error: From<<A as BodyReceiver>::Err>,
     {
         let client = InternalClient::new();
         let provider = RequestProvider::new(

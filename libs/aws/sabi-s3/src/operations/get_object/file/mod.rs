@@ -1,6 +1,10 @@
-use crate::core::S3Result;
+mod outfile;
+pub use outfile::Error as OutfileError;
+pub use outfile::Outfile;
 
+use crate::core::S3Result;
 use crate::internal::{RequestResource, ResourceLoader};
+use crate::operations::get_object;
 use crate::verbs::HasObjectKey;
 use sabi_core::auth::v4::canonical::HashedPayload;
 use sabi_core::auth::v4::chrono::now;
@@ -13,14 +17,14 @@ use tempfile::NamedTempFile;
 #[derive(Debug)]
 pub struct FileRequest {
     object_key: String,
-    outfile: PathBuf,
+    outfile: Outfile,
 }
 
 impl FileRequest {
-    pub fn new(object_key: String, file_path: PathBuf) -> S3Result<Self> {
+    pub fn create(object_key: String, file_path: PathBuf) -> S3Result<Self> {
         Ok(FileRequest {
             object_key,
-            outfile: file_path,
+            outfile: Outfile::create(file_path).map_err(|e| get_object::Error::from(e))?,
         })
     }
 }
@@ -48,8 +52,7 @@ impl BodyReceiver for FileRequest {
     type Err = crate::Error;
 
     fn receive_body_from<A: Read>(&mut self, mut body: A) -> S3Result<u64> {
-        // todo: remove unwrap
-        let dir = self.outfile.parent().unwrap();
+        let dir = self.outfile.directory();
         let mut tmp = NamedTempFile::new_in(dir)?;
         let size = io::copy(&mut body, &mut tmp)?;
         tmp.persist(&self.outfile).map_err(|e| io::Error::from(e))?;
