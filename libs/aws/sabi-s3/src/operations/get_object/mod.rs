@@ -4,13 +4,13 @@ pub use file::FileRequest;
 use crate::core::{ETag, S3Client, S3HeaderMap, S3Result};
 use crate::internal::{InternalClient, RequestProvider, ResourceLoader};
 use crate::verbs::HasObjectKey;
+use crate::Error;
 use reqwest::header::HeaderMap;
 use reqwest::Method;
-use sabi_core::io::CanLoan;
-use std::io::Write;
+use sabi_core::io::BodyReceiver;
 
 /// [GetObject - Amazon Simple Storage Service](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObject.html)
-pub trait Request: HasObjectKey + ResourceLoader + CanLoan {}
+pub trait Request: HasObjectKey + ResourceLoader + BodyReceiver {}
 
 #[derive(Debug)]
 pub struct Response {
@@ -25,13 +25,15 @@ pub struct Headers {
 pub trait Requester {
     fn get_object<A>(&self, request: A) -> S3Result<Response>
     where
-        A: Request;
+        A: Request,
+        Error: From<<A as BodyReceiver>::Err>;
 }
 
 impl Requester for S3Client {
     fn get_object<A>(&self, mut request: A) -> S3Result<Response>
     where
         A: Request,
+        Error: From<<A as BodyReceiver>::Err>,
     {
         let client = InternalClient::new();
         let provider = RequestProvider::new(
@@ -46,8 +48,7 @@ impl Requester for S3Client {
         let headers = Headers {
             e_tag: header_map.get_e_tag()?,
         };
-        request.copy_from(response)?;
-
+        request.receive_body_from(response)?;
         Ok(Response { headers })
     }
 }

@@ -1,3 +1,2 @@
-mod copier;
-pub use copier::CanLoan;
-pub use copier::Copier;
+mod body_receiver;
+pub use body_receiver::BodyReceiver;
