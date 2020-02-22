@@ -53,11 +53,45 @@ impl BodyReceiver for FileRequest {
 
     fn receive_body_from<A: Read>(&mut self, mut body: A) -> crate::Result<u64> {
         let dir = self.outfile.directory();
+
+        /*
         let mut tmp = NamedTempFile::new_in(dir)?;
         let size = io::copy(&mut body, &mut tmp)?;
         tmp.persist(&self.outfile).map_err(|e| io::Error::from(e))?;
-        Ok(size)
+        */
+
+        /*let size: crate::Result<u64> = get_object::Error::cover(|| {
+            let mut tmp = NamedTempFile::new_in(dir)?;
+            let size = io::copy(&mut body, &mut tmp)?;
+            tmp.persist(&self.outfile).map_err(|e| io::Error::from(e))?;
+            Ok(size)
+        });
+
+        // let mut tmp = NamedTempFile::new_in(dir)?;
+        // let size = io::copy(&mut body, &mut tmp)?;
+        // tmp.persist(&self.outfile).map_err(|e| io::Error::from(e))?;
+
+        Ok(size?)*/
+
+        get_object::Error::cover(|| {
+            let mut tmp = NamedTempFile::new_in(dir)?;
+            let size = io::copy(&mut body, &mut tmp)?;
+            tmp.persist(&self.outfile).map_err(|e| io::Error::from(e))?;
+            Ok(size)
+        })
     }
 }
 
 impl super::Request for FileRequest {}
+
+trait Piyo: Sized {
+    fn cover<F, A, E>(mut f: F) -> Result<A, E>
+    where
+        F: FnMut() -> Result<A, Self>,
+        E: From<Self>,
+    {
+        Ok(f()?)
+    }
+}
+
+impl<A> Piyo for A {}
