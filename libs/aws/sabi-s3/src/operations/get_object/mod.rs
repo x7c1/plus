@@ -5,8 +5,10 @@ mod file;
 pub use file::FileRequest;
 pub use file::{Outfile, OutfileError};
 
-use crate::core::{ETag, S3Client, S3HeaderMap, S3Result};
+use crate::core;
+use crate::core::{ETag, S3HeaderMap, S3Result};
 use crate::internal::{InternalClient, RequestProvider, ResourceLoader};
+use crate::operations::{get_object, S3Client};
 use crate::verbs::HasObjectKey;
 use reqwest::header::HeaderMap;
 use reqwest::Method;
@@ -46,14 +48,17 @@ impl Requester for S3Client {
             &request,
             &self.default_region,
         )?;
-        let response: reqwest::blocking::Response = client.request_by(provider)?;
-        let headers = to_headers(response.headers())?;
+        let response: reqwest::blocking::Response = client
+            .request_by(provider)
+            .map_err(|e| get_object::Error::from(e))?;
+
+        let headers = to_headers(response.headers()).map_err(|e| get_object::Error::from(e))?;
         request.receive_body_from(response)?;
         Ok(Response { headers })
     }
 }
 
-fn to_headers(map: &HeaderMap) -> S3Result<Headers> {
+fn to_headers(map: &HeaderMap) -> core::Result<Headers> {
     Ok(Headers {
         e_tag: map.get_e_tag()?,
     })

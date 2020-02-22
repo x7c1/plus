@@ -1,11 +1,16 @@
+mod error;
+pub use error::Error;
+
 mod file;
 pub use file::FileRequest;
 
 mod rich_file;
 pub use rich_file::RichFile;
 
-use crate::core::{ETag, S3Client, S3HeaderMap, S3Result};
+use crate::core;
+use crate::core::{ETag, S3HeaderMap, S3Result};
 use crate::internal::{InternalClient, RequestProvider, ResourceLoader};
+use crate::operations::{put_object, S3Client};
 use crate::verbs::HasObjectKey;
 use reqwest::header::HeaderMap;
 use reqwest::Method;
@@ -41,12 +46,17 @@ impl Requester for S3Client {
             &request,
             &self.default_region,
         )?;
-        let raw = client.request_by(provider)?;
+        let response = client
+            .request_by(provider)
+            .map_err(|e| put_object::Error::from(e))?;
 
-        let header_map: &HeaderMap = raw.headers();
-        let headers = Headers {
-            e_tag: header_map.get_e_tag()?,
-        };
+        let headers = to_headers(response.headers()).map_err(|e| put_object::Error::from(e))?;
         Ok(Response { headers })
     }
+}
+
+fn to_headers(map: &HeaderMap) -> core::Result<Headers> {
+    Ok(Headers {
+        e_tag: map.get_e_tag()?,
+    })
 }

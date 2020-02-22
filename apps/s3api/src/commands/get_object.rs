@@ -3,8 +3,8 @@ use clap::{App, Arg, ArgMatches, SubCommand};
 use clap_extractor::Matcher;
 use clap_task::ClapTask;
 use futures::executor;
-use sabi_s3::core::{S3Bucket, S3Client};
-use sabi_s3::operations::get_object;
+use sabi_s3::core::S3Bucket;
+use sabi_s3::operations::{get_object, S3Client};
 
 // see also:
 // https://docs.aws.amazon.com/cli/latest/reference/s3api/get-object.html

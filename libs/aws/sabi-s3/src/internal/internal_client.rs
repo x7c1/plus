@@ -1,4 +1,3 @@
-use crate::core::S3Result;
 use crate::internal;
 use crate::internal::{RequestProvider, ResourceLoader};
 use crate::verbs::HasObjectKey;
@@ -14,7 +13,7 @@ impl InternalClient {
         InternalClient {}
     }
 
-    pub fn request_by<A>(&self, provider: RequestProvider<A>) -> S3Result<Response>
+    pub fn request_by<A>(&self, provider: RequestProvider<A>) -> internal::Result<Response>
     where
         A: ResourceLoader,
         A: HasObjectKey,

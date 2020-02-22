@@ -3,6 +3,7 @@ pub use outfile::Error as OutfileError;
 pub use outfile::Outfile;
 
 use crate::core::S3Result;
+use crate::internal;
 use crate::internal::{RequestResource, ResourceLoader};
 use crate::operations::get_object;
 use crate::verbs::HasObjectKey;
@@ -36,7 +37,7 @@ impl HasObjectKey for FileRequest {
 }
 
 impl ResourceLoader for FileRequest {
-    fn load(&self) -> S3Result<RequestResource> {
+    fn load(&self) -> internal::Result<RequestResource> {
         let resource = RequestResource {
             body: None,
             hash: HashedPayload::empty(),

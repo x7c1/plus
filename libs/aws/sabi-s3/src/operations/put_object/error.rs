@@ -8,8 +8,8 @@ pub enum Error {
     #[fail(display = "crate::core::Error > {}", 0)]
     S3CoreError(crate::core::Error),
 
-    #[fail(display = "OutfileError > {}", 0)]
-    OutFileError(super::file::OutfileError),
+    #[fail(display = "sabi_core::Error > {}", 0)]
+    SabiCoreError(sabi_core::Error),
 }
 
 impl From<internal::Error> for Error {
@@ -24,8 +24,8 @@ impl From<crate::core::Error> for Error {
     }
 }
 
-impl From<super::file::OutfileError> for Error {
-    fn from(e: super::file::OutfileError) -> Self {
-        Error::OutFileError(e)
+impl From<sabi_core::Error> for Error {
+    fn from(e: sabi_core::Error) -> Self {
+        Error::SabiCoreError(e)
     }
 }

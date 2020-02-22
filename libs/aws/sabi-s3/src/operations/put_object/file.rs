@@ -1,8 +1,6 @@
-use crate::core::S3Result;
-use crate::error::Error::{FileNotFound, StdIoError};
+use crate::internal;
 use crate::internal::{RequestResource, ResourceLoader};
 use crate::operations::put_object::RichFile;
-use crate::operations::Kind;
 use crate::verbs::HasObjectKey;
 use reqwest::blocking::Body;
 use sabi_core::auth::v4::canonical::HashedPayload;
@@ -23,14 +21,13 @@ pub struct FileRequest {
 }
 
 impl FileRequest {
-    fn open_file(&self) -> S3Result<File> {
+    fn open_file(&self) -> internal::Result<File> {
         File::open(&self.file_path).map_err(|e| match e {
-            _ if e.kind() == NotFound => FileNotFound {
-                operation: Kind::PutObject,
+            _ if e.kind() == NotFound => internal::Error::FileNotFound {
                 path: self.file_path.to_string(),
                 description: e.description().to_string(),
             },
-            _ => StdIoError(e),
+            _ => internal::Error::StdIoError(e),
         })
     }
 }
@@ -42,10 +39,9 @@ impl HasObjectKey for FileRequest {
 }
 
 impl ResourceLoader for FileRequest {
-    fn load(&self) -> S3Result<RequestResource> {
+    fn load(&self) -> internal::Result<RequestResource> {
         let mut file = self.open_file()?;
         let hash = file.reset_cursor_after(|file| HashedPayload::try_from(file))?;
-
         let resource = RequestResource {
             body: Some(Body::from(file)),
             hash,

@@ -1,15 +1,16 @@
-use crate::core::{ETag, S3Result};
+use crate::core;
+use crate::core::ETag;
 use reqwest::header::HeaderMap;
 
 mod error;
 pub use error::Error;
 
 pub trait S3HeaderMap {
-    fn get_e_tag(&self) -> S3Result<ETag>;
+    fn get_e_tag(&self) -> core::Result<ETag>;
 }
 
 impl S3HeaderMap for HeaderMap {
-    fn get_e_tag(&self) -> S3Result<ETag> {
+    fn get_e_tag(&self) -> core::Result<ETag> {
         let e_tag = self
             .get("ETag")
             .ok_or_else(|| Error::ETagHeaderNotFound)?
