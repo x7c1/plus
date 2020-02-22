@@ -12,8 +12,8 @@ pub enum Error {
     #[fail(display = "operations::put_object::Error > {}", 0)]
     PutObjectError(operations::put_object::Error),
 
-    #[fail(display = "operations::S3ClientError > {}", 0)]
-    S3ClientError(operations::S3ClientError),
+    #[fail(display = "operations::Error > {}", 0)]
+    S3ClientError(operations::Error),
 
     #[fail(display = "std::io::Error > {}", 0)]
     StdIoError(std::io::Error),
@@ -31,8 +31,8 @@ impl From<operations::put_object::Error> for Error {
     }
 }
 
-impl From<operations::S3ClientError> for Error {
-    fn from(e: operations::S3ClientError) -> Self {
+impl From<operations::Error> for Error {
+    fn from(e: operations::Error) -> Self {
         Error::S3ClientError(e)
     }
 }
