@@ -44,11 +44,14 @@ impl Requester for S3Client {
             &self.default_region,
         )?;
         let response: reqwest::blocking::Response = client.request_by(provider)?;
-        let header_map: &HeaderMap = response.headers();
-        let headers = Headers {
-            e_tag: header_map.get_e_tag()?,
-        };
+        let headers = to_headers(response.headers())?;
         request.receive_body_from(response)?;
         Ok(Response { headers })
     }
+}
+
+fn to_headers(map: &HeaderMap) -> S3Result<Headers> {
+    Ok(Headers {
+        e_tag: map.get_e_tag()?,
+    })
 }
