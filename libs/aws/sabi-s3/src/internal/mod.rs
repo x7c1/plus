@@ -1,3 +1,6 @@
+mod error;
+pub use error::Error;
+
 mod internal_client;
 pub use internal_client::InternalClient;
 

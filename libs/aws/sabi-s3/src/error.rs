@@ -1,7 +1,7 @@
 extern crate failure;
 
 use crate::core::headers;
-use crate::operations;
+use crate::{internal, operations};
 use std::fmt::Debug;
 
 pub type Result<T> = ::std::result::Result<T, Error>;
@@ -24,11 +24,11 @@ pub enum Error {
     #[fail(display = "operations::get_object::Error > {}", 0)]
     GetObjectError(operations::get_object::Error),
 
+    #[fail(display = "internal::Error > {}", 0)]
+    InternalError(internal::Error),
+
     #[fail(display = "region not specified")]
     RegionNotSpecified,
-
-    #[fail(display = "reqwest::Error > {}", 0)]
-    Reqwest(reqwest::Error),
 
     #[fail(display = "headers::Error > {}", 0)]
     S3HeaderError(headers::Error),
@@ -55,9 +55,9 @@ impl From<operations::get_object::Error> for Error {
     }
 }
 
-impl From<reqwest::Error> for Error {
-    fn from(e: reqwest::Error) -> Self {
-        Error::Reqwest(e)
+impl From<internal::Error> for Error {
+    fn from(e: internal::Error) -> Self {
+        Error::InternalError(e)
     }
 }
 
