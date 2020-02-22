@@ -10,7 +10,9 @@ pub trait RichHeaderMap: Sized {
     fn push<A>(self, header: A) -> SabiResult<Self>
     where
         A: ToHeaderFragment;
-
+    fn push_if_exists<A>(self, header: Option<A>) -> SabiResult<Self>
+    where
+        A: ToHeaderFragment;
     fn host(self, url: &Url) -> SabiResult<Self>;
 
     fn authorize_with(self, factory: AuthorizationFactory) -> SabiResult<Self>;
@@ -24,6 +26,17 @@ impl RichHeaderMap for HeaderMap {
         let fragment = header.into()?;
         self.insert(fragment.key, fragment.value);
         Ok(self)
+    }
+
+    fn push_if_exists<A>(self, header: Option<A>) -> SabiResult<Self>
+    where
+        A: ToHeaderFragment,
+    {
+        if let Some(header) = header {
+            self.push(header)
+        } else {
+            Ok(self)
+        }
     }
 
     fn host(mut self, url: &Url) -> SabiResult<Self> {

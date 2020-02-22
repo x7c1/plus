@@ -13,7 +13,7 @@ fn get_sample1() -> Sample {
     }
 }
 
-fn to_workspace() -> PilotResult<()> {
+fn go_to_workspace() -> PilotResult<()> {
     let workspace = Path::new(&*TEST_WORKSPACE_DIR).join("s3api/put-object");
     println!("workspace: {:?}", workspace);
     set_current_dir(workspace)?;
@@ -22,7 +22,7 @@ fn to_workspace() -> PilotResult<()> {
 
 #[test]
 fn return_zero_on_succeeded() -> PilotResult<()> {
-    to_workspace()?;
+    go_to_workspace()?;
 
     let sample = get_sample1();
     let wsb_output = s3api()
@@ -57,7 +57,7 @@ fn return_zero_on_succeeded() -> PilotResult<()> {
 
 #[test]
 fn output_e_tag_is_correct() -> PilotResult<()> {
-    to_workspace()?;
+    go_to_workspace()?;
 
     let sample = get_sample1();
     let aws_output = aws()
