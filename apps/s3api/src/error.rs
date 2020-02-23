@@ -35,9 +35,13 @@ impl<A: Debug> From<clap_extractor::Error<A>> for Error {
     }
 }
 
-impl From<sabi_s3::Error> for Error {
-    fn from(e: sabi_s3::Error) -> Self {
-        Error::SabiS3Error(e)
+pub trait IntoS3Error: Into<sabi_s3::Error> {}
+impl IntoS3Error for sabi_s3::actions::Error {}
+impl IntoS3Error for sabi_s3::client::Error {}
+impl IntoS3Error for sabi_s3::core::Error {}
+impl<A: IntoS3Error> From<A> for Error {
+    fn from(e: A) -> Self {
+        Error::SabiS3Error(e.into())
     }
 }
 

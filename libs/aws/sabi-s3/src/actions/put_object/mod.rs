@@ -7,11 +7,12 @@ pub use file::FileRequest;
 mod rich_file;
 pub use rich_file::RichFile;
 
-use crate::core;
+use crate::actions::put_object;
+use crate::client::S3Client;
 use crate::core::verbs::HasObjectKey;
 use crate::core::{ETag, S3HeaderMap};
 use crate::internal::{InternalClient, RequestProvider, ResourceLoader};
-use crate::operations::{put_object, S3Client};
+use crate::{actions, core};
 use reqwest::header::HeaderMap;
 use reqwest::Method;
 
@@ -28,13 +29,13 @@ pub struct Headers {
 }
 
 pub trait Requester {
-    fn put_object<A>(&self, request: A) -> crate::Result<Response>
+    fn put_object<A>(&self, request: A) -> actions::Result<Response>
     where
         A: Request;
 }
 
 impl Requester for S3Client {
-    fn put_object<A>(&self, request: A) -> crate::Result<Response>
+    fn put_object<A>(&self, request: A) -> actions::Result<Response>
     where
         A: Request,
     {

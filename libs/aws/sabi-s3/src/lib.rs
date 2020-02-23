@@ -1,13 +1,13 @@
 #[macro_use]
-extern crate failure;
+pub mod actions;
 
 #[macro_use]
-pub mod operations;
+extern crate failure;
 
-mod internal;
-
+pub mod client;
 pub mod core;
 
 mod error;
 pub use error::Error;
-pub use error::Result;
+
+pub mod internal;

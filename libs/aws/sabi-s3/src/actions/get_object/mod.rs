@@ -5,11 +5,12 @@ mod file;
 pub use file::FileRequest;
 pub use file::{Outfile, OutfileError};
 
-use crate::core;
+use crate::actions::get_object;
+use crate::client::S3Client;
 use crate::core::verbs::HasObjectKey;
 use crate::core::{ETag, S3HeaderMap};
 use crate::internal::{InternalClient, RequestProvider, ResourceLoader};
-use crate::operations::{get_object, S3Client};
+use crate::{actions, core};
 use reqwest::header::HeaderMap;
 use reqwest::Method;
 use sabi_core::io::BodyReceiver;
@@ -28,17 +29,17 @@ pub struct Headers {
 }
 
 pub trait Requester {
-    fn get_object<A>(&self, request: A) -> crate::Result<Response>
+    fn get_object<A>(&self, request: A) -> actions::Result<Response>
     where
         A: Request,
-        crate::Error: From<<A as BodyReceiver>::Err>;
+        actions::Error: From<<A as BodyReceiver>::Err>;
 }
 
 impl Requester for S3Client {
-    fn get_object<A>(&self, mut request: A) -> crate::Result<Response>
+    fn get_object<A>(&self, mut request: A) -> actions::Result<Response>
     where
         A: Request,
-        crate::Error: From<<A as BodyReceiver>::Err>,
+        actions::Error: From<<A as BodyReceiver>::Err>,
     {
         let client = InternalClient::new();
         let provider = RequestProvider::new(

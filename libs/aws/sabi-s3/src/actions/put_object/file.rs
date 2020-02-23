@@ -1,7 +1,7 @@
+use crate::actions::put_object::RichFile;
 use crate::core::verbs::HasObjectKey;
 use crate::internal;
 use crate::internal::{RequestResource, ResourceLoader};
-use crate::operations::put_object::RichFile;
 use reqwest::blocking::Body;
 use sabi_core::auth::v4::canonical::HashedPayload;
 use sabi_core::auth::v4::chrono::now;

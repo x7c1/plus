@@ -2,11 +2,11 @@ mod outfile;
 pub use outfile::Error as OutfileError;
 pub use outfile::Outfile;
 
+use crate::actions::get_object;
+use crate::actions::get_object::error::Error::FailedToReceiveBody;
 use crate::core::verbs::HasObjectKey;
-use crate::internal;
 use crate::internal::{RequestResource, ResourceLoader};
-use crate::operations::get_object;
-use crate::operations::get_object::error::Error::FailedToReceiveBody;
+use crate::{actions, internal};
 use sabi_core::auth::v4::canonical::HashedPayload;
 use sabi_core::auth::v4::chrono::now;
 use sabi_core::io::BodyReceiver;
@@ -22,7 +22,7 @@ pub struct FileRequest {
 }
 
 impl FileRequest {
-    pub fn create(object_key: String, file_path: PathBuf) -> crate::Result<Self> {
+    pub fn create(object_key: String, file_path: PathBuf) -> actions::Result<Self> {
         Ok(FileRequest {
             object_key,
             outfile: Outfile::create(file_path).map_err(|e| get_object::Error::from(e))?,
@@ -50,9 +50,9 @@ impl ResourceLoader for FileRequest {
 }
 
 impl BodyReceiver for FileRequest {
-    type Err = crate::Error;
+    type Err = actions::Error;
 
-    fn receive_body_from<A: Read>(&mut self, mut body: A) -> crate::Result<u64> {
+    fn receive_body_from<A: Read>(&mut self, mut body: A) -> actions::Result<u64> {
         let dir = self.outfile.directory();
         (|| {
             let mut tmp = NamedTempFile::new_in(dir)?;
@@ -60,7 +60,7 @@ impl BodyReceiver for FileRequest {
             tmp.persist(&self.outfile).map_err(|e| io::Error::from(e))?;
             Ok(size)
         })()
-        .map_err(|e| crate::Error::from(FailedToReceiveBody(e)))
+        .map_err(|e| actions::Error::from(FailedToReceiveBody(e)))
     }
 }
 
