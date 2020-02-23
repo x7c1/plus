@@ -1,15 +1,7 @@
 use crate::s3api::{aws, dump, s3api, TEST_BUCKET, TEST_WORKSPACE_DIR};
 use serde_json::Value;
-use std::env::set_current_dir;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 use wsb_pilot::{MutableSelf, PilotResult};
-
-fn go_to_workspace() -> PilotResult<()> {
-    let workspace = Path::new(&*TEST_WORKSPACE_DIR).join("s3api/get-object");
-    println!("workspace: {:?}", workspace);
-    set_current_dir(workspace)?;
-    Ok({})
-}
 
 fn get_mock_files() -> Vec<MockFile> {
     vec![
@@ -45,11 +37,14 @@ fn get_sample_for_wsb() -> Sample {
 
 // workaround to emulate singleton initializer
 lazy_static! {
+    static ref WORKSPACE: PathBuf = PathBuf::new()
+        .join(&*TEST_WORKSPACE_DIR)
+        .join("s3api")
+        .join("get-object");
     static ref SETUP_RESULT: () = init().unwrap();
 }
 
 fn setup() -> PilotResult<()> {
-    go_to_workspace()?;
     let _ = &*SETUP_RESULT;
     Ok({})
 }
@@ -60,6 +55,7 @@ fn init() -> PilotResult<()> {
     // /*
     for mock in get_mock_files() {
         let aws_output = aws()
+            .current_dir(&*WORKSPACE)
             .arg("s3api")
             .arg("put-object")
             .args(&["--bucket", &TEST_BUCKET])
@@ -79,6 +75,7 @@ fn return_zero_on_succeeded() -> PilotResult<()> {
 
     let aws_sample = get_sample_for_aws();
     let aws_output = aws()
+        .current_dir(&*WORKSPACE)
         .arg("s3api")
         .arg("get-object")
         .args(&["--bucket", &TEST_BUCKET])
@@ -101,6 +98,7 @@ fn return_zero_on_succeeded() -> PilotResult<()> {
 
     let wsb_sample = get_sample_for_wsb();
     let wsb_output = s3api()
+        .current_dir(&*WORKSPACE)
         .arg("get-object")
         .args(&["--bucket", &TEST_BUCKET])
         .args(&["--key", &wsb_sample.object_key])
