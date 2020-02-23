@@ -1,22 +1,22 @@
-use failure::_core::marker::PhantomData;
 use reqwest::Method;
+use std::marker::PhantomData;
 
 pub trait HasMethod<MARKER> {
     const METHOD: Method;
 }
 
-pub trait GetRequest<A> {}
+pub struct GetImpl<A>(PhantomData<A>);
 
-pub struct GetMethod<A>(PhantomData<A>);
+pub trait IsGet<MARKER> {}
 
-impl<A, B: GetRequest<A>> HasMethod<GetMethod<A>> for B {
+impl<A, B: IsGet<A>> HasMethod<GetImpl<A>> for B {
     const METHOD: Method = Method::GET;
 }
 
-pub trait PostRequest<A> {}
+pub struct PostImpl<A>(PhantomData<A>);
 
-pub struct PostMethod<A>(PhantomData<A>);
+pub trait IsPost<MARKER> {}
 
-impl<A, B: PostRequest<A>> HasMethod<PostMethod<A>> for B {
+impl<A, B: IsPost<A>> HasMethod<PostImpl<A>> for B {
     const METHOD: Method = Method::POST;
 }

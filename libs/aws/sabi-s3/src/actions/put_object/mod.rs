@@ -9,7 +9,7 @@ pub use rich_file::RichFile;
 
 use crate::actions::put_object;
 use crate::client::S3Client;
-use crate::core::verbs::{HasObjectKey, PostRequest};
+use crate::core::verbs::{HasObjectKey, IsPost};
 use crate::core::{ETag, S3HeaderMap};
 use crate::internal::{InternalClient, RequestProvider, ResourceLoader};
 use crate::{actions, core, internal};
@@ -29,7 +29,7 @@ pub struct Headers {
     pub e_tag: ETag,
 }
 
-impl<A: Request> PostRequest<Response> for A {}
+impl<A: Request> IsPost<Response> for A {}
 
 pub trait Requester {
     fn put_object<A>(&self, request: A) -> actions::Result<Response>
