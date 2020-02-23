@@ -1,8 +1,8 @@
 use crate::s3api::*;
 use serde_json::Value;
-use std::env::set_current_dir;
-use std::fs;
+use std::io;
 use std::path::{Path, PathBuf};
+use std::process::Command;
 use wsb_pilot::PilotResult;
 
 fn get_sample1() -> Sample {
@@ -13,19 +13,19 @@ fn get_sample1() -> Sample {
     }
 }
 
-fn go_to_workspace() -> PilotResult<()> {
-    let workspace = Path::new(&*TEST_WORKSPACE_DIR).join("s3api/put-object");
-    println!("workspace: {:?}", workspace);
-    set_current_dir(workspace)?;
-    Ok({})
+lazy_static! {
+    static ref WORKSPACE: PathBuf = PathBuf::new()
+        .join(&*TEST_WORKSPACE_DIR)
+        .join("s3api")
+        .join("put-object");
 }
 
 #[test]
 fn return_zero_on_succeeded() -> PilotResult<()> {
-    go_to_workspace()?;
-
     let sample = get_sample1();
+
     let wsb_output = s3api()
+        .current_dir(&*WORKSPACE)
         .arg("put-object")
         .args(&["--bucket", &TEST_BUCKET])
         .args(&["--key", &sample.object_key])
@@ -40,6 +40,7 @@ fn return_zero_on_succeeded() -> PilotResult<()> {
         "return non-zero if it failed."
     );
     let aws_output = aws()
+        .current_dir(&*WORKSPACE)
         .arg("s3api")
         .arg("get-object")
         .args(&["--bucket", &TEST_BUCKET])
@@ -49,18 +50,28 @@ fn return_zero_on_succeeded() -> PilotResult<()> {
 
     dump_if_failed(&aws_output);
 
-    let expected = fs::read_to_string(&sample.upload_src)?;
-    let actual = fs::read_to_string(&sample.download_dst)?;
+    let expected = read_to_string(&sample.upload_src)?;
+    let actual = read_to_string(&sample.download_dst)?;
     assert_eq!(actual, expected, "correctly uploaded.");
     Ok({})
 }
 
+fn read_to_string(path: &Path) -> io::Result<String> {
+    let path_str: &str = &path.to_string_lossy();
+    let output = Command::new("cat")
+        .current_dir(&*WORKSPACE)
+        .arg(path_str)
+        .output()?;
+
+    let output_str = String::from_utf8_lossy(&output.stdout).to_string();
+    Ok(output_str)
+}
+
 #[test]
 fn output_e_tag_is_correct() -> PilotResult<()> {
-    go_to_workspace()?;
-
     let sample = get_sample1();
     let aws_output = aws()
+        .current_dir(&*WORKSPACE)
         .arg("s3api")
         .arg("put-object")
         .args(&["--bucket", &TEST_BUCKET])
@@ -68,9 +79,10 @@ fn output_e_tag_is_correct() -> PilotResult<()> {
         .args(&["--body", &sample.upload_src.to_string_lossy()])
         .output()?;
 
-    dump(&aws_output);
+    dump_if_failed(&aws_output);
 
     let wsb_output = s3api()
+        .current_dir(&*WORKSPACE)
         .arg("put-object")
         .args(&["--bucket", &TEST_BUCKET])
         .args(&["--key", &sample.object_key])
