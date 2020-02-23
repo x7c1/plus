@@ -2,6 +2,9 @@ pub type Result<T> = std::result::Result<T, Error>;
 
 #[derive(Fail, Debug)]
 pub enum Error {
+    #[fail(display = "std::io::Error > {}", 0)]
+    FailedToReceiveBody(std::io::Error),
+
     #[fail(display = "FileNotFound > {}", 0)]
     FileNotFound { path: String, description: String },
 

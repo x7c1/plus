@@ -2,8 +2,8 @@ mod error;
 pub use error::Error;
 pub use error::Result;
 
-use crate::actions;
 use crate::core::S3Bucket;
+use crate::{actions, internal};
 use sabi_core::auth::Credentials;
 use sabi_core::index::RegionCode;
 use sabi_core::io::BodyReceiver;
@@ -35,7 +35,7 @@ impl S3Client {
     pub async fn get_object<A>(&self, request: A) -> actions::Result<actions::get_object::Response>
     where
         A: actions::get_object::Request,
-        actions::Error: From<<A as BodyReceiver>::Err>,
+        internal::Error: From<<A as BodyReceiver>::Err>,
     {
         actions::get_object::Requester::get_object(self, request)
     }

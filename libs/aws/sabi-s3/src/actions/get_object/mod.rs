@@ -10,7 +10,7 @@ use crate::client::S3Client;
 use crate::core::verbs::HasObjectKey;
 use crate::core::{ETag, S3HeaderMap};
 use crate::internal::{InternalClient, RequestProvider, ResourceLoader};
-use crate::{actions, core};
+use crate::{actions, core, internal};
 use reqwest::header::HeaderMap;
 use reqwest::Method;
 use sabi_core::io::BodyReceiver;
@@ -32,32 +32,31 @@ pub trait Requester {
     fn get_object<A>(&self, request: A) -> actions::Result<Response>
     where
         A: Request,
-        actions::Error: From<<A as BodyReceiver>::Err>;
+        internal::Error: From<<A as BodyReceiver>::Err>;
 }
 
 impl Requester for S3Client {
     fn get_object<A>(&self, mut request: A) -> actions::Result<Response>
     where
         A: Request,
-        actions::Error: From<<A as BodyReceiver>::Err>,
+        internal::Error: From<<A as BodyReceiver>::Err>,
     {
         let client = InternalClient::new();
-        let provider = RequestProvider::new(
-            Method::GET,
-            &self.credentials,
-            &self.bucket,
-            &request,
-            &self.default_region,
-        )
-        .map_err(|e| get_object::Error::from(e))?;
+        (|| {
+            let provider = RequestProvider::new(
+                Method::GET,
+                &self.credentials,
+                &self.bucket,
+                &request,
+                &self.default_region,
+            )?;
 
-        let response: reqwest::blocking::Response = client
-            .request_by(provider)
-            .map_err(|e| get_object::Error::from(e))?;
-
-        let headers = to_headers(response.headers()).map_err(|e| get_object::Error::from(e))?;
-        request.receive_body_from(response)?;
-        Ok(Response { headers })
+            let response: reqwest::blocking::Response = client.request_by(provider)?;
+            let headers = to_headers(response.headers())?;
+            request.receive_body_from(response)?;
+            Ok(Response { headers })
+        })()
+        .map_err(|e: internal::Error| get_object::Error::from(e).into())
     }
 }
 
