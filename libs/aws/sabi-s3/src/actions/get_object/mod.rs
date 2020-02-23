@@ -31,15 +31,13 @@ pub struct Headers {
 pub trait Requester {
     fn get_object<A>(&self, request: A) -> actions::Result<Response>
     where
-        A: Request,
-        internal::Error: From<<A as BodyReceiver>::Err>;
+        A: Request;
 }
 
 impl Requester for S3Client {
     fn get_object<A>(&self, mut request: A) -> actions::Result<Response>
     where
         A: Request,
-        internal::Error: From<<A as BodyReceiver>::Err>,
     {
         let client = InternalClient::new();
         (|| {

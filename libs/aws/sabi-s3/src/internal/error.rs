@@ -2,9 +2,6 @@ pub type Result<T> = std::result::Result<T, Error>;
 
 #[derive(Fail, Debug)]
 pub enum Error {
-    #[fail(display = "std::io::Error > {}", 0)]
-    FailedToReceiveBody(std::io::Error),
-
     #[fail(display = "FileNotFound > {}", 0)]
     FileNotFound { path: String, description: String },
 
@@ -39,5 +36,11 @@ impl From<sabi_core::Error> for Error {
 impl From<crate::core::Error> for Error {
     fn from(e: crate::core::Error) -> Self {
         Error::S3CoreError(e)
+    }
+}
+
+impl From<std::io::Error> for Error {
+    fn from(e: std::io::Error) -> Self {
+        Error::StdIoError(e)
     }
 }
