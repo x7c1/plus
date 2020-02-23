@@ -1,4 +1,7 @@
-use crate::{actions, client, core};
+use crate::{actions, client, core, internal};
+
+/// integrate sabi_s3::*::Error into one sabi-s3::Error.
+/// see also: libs/aws/sabi-s3-macros
 
 #[derive(Fail, Debug)]
 pub enum Error {
@@ -10,6 +13,9 @@ pub enum Error {
 
     #[fail(display = "core::Error > {}", 0)]
     CoreError(core::Error),
+
+    #[fail(display = "internal::Error > {}", 0)]
+    InternalError(internal::Error),
 }
 
 impl From<actions::Error> for Error {
@@ -27,5 +33,11 @@ impl From<client::Error> for Error {
 impl From<core::Error> for Error {
     fn from(e: core::Error) -> Self {
         Error::CoreError(e)
+    }
+}
+
+impl From<internal::Error> for Error {
+    fn from(e: internal::Error) -> Self {
+        Error::InternalError(e)
     }
 }
