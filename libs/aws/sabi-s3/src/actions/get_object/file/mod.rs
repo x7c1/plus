@@ -56,7 +56,7 @@ impl BodyReceiver for FileRequest {
         (|| {
             let mut tmp = NamedTempFile::new_in(dir)?;
             let size = io::copy(&mut body, &mut tmp)?;
-            tmp.persist(&self.outfile).map_err(|e| io::Error::from(e))?;
+            tmp.persist(&self.outfile)?;
             Ok(size)
         })()
         .map_err(|e| FailedToReceiveBody(e))

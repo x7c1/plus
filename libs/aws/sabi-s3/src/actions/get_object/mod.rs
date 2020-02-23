@@ -50,7 +50,6 @@ impl Requester for S3Client {
                 &request,
                 &self.default_region,
             )?;
-
             let response: reqwest::blocking::Response = client.request_by(provider)?;
             let headers = to_headers(response.headers())?;
             request.receive_body_from(response)?;
