@@ -1,4 +1,4 @@
-use crate::core::verbs::{HasBucketScope, HasObjectKey, ToEndpoint};
+use crate::core::verbs::{HasBucketScope, HasMethod, HasObjectKey, ToEndpoint};
 use crate::internal;
 use crate::internal::Error::RegionNotSpecified;
 use crate::internal::{InternalRequest, RequestParts, ResourceLoader};
@@ -27,18 +27,15 @@ where
     A: ResourceLoader,
     A: HasObjectKey,
 {
-    pub fn new<'a, X>(
-        method: Method,
-        scope: &'a X,
-        request: &'a A,
-    ) -> internal::Result<RequestProvider<'a, A>>
+    pub fn new<'a, X, ANY>(scope: &'a X, request: &'a A) -> internal::Result<RequestProvider<'a, A>>
     where
         X: HasBucketScope,
+        A: HasMethod<ANY>,
     {
         let provider = RequestProvider {
             credentials: scope.credentials(),
             url: (scope.bucket(), request).to_endpoint()?,
-            method,
+            method: A::METHOD,
             resource_loader: request,
             default_region: scope.default_region(),
         };

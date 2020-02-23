@@ -9,13 +9,15 @@ pub use rich_file::RichFile;
 
 use crate::actions::put_object;
 use crate::client::S3Client;
-use crate::core::verbs::HasObjectKey;
+use crate::core::verbs::{HasMethod, HasObjectKey};
 use crate::core::{ETag, S3HeaderMap};
 use crate::internal::{InternalClient, RequestProvider, ResourceLoader};
 use crate::{actions, core, internal};
 use reqwest::header::HeaderMap;
 use reqwest::Method;
 
+/// rf.
+/// [PutObject - Amazon Simple Storage Service](https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObject.html)
 pub trait Request: HasObjectKey + ResourceLoader {}
 
 #[derive(Debug)]
@@ -26,6 +28,10 @@ pub struct Response {
 #[derive(Debug)]
 pub struct Headers {
     pub e_tag: ETag,
+}
+
+impl<A: Request> HasMethod<Response> for A {
+    const METHOD: Method = Method::POST;
 }
 
 pub trait Requester {
@@ -41,7 +47,7 @@ impl Requester for S3Client {
     {
         let client = InternalClient::new();
         (|| {
-            let provider = RequestProvider::new(Method::PUT, &self, &request)?;
+            let provider = RequestProvider::new(&self, &request)?;
             let response = client.request_by(provider)?;
             let headers = to_headers(response.headers())?;
             Ok(Response { headers })
