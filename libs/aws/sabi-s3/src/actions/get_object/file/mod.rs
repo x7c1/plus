@@ -2,10 +2,10 @@ mod outfile;
 pub use outfile::Error as OutfileError;
 pub use outfile::Outfile;
 
-use crate::core::S3Result;
+use crate::actions::get_object;
+use crate::core::verbs::HasObjectKey;
 use crate::internal::{RequestResource, ResourceLoader};
-use crate::operations::get_object;
-use crate::verbs::HasObjectKey;
+use crate::{actions, internal};
 use sabi_core::auth::v4::canonical::HashedPayload;
 use sabi_core::auth::v4::chrono::now;
 use sabi_core::io::BodyReceiver;
@@ -21,7 +21,7 @@ pub struct FileRequest {
 }
 
 impl FileRequest {
-    pub fn create(object_key: String, file_path: PathBuf) -> S3Result<Self> {
+    pub fn create(object_key: String, file_path: PathBuf) -> actions::Result<Self> {
         Ok(FileRequest {
             object_key,
             outfile: Outfile::create(file_path).map_err(|e| get_object::Error::from(e))?,
@@ -36,7 +36,7 @@ impl HasObjectKey for FileRequest {
 }
 
 impl ResourceLoader for FileRequest {
-    fn load(&self) -> S3Result<RequestResource> {
+    fn load(&self) -> internal::Result<RequestResource> {
         let resource = RequestResource {
             body: None,
             hash: HashedPayload::empty(),
@@ -49,13 +49,11 @@ impl ResourceLoader for FileRequest {
 }
 
 impl BodyReceiver for FileRequest {
-    type Err = crate::Error;
-
-    fn receive_body_from<A: Read>(&mut self, mut body: A) -> S3Result<u64> {
+    fn receive_body_from<A: Read>(&mut self, mut body: A) -> io::Result<u64> {
         let dir = self.outfile.directory();
         let mut tmp = NamedTempFile::new_in(dir)?;
         let size = io::copy(&mut body, &mut tmp)?;
-        tmp.persist(&self.outfile).map_err(|e| io::Error::from(e))?;
+        tmp.persist(&self.outfile)?;
         Ok(size)
     }
 }

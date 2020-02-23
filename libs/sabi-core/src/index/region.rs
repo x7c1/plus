@@ -1,10 +1,10 @@
+use crate::env::aws;
 use crate::verbs::AsBytes;
 use crate::SabiResult;
 use std::str::FromStr;
 
 /// see also:
 ///  * [AWS Service Endpoints - AWS General Reference](https://docs.aws.amazon.com/general/latest/gr/rande.html)
-///
 #[derive(Debug)]
 pub enum RegionCode {
     ApNorthEast1,
@@ -15,6 +15,11 @@ pub enum RegionCode {
 impl RegionCode {
     pub fn any<A: Into<String>>(key: A) -> Self {
         Self::Any(key.into())
+    }
+
+    pub fn find_from_env() -> SabiResult<Option<RegionCode>> {
+        let code = aws::default_region().as_optional()?;
+        Ok(code)
     }
 
     pub fn as_str(&self) -> &str {

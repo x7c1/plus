@@ -1,6 +1,6 @@
-use crate::core::S3Result;
+use crate::core::verbs::HasObjectKey;
+use crate::internal;
 use crate::internal::{RequestProvider, ResourceLoader};
-use crate::verbs::HasObjectKey;
 use reqwest::blocking::{Client, Response};
 use std::fmt::Debug;
 use std::time::Duration;
@@ -13,7 +13,7 @@ impl InternalClient {
         InternalClient {}
     }
 
-    pub fn request_by<A>(&self, provider: RequestProvider<A>) -> S3Result<Response>
+    pub fn request_by<A>(&self, provider: RequestProvider<A>) -> internal::Result<Response>
     where
         A: ResourceLoader,
         A: HasObjectKey,
@@ -23,7 +23,8 @@ impl InternalClient {
 
         let builder = Client::builder()
             .timeout(Duration::from_secs(5))
-            .build()?
+            .build()
+            .map_err(|e| internal::Error::ReqwestError(e))?
             .request(request.method, request.url)
             .headers(request.headers);
 
@@ -31,9 +32,11 @@ impl InternalClient {
             Some(body) => builder.body(body),
             _ => builder,
         };
-        let response: Response = builder.send()?;
-        eprintln!("response > {:#?}", response);
+        let response: Response = builder
+            .send()
+            .map_err(|e| internal::Error::ReqwestError(e))?;
 
+        eprintln!("response > {:#?}", response);
         Ok(response)
     }
 }

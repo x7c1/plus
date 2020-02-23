@@ -1,4 +1,4 @@
-use crate::core::S3Result;
+use crate::internal;
 use chrono::{DateTime, Utc};
 use reqwest::blocking::Body;
 use sabi_core::auth::v4::canonical::HashedPayload;
@@ -14,5 +14,5 @@ pub struct RequestResource<'a> {
 }
 
 pub trait ResourceLoader {
-    fn load(&self) -> S3Result<RequestResource>;
+    fn load(&self) -> internal::Result<RequestResource>;
 }

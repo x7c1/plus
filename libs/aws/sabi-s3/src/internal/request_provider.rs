@@ -1,7 +1,7 @@
-use crate::core::{S3Bucket, S3Result};
+use crate::core::verbs::{HasBucketScope, HasMethod, HasObjectKey, ToEndpoint};
+use crate::internal;
+use crate::internal::Error::RegionNotSpecified;
 use crate::internal::{InternalRequest, RequestParts, ResourceLoader};
-use crate::verbs::{HasObjectKey, ToEndpoint};
-use crate::Error::RegionNotSpecified;
 use reqwest::header::HeaderMap;
 use reqwest::{Method, Url};
 use sabi_core::auth::v4::request::AuthorizationFactory;
@@ -27,24 +27,22 @@ where
     A: ResourceLoader,
     A: HasObjectKey,
 {
-    pub fn new<'a>(
-        method: Method,
-        credentials: &'a Credentials,
-        bucket: &'a S3Bucket,
-        request: &'a A,
-        default_region: &'a Option<RegionCode>,
-    ) -> S3Result<RequestProvider<'a, A>> {
+    pub fn new<'a, X, ANY>(scope: &'a X, request: &'a A) -> internal::Result<RequestProvider<'a, A>>
+    where
+        X: HasBucketScope,
+        A: HasMethod<ANY>,
+    {
         let provider = RequestProvider {
-            credentials,
-            url: (bucket, request).to_endpoint()?,
-            method,
+            credentials: scope.credentials(),
+            url: (scope.bucket(), request).to_endpoint()?,
+            method: A::METHOD,
             resource_loader: request,
-            default_region,
+            default_region: scope.default_region(),
         };
         Ok(provider)
     }
 
-    pub fn provide(self) -> S3Result<InternalRequest> {
+    pub fn provide(self) -> internal::Result<InternalRequest> {
         let resource = self.resource_loader.load()?;
         let region_code = resource
             .region

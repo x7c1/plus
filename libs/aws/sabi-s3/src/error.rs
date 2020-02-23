@@ -1,89 +1,43 @@
-extern crate failure;
+use crate::{actions, client, core, internal};
 
-use crate::core::headers;
-use crate::operations;
-use std::fmt::Debug;
-
-pub type Result<T> = ::std::result::Result<T, Error>;
+/// integrate sabi_s3::*::Error into one sabi-s3::Error.
+/// see also: libs/aws/sabi-s3-macros
 
 #[derive(Fail, Debug)]
 pub enum Error {
-    #[fail(display = "env_extractor::Error > {}", 0)]
-    EnvExtractorError(String),
+    #[fail(display = "actions::Error > {}", 0)]
+    ActionsError(actions::Error),
 
-    #[fail(display = "EnvVarNotPresent > {}", 0)]
-    EnvVarNotPresent(String),
+    #[fail(display = "client::Error > {}", 0)]
+    ClientError(client::Error),
 
-    #[fail(display = "FileNotFound > {}", 0)]
-    FileNotFound {
-        operation: operations::Kind,
-        path: String,
-        description: String,
-    },
+    #[fail(display = "core::Error > {}", 0)]
+    CoreError(core::Error),
 
-    #[fail(display = "operations::get_object::Error > {}", 0)]
-    GetObjectError(operations::get_object::Error),
-
-    #[fail(display = "region not specified")]
-    RegionNotSpecified,
-
-    #[fail(display = "reqwest::Error > {}", 0)]
-    Reqwest(reqwest::Error),
-
-    #[fail(display = "headers::Error > {}", 0)]
-    S3HeaderError(headers::Error),
-
-    #[fail(display = "sabi_core::Error > {}", 0)]
-    SabiCoreError(sabi_core::Error),
-
-    #[fail(display = "std::io::Error > {}", 0)]
-    StdIoError(std::io::Error),
-
-    #[fail(display = "url::ParseError > {}", 0)]
-    UrlParseError(url::ParseError),
+    #[fail(display = "internal::Error > {}", 0)]
+    InternalError(internal::Error),
 }
 
-impl<A: Debug> From<env_extractor::Error<A>> for Error {
-    fn from(e: env_extractor::Error<A>) -> Self {
-        Error::EnvExtractorError(format!("{:?}", e))
+impl From<actions::Error> for Error {
+    fn from(e: actions::Error) -> Self {
+        Error::ActionsError(e)
     }
 }
 
-impl From<operations::get_object::Error> for Error {
-    fn from(e: operations::get_object::Error) -> Self {
-        Error::GetObjectError(e)
+impl From<client::Error> for Error {
+    fn from(e: client::Error) -> Self {
+        Error::ClientError(e)
     }
 }
 
-impl From<reqwest::Error> for Error {
-    fn from(e: reqwest::Error) -> Self {
-        Error::Reqwest(e)
+impl From<core::Error> for Error {
+    fn from(e: core::Error) -> Self {
+        Error::CoreError(e)
     }
 }
 
-impl From<headers::Error> for Error {
-    fn from(e: headers::Error) -> Self {
-        Error::S3HeaderError(e)
-    }
-}
-
-impl From<sabi_core::Error> for Error {
-    fn from(e: sabi_core::Error) -> Self {
-        match e {
-            sabi_core::Error::EnvVarNotPresent(key) => Error::EnvVarNotPresent(key),
-            _ => Error::SabiCoreError(e),
-        }
-    }
-}
-
-impl From<std::io::Error> for Error {
-    fn from(e: std::io::Error) -> Self {
-        Error::StdIoError(e)
-    }
-}
-
-impl From<url::ParseError> for Error {
-    fn from(e: url::ParseError) -> Self {
-        Error::UrlParseError(e)
+impl From<internal::Error> for Error {
+    fn from(e: internal::Error) -> Self {
+        Error::InternalError(e)
     }
 }

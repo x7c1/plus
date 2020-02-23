@@ -20,3 +20,5 @@ fi
 
 cd "$OSXCROSS_ROOT" || exit 1
 UNATTENDED=1 ./build.sh
+
+cd "$PROJECT_ROOT" || exit 1
