@@ -9,7 +9,13 @@
 #   $ ./scripts/run_pilot.sh
 #
 # Enable to print stdout if necessary:
-#   $ ./scripts/run_pilot.sh --nocapture
+#   $ ./scripts/run_pilot.sh --color always --nocapture
+#
+# Disable to run in parallel:
+#   $ ./scripts/run_pilot.sh --color always --test-threads=1
+#
+# See also:
+#   https://doc.rust-lang.org/book/ch11-02-running-tests.html
 
 
 # stop if non-zero returned.

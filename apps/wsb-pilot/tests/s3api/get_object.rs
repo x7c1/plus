@@ -57,7 +57,7 @@ fn setup() -> PilotResult<()> {
 fn init() -> PilotResult<()> {
     println!("[get-object] init");
 
-    /*
+    // /*
     for mock in get_mock_files() {
         let aws_output = aws()
             .arg("s3api")
@@ -69,7 +69,7 @@ fn init() -> PilotResult<()> {
 
         dump(&aws_output);
     }
-    */
+    // */
     Ok({})
 }
 
