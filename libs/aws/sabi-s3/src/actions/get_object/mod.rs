@@ -41,13 +41,7 @@ impl Requester for S3Client {
     {
         let client = InternalClient::new();
         (|| {
-            let provider = RequestProvider::new(
-                Method::GET,
-                &self.credentials,
-                &self.bucket,
-                &request,
-                &self.default_region,
-            )?;
+            let provider = RequestProvider::new(Method::GET, &self, &request)?;
             let response: reqwest::blocking::Response = client.request_by(provider)?;
             let headers = to_headers(response.headers())?;
             request.receive_body_from(response)?;

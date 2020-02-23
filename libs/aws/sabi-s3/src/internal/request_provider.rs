@@ -1,5 +1,4 @@
-use crate::core::verbs::{HasObjectKey, ToEndpoint};
-use crate::core::S3Bucket;
+use crate::core::verbs::{HasBucketScope, HasObjectKey, ToEndpoint};
 use crate::internal;
 use crate::internal::Error::RegionNotSpecified;
 use crate::internal::{InternalRequest, RequestParts, ResourceLoader};
@@ -28,19 +27,20 @@ where
     A: ResourceLoader,
     A: HasObjectKey,
 {
-    pub fn new<'a>(
+    pub fn new<'a, X>(
         method: Method,
-        credentials: &'a Credentials,
-        bucket: &'a S3Bucket,
+        scope: &'a X,
         request: &'a A,
-        default_region: &'a Option<RegionCode>,
-    ) -> internal::Result<RequestProvider<'a, A>> {
+    ) -> internal::Result<RequestProvider<'a, A>>
+    where
+        X: HasBucketScope,
+    {
         let provider = RequestProvider {
-            credentials,
-            url: (bucket, request).to_endpoint()?,
+            credentials: scope.credentials(),
+            url: (scope.bucket(), request).to_endpoint()?,
             method,
             resource_loader: request,
-            default_region,
+            default_region: scope.default_region(),
         };
         Ok(provider)
     }

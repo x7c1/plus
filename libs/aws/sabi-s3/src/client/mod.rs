@@ -3,6 +3,7 @@ pub use error::Error;
 pub use error::Result;
 
 use crate::actions;
+use crate::core::verbs::HasBucketScope;
 use crate::core::S3Bucket;
 use sabi_core::auth::Credentials;
 use sabi_core::index::RegionCode;
@@ -13,6 +14,20 @@ pub struct S3Client {
     pub credentials: Credentials,
     pub default_region: Option<RegionCode>,
     pub bucket: S3Bucket,
+}
+
+impl HasBucketScope for &S3Client {
+    fn credentials(&self) -> &Credentials {
+        &self.credentials
+    }
+
+    fn bucket(&self) -> &S3Bucket {
+        &self.bucket
+    }
+
+    fn default_region(&self) -> &Option<RegionCode> {
+        &self.default_region
+    }
 }
 
 impl S3Client {
