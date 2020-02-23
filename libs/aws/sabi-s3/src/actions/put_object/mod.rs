@@ -9,12 +9,11 @@ pub use rich_file::RichFile;
 
 use crate::actions::put_object;
 use crate::client::S3Client;
-use crate::core::verbs::{HasMethod, HasObjectKey};
+use crate::core::verbs::{HasObjectKey, PostRequest};
 use crate::core::{ETag, S3HeaderMap};
 use crate::internal::{InternalClient, RequestProvider, ResourceLoader};
 use crate::{actions, core, internal};
 use reqwest::header::HeaderMap;
-use reqwest::Method;
 
 /// rf.
 /// [PutObject - Amazon Simple Storage Service](https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObject.html)
@@ -30,9 +29,7 @@ pub struct Headers {
     pub e_tag: ETag,
 }
 
-impl<A: Request> HasMethod<Response> for A {
-    const METHOD: Method = Method::POST;
-}
+impl<A: Request> PostRequest<Response> for A {}
 
 pub trait Requester {
     fn put_object<A>(&self, request: A) -> actions::Result<Response>

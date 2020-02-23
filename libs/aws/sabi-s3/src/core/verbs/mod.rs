@@ -8,4 +8,6 @@ mod has_bucket_scope;
 pub use has_bucket_scope::HasBucketScope;
 
 mod has_method;
+pub use has_method::GetRequest;
 pub use has_method::HasMethod;
+pub use has_method::PostRequest;
