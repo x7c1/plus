@@ -1,5 +1,5 @@
 use crate::core;
-use crate::core::response::headers::S3Header;
+use crate::core::response::headers::AwsHeader;
 
 #[derive(Debug)]
 pub struct ETag(String);
@@ -18,7 +18,7 @@ impl ETag {
     }
 }
 
-impl<'a> S3Header<'a> for ETag {
+impl<'a> AwsHeader<'a> for ETag {
     const HEADER_NAME: &'a str = "ETag";
 
     fn new<A: Into<String>>(a: A) -> core::Result<Self> {
