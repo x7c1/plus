@@ -8,14 +8,12 @@ use wsb_pilot::PilotResult;
 fn return_zero_on_succeeded() -> PilotResult<()> {
     let sample = get_sample1();
 
-    let wsb_output = wsb_s3api()
+    let _wsb_output = wsb_s3api()
         .arg("put-object")
         .args(&["--bucket", &TEST_BUCKET])
         .args(&["--key", &sample.object_key])
         .args(&["--body", &sample.upload_src.to_string_lossy()])
         .output()?;
-
-    assert_eq!(0, wsb_output.status_code(), "return non-zero if it failed.");
 
     let expected = read_to_string(&sample.upload_src)?;
     let actual = {
@@ -69,7 +67,7 @@ fn output_e_tag_is_correct() -> PilotResult<()> {
 
 #[test]
 fn return_non_zero_on_failed() -> PilotResult<()> {
-    let output = wsb_s3api().arg("unknown-subcommand").output()?;
+    let output = wsb_s3api().arg("unknown-subcommand").execute()?;
     assert_eq!(1, output.status_code(), "return zero if it succeeded.");
     Ok({})
 }
