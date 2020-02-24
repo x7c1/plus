@@ -42,21 +42,6 @@ fn return_zero_on_succeeded() -> PilotResult<()> {
     Ok({})
 }
 
-#[test]
-fn sample1() {
-    // setup();
-}
-
-#[test]
-fn sample2() {
-    // setup();
-}
-
-#[test]
-fn sample3() {
-    // setup();
-}
-
 // workaround to emulate singleton initializer
 lazy_static! {
     static ref WORKSPACE: PathBuf = PathBuf::new()
