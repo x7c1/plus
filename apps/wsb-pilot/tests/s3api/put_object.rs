@@ -1,8 +1,6 @@
 use crate::s3api::{TEST_BUCKET, TEST_WORKSPACE_DIR};
-use serde_json::Value;
 use std::io;
 use std::path::{Path, PathBuf};
-use std::process::Command;
 use wsb_pilot::cmd::CommandRunner;
 use wsb_pilot::PilotResult;
 
@@ -36,13 +34,8 @@ fn return_zero_on_succeeded() -> PilotResult<()> {
 
 fn read_to_string(path: &Path) -> io::Result<String> {
     let path_str: &str = &path.to_string_lossy();
-    let output = Command::new("cat")
-        .current_dir(&*WORKSPACE)
-        .arg(path_str)
-        .output()?;
-
-    let output_str = String::from_utf8_lossy(&output.stdout).to_string();
-    Ok(output_str)
+    let output = cat().arg(path_str).output()?;
+    Ok(output.to_stdout_string())
 }
 
 #[test]
@@ -99,6 +92,10 @@ fn aws_s3api() -> CommandRunner {
 
 fn wsb_s3api() -> CommandRunner {
     super::wsb_s3api().current_dir(&*WORKSPACE)
+}
+
+fn cat() -> CommandRunner {
+    super::cat().current_dir(&*WORKSPACE)
 }
 
 struct Sample {
