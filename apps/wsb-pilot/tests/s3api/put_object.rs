@@ -1,31 +1,16 @@
-use crate::s3api::*;
+use crate::s3api::{dump, dump_if_failed, TEST_BUCKET, TEST_WORKSPACE_DIR};
 use serde_json::Value;
 use std::io;
 use std::path::{Path, PathBuf};
 use std::process::Command;
+use wsb_pilot::cmd::CommandRunner;
 use wsb_pilot::PilotResult;
-
-fn get_sample1() -> Sample {
-    Sample {
-        object_key: "s3api/put-object/foo/bar/sample.txt".to_string(),
-        upload_src: "./sample.txt".into(),
-        download_dst: "./downloaded.tmp".into(),
-    }
-}
-
-lazy_static! {
-    static ref WORKSPACE: PathBuf = PathBuf::new()
-        .join(&*TEST_WORKSPACE_DIR)
-        .join("s3api")
-        .join("put-object");
-}
 
 #[test]
 fn return_zero_on_succeeded() -> PilotResult<()> {
     let sample = get_sample1();
 
-    let wsb_output = s3api()
-        .current_dir(&*WORKSPACE)
+    let wsb_output = wsb_s3api()
         .arg("put-object")
         .args(&["--bucket", &TEST_BUCKET])
         .args(&["--key", &sample.object_key])
@@ -33,15 +18,12 @@ fn return_zero_on_succeeded() -> PilotResult<()> {
         .output()?;
 
     dump(&wsb_output);
-
     assert_eq!(
         Some(0),
         wsb_output.status.code(),
         "return non-zero if it failed."
     );
-    let aws_output = aws()
-        .current_dir(&*WORKSPACE)
-        .arg("s3api")
+    let aws_output = aws_s3api()
         .arg("get-object")
         .args(&["--bucket", &TEST_BUCKET])
         .args(&["--key", &sample.object_key])
@@ -70,9 +52,7 @@ fn read_to_string(path: &Path) -> io::Result<String> {
 #[test]
 fn output_e_tag_is_correct() -> PilotResult<()> {
     let sample = get_sample1();
-    let aws_output = aws()
-        .current_dir(&*WORKSPACE)
-        .arg("s3api")
+    let aws_output = aws_s3api()
         .arg("put-object")
         .args(&["--bucket", &TEST_BUCKET])
         .args(&["--key", &sample.object_key])
@@ -81,8 +61,7 @@ fn output_e_tag_is_correct() -> PilotResult<()> {
 
     dump_if_failed(&aws_output);
 
-    let wsb_output = s3api()
-        .current_dir(&*WORKSPACE)
+    let wsb_output = wsb_s3api()
         .arg("put-object")
         .args(&["--bucket", &TEST_BUCKET])
         .args(&["--key", &sample.object_key])
@@ -100,7 +79,7 @@ fn output_e_tag_is_correct() -> PilotResult<()> {
 
 #[test]
 fn return_non_zero_on_failed() -> PilotResult<()> {
-    let output = s3api().arg("unknown-subcommand").output()?;
+    let output = wsb_s3api().arg("unknown-subcommand").output()?;
     dump_if_failed(&output);
 
     assert_eq!(
@@ -109,6 +88,29 @@ fn return_non_zero_on_failed() -> PilotResult<()> {
         "return zero if it succeeded."
     );
     Ok({})
+}
+
+lazy_static! {
+    static ref WORKSPACE: PathBuf = PathBuf::new()
+        .join(&*TEST_WORKSPACE_DIR)
+        .join("s3api")
+        .join("put-object");
+}
+
+fn get_sample1() -> Sample {
+    Sample {
+        object_key: "s3api/put-object/foo/bar/sample.txt".to_string(),
+        upload_src: "./sample.txt".into(),
+        download_dst: "./downloaded.tmp".into(),
+    }
+}
+
+fn aws_s3api() -> CommandRunner {
+    super::aws_s3api().current_dir(&*WORKSPACE)
+}
+
+fn wsb_s3api() -> CommandRunner {
+    super::wsb_s3api().current_dir(&*WORKSPACE)
 }
 
 struct Sample {
