@@ -1,4 +1,4 @@
-use crate::core::headers;
+use crate::core::response::headers;
 use failure::_core::fmt::Debug;
 
 pub type Result<T> = std::result::Result<T, Error>;

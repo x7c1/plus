@@ -1,9 +1,11 @@
 use crate::core;
-use crate::core::ETag;
 use reqwest::header::HeaderMap;
 
 mod error;
 pub use error::Error;
+
+mod e_tag;
+pub use e_tag::ETag;
 
 pub trait S3HeaderMap {
     fn get_e_tag(&self) -> core::Result<ETag>;

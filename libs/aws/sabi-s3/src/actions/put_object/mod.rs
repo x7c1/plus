@@ -9,8 +9,8 @@ pub use rich_file::RichFile;
 
 use crate::actions::put_object;
 use crate::client::S3Client;
+use crate::core::response::headers::{ETag, S3HeaderMap};
 use crate::core::verbs::{HasObjectKey, IsPut};
-use crate::core::{ETag, S3HeaderMap};
 use crate::internal::{InternalClient, RequestProvider, ResourceLoader};
 use crate::{actions, core, internal};
 use reqwest::header::HeaderMap;

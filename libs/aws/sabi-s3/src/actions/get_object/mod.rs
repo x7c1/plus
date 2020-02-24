@@ -7,8 +7,8 @@ pub use file::{Outfile, OutfileError};
 
 use crate::actions::get_object;
 use crate::client::S3Client;
+use crate::core::response::headers::{ETag, S3HeaderMap};
 use crate::core::verbs::{HasObjectKey, IsGet};
-use crate::core::{ETag, S3HeaderMap};
 use crate::internal::{InternalClient, RequestProvider, ResourceLoader};
 use crate::{actions, core, internal};
 use reqwest::header::HeaderMap;
