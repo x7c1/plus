@@ -1,6 +1,8 @@
 #[macro_use]
 extern crate failure;
 
+pub mod cmd;
+
 mod error;
 pub use error::Result as PilotResult;
 

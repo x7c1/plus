@@ -1,5 +1,5 @@
 use env_extractor::{FromStrResult, SingleValue};
-use std::process::{Command, Output};
+use wsb_pilot::cmd::CommandRunner;
 
 mod get_object;
 mod put_object;
@@ -10,12 +10,16 @@ lazy_static! {
     static ref TEST_WORKSPACE_DIR: String = load_workspace_dir().unwrap();
 }
 
-fn aws() -> Command {
-    Command::new("aws")
+fn aws_s3api() -> CommandRunner {
+    CommandRunner::new("aws").arg("s3api")
 }
 
-fn s3api() -> Command {
-    Command::new(format!("{}/s3api", *TEST_APPS_DIR))
+fn wsb_s3api() -> CommandRunner {
+    CommandRunner::new(format!("{}/s3api", *TEST_APPS_DIR))
+}
+
+fn cat() -> CommandRunner {
+    CommandRunner::new("cat")
 }
 
 fn load_test_bucket() -> FromStrResult<String> {
@@ -28,20 +32,4 @@ fn load_apps_dir() -> FromStrResult<String> {
 
 fn load_workspace_dir() -> FromStrResult<String> {
     SingleValue::new("WSB_WORKSPACE_DIR").as_required()
-}
-
-fn dump_if_failed(output: &Output) {
-    if !output.status.success() {
-        dump(output);
-    }
-}
-
-fn dump(output: &Output) {
-    let to_string = |vec| String::from_utf8_lossy(vec).to_string();
-    println!("{}", to_string(&output.stdout));
-
-    let e = to_string(&output.stderr);
-    if e.len() > 0 {
-        println!("stderr: {}", e);
-    }
 }

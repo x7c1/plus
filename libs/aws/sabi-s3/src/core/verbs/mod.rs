@@ -10,4 +10,4 @@ pub use has_bucket_scope::HasBucketScope;
 mod has_method;
 pub use has_method::HasMethod;
 pub use has_method::IsGet;
-pub use has_method::IsPost;
+pub use has_method::IsPut;
