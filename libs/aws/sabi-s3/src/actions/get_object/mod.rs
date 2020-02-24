@@ -56,6 +56,6 @@ impl Requester for S3Client {
 
 fn to_headers(map: &HeaderMap) -> core::Result<Headers> {
     Ok(Headers {
-        e_tag: map.get_e_tag()?,
+        e_tag: map.get_header_value()?,
     })
 }

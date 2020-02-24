@@ -2,9 +2,12 @@ use reqwest::header::ToStrError;
 
 #[derive(Fail, Debug)]
 pub enum Error {
-    #[fail(display = "ETag header not found.")]
-    ETagHeaderNotFound,
+    #[fail(display = "header not found. target: {}", 0)]
+    HeaderNotFound(String),
 
-    #[fail(display = "ETag header has invalid characters > {:?}", 0)]
-    InvalidETagHeader(ToStrError),
+    #[fail(
+        display = "invalid character(s) found. name: {}, cause > {}",
+        name, cause
+    )]
+    InvalidCharacters { name: String, cause: ToStrError },
 }
