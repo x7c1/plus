@@ -1,5 +1,4 @@
 use crate::s3api::{TEST_BUCKET, TEST_WORKSPACE_DIR};
-use serde_json::Value;
 use std::path::PathBuf;
 use wsb_pilot::cmd::CommandRunner;
 use wsb_pilot::{MutableSelf, PilotResult};
@@ -37,8 +36,8 @@ fn return_zero_on_succeeded() -> PilotResult<()> {
     wsb_output.dump();
     assert_eq!(0, wsb_output.status_code(), "return non-zero if it failed.");
 
-    let aws_json: Value = serde_json::from_slice(aws_output.stdout())?;
-    let wsb_json: Value = serde_json::from_slice(wsb_output.stdout())?;
+    let aws_json = aws_output.to_json()?;
+    let wsb_json = wsb_output.to_json()?;
     assert_eq!(wsb_json["ETag"], aws_json["ETag"]);
 
     Ok({})
