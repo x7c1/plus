@@ -1,3 +1,5 @@
+use crate::PilotResult;
+use serde_json::Value;
 use std::process::Output;
 
 pub struct CommandOutput {
@@ -22,6 +24,11 @@ impl CommandOutput {
             .status
             .code()
             .expect("Process terminated by signal")
+    }
+
+    pub fn to_json(&self) -> PilotResult<Value> {
+        let value: Value = serde_json::from_slice(self.stdout())?;
+        Ok(value)
     }
 
     pub fn dump(&self) {

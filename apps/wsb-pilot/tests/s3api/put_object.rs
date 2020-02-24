@@ -62,8 +62,8 @@ fn output_e_tag_is_correct() -> PilotResult<()> {
     let wsb_output = run(wsb_s3api())?;
     wsb_output.dump();
 
-    let aws_json: Value = serde_json::from_slice(aws_output.stdout())?;
-    let wsb_json: Value = serde_json::from_slice(wsb_output.stdout())?;
+    let aws_json = aws_output.to_json()?;
+    let wsb_json = wsb_output.to_json()?;
     assert_eq!(wsb_json["ETag"], aws_json["ETag"]);
 
     Ok({})
