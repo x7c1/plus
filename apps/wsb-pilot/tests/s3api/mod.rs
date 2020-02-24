@@ -1,5 +1,5 @@
 use env_extractor::{FromStrResult, SingleValue};
-use std::process::{Command, Output};
+use std::process::Output;
 use wsb_pilot::cmd::CommandRunner;
 
 mod get_object;

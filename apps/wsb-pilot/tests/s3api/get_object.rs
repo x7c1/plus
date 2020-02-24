@@ -8,15 +8,18 @@ use wsb_pilot::{MutableSelf, PilotResult};
 fn return_zero_on_succeeded() -> PilotResult<()> {
     setup()?;
 
+    let run = |runner: CommandRunner, sample: Sample| {
+        runner
+            .arg("get-object")
+            .args(&["--bucket", &TEST_BUCKET])
+            .args(&["--key", &sample.object_key])
+            .arg(&sample.outfile_dst)
+            .output()
+    };
     let aws_sample = get_sample().mutate(|mut x| x.outfile_dst = "./sample1.aws.tmp".into());
-    let aws_output = aws_s3api()
-        .arg("get-object")
-        .args(&["--bucket", &TEST_BUCKET])
-        .args(&["--key", &aws_sample.object_key])
-        .arg(&aws_sample.outfile_dst)
-        .output()?;
-
+    let aws_output = run(aws_s3api(), aws_sample)?;
     dump(&aws_output);
+
     assert_eq!(
         Some(0),
         aws_output.status.code(),
@@ -35,14 +38,9 @@ fn return_zero_on_succeeded() -> PilotResult<()> {
     */
 
     let wsb_sample = get_sample().mutate(|mut x| x.outfile_dst = "./sample1.wsb.tmp".into());
-    let wsb_output = wsb_s3api()
-        .arg("get-object")
-        .args(&["--bucket", &TEST_BUCKET])
-        .args(&["--key", &wsb_sample.object_key])
-        .arg(&wsb_sample.outfile_dst)
-        .output()?;
-
+    let wsb_output = run(wsb_s3api(), wsb_sample)?;
     dump(&wsb_output);
+
     assert_eq!(
         Some(0),
         wsb_output.status.code(),
