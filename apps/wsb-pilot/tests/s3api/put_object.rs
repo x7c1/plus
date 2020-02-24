@@ -52,22 +52,18 @@ fn read_to_string(path: &Path) -> io::Result<String> {
 #[test]
 fn output_e_tag_is_correct() -> PilotResult<()> {
     let sample = get_sample1();
-    let aws_output = aws_s3api()
-        .arg("put-object")
-        .args(&["--bucket", &TEST_BUCKET])
-        .args(&["--key", &sample.object_key])
-        .args(&["--body", &sample.upload_src.to_string_lossy()])
-        .output()?;
-
+    let run = |runner: CommandRunner| {
+        runner
+            .arg("put-object")
+            .args(&["--bucket", &TEST_BUCKET])
+            .args(&["--key", &sample.object_key])
+            .args(&["--body", &sample.upload_src.to_string_lossy()])
+            .output()
+    };
+    let aws_output = run(aws_s3api())?;
     dump_if_failed(&aws_output);
 
-    let wsb_output = wsb_s3api()
-        .arg("put-object")
-        .args(&["--bucket", &TEST_BUCKET])
-        .args(&["--key", &sample.object_key])
-        .args(&["--body", &sample.upload_src.to_string_lossy()])
-        .output()?;
-
+    let wsb_output = run(wsb_s3api())?;
     dump(&wsb_output);
 
     let aws_json: Value = serde_json::from_slice(&aws_output.stdout)?;
