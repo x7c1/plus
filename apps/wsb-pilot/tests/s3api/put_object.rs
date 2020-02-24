@@ -7,20 +7,26 @@ use wsb_pilot::PilotResult;
 #[test]
 fn return_zero_on_succeeded() -> PilotResult<()> {
     let sample = get_sample1();
-
-    let _wsb_output = wsb_s3api()
-        .arg("put-object")
-        .args(&["--bucket", &TEST_BUCKET])
-        .args(&["--key", &sample.object_key])
-        .args(&["--body", &sample.upload_src.to_string_lossy()])
-        .output()?;
-
-    let expected = read_to_string(&sample.upload_src)?;
+    let expected = {
+        upload(&sample)?;
+        read_to_string(&sample.upload_src)?
+    };
     let actual = {
         download(&sample)?;
         read_to_string(&sample.download_dst)?
     };
     assert_eq!(actual, expected, "correctly uploaded.");
+    Ok({})
+}
+
+fn upload(target: &Sample) -> PilotResult<()> {
+    wsb_s3api()
+        .arg("put-object")
+        .args(&["--bucket", &TEST_BUCKET])
+        .args(&["--key", &target.object_key])
+        .args(&["--body", &target.upload_src.to_string_lossy()])
+        .output()?;
+
     Ok({})
 }
 
