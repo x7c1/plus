@@ -15,20 +15,25 @@ fn return_zero_on_succeeded() -> PilotResult<()> {
         .args(&["--body", &sample.upload_src.to_string_lossy()])
         .output()?;
 
-    wsb_output.dump();
     assert_eq!(0, wsb_output.status_code(), "return non-zero if it failed.");
-    let aws_output = aws_s3api()
-        .arg("get-object")
-        .args(&["--bucket", &TEST_BUCKET])
-        .args(&["--key", &sample.object_key])
-        .arg(&sample.download_dst)
-        .output()?;
-
-    aws_output.dump_if_failed();
 
     let expected = read_to_string(&sample.upload_src)?;
-    let actual = read_to_string(&sample.download_dst)?;
+    let actual = {
+        download(&sample)?;
+        read_to_string(&sample.download_dst)?
+    };
     assert_eq!(actual, expected, "correctly uploaded.");
+    Ok({})
+}
+
+fn download(target: &Sample) -> PilotResult<()> {
+    aws_s3api()
+        .arg("get-object")
+        .args(&["--bucket", &TEST_BUCKET])
+        .args(&["--key", &target.object_key])
+        .arg(&target.download_dst)
+        .output()?;
+
     Ok({})
 }
 
@@ -49,14 +54,14 @@ fn output_e_tag_is_correct() -> PilotResult<()> {
             .args(&["--body", &sample.upload_src.to_string_lossy()])
             .output()
     };
-    let aws_output = run(aws_s3api())?;
-    aws_output.dump_if_failed();
-
-    let wsb_output = run(wsb_s3api())?;
-    wsb_output.dump();
-
-    let aws_json = aws_output.stdout_to_json()?;
-    let wsb_json = wsb_output.stdout_to_json()?;
+    let aws_json = {
+        let output = run(aws_s3api())?;
+        output.stdout_to_json()?
+    };
+    let wsb_json = {
+        let output = run(wsb_s3api())?;
+        output.stdout_to_json()?
+    };
     assert_eq!(wsb_json["ETag"], aws_json["ETag"]);
 
     Ok({})
@@ -65,8 +70,6 @@ fn output_e_tag_is_correct() -> PilotResult<()> {
 #[test]
 fn return_non_zero_on_failed() -> PilotResult<()> {
     let output = wsb_s3api().arg("unknown-subcommand").output()?;
-    output.dump_if_failed();
-
     assert_eq!(1, output.status_code(), "return zero if it succeeded.");
     Ok({})
 }

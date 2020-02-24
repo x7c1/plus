@@ -17,7 +17,6 @@ fn return_zero_on_succeeded() -> PilotResult<()> {
     };
     let aws_sample = get_sample().mutate(|mut x| x.outfile_dst = "./sample1.aws.tmp".into());
     let aws_output = run(aws_s3api(), aws_sample)?;
-    aws_output.dump();
     assert_eq!(0, aws_output.status_code(), "return non-zero if it failed.");
 
     /*
@@ -33,7 +32,6 @@ fn return_zero_on_succeeded() -> PilotResult<()> {
 
     let wsb_sample = get_sample().mutate(|mut x| x.outfile_dst = "./sample1.wsb.tmp".into());
     let wsb_output = run(wsb_s3api(), wsb_sample)?;
-    wsb_output.dump();
     assert_eq!(0, wsb_output.status_code(), "return non-zero if it failed.");
 
     let aws_json = aws_output.stdout_to_json()?;
@@ -79,14 +77,12 @@ fn init() -> PilotResult<()> {
 
     // /*
     for mock in get_mock_files() {
-        let aws_output = aws_s3api()
+        let _aws_output = aws_s3api()
             .arg("put-object")
             .args(&["--bucket", &TEST_BUCKET])
             .args(&["--key", &mock.object_key])
             .args(&["--body", &mock.file_path.to_string_lossy()])
             .output()?;
-
-        aws_output.dump();
     }
     // */
     Ok({})

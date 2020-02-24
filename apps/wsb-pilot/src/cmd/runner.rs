@@ -47,6 +47,9 @@ impl CommandRunner {
             .args(self.args)
             .output()?;
 
-        Ok(CommandOutput::new(output))
+        let reified = CommandOutput::new(output);
+        reified.dump();
+
+        Ok(reified)
     }
 }
