@@ -1,4 +1,4 @@
-use crate::s3api::{dump, dump_if_failed, TEST_BUCKET, TEST_WORKSPACE_DIR};
+use crate::s3api::{TEST_BUCKET, TEST_WORKSPACE_DIR};
 use serde_json::Value;
 use std::io;
 use std::path::{Path, PathBuf};
@@ -17,12 +17,8 @@ fn return_zero_on_succeeded() -> PilotResult<()> {
         .args(&["--body", &sample.upload_src.to_string_lossy()])
         .output()?;
 
-    dump(&wsb_output);
-    assert_eq!(
-        Some(0),
-        wsb_output.status.code(),
-        "return non-zero if it failed."
-    );
+    wsb_output.dump();
+    assert_eq!(0, wsb_output.status_code(), "return non-zero if it failed.");
     let aws_output = aws_s3api()
         .arg("get-object")
         .args(&["--bucket", &TEST_BUCKET])
@@ -30,7 +26,7 @@ fn return_zero_on_succeeded() -> PilotResult<()> {
         .arg(&sample.download_dst)
         .output()?;
 
-    dump_if_failed(&aws_output);
+    aws_output.dump_if_failed();
 
     let expected = read_to_string(&sample.upload_src)?;
     let actual = read_to_string(&sample.download_dst)?;
@@ -61,13 +57,13 @@ fn output_e_tag_is_correct() -> PilotResult<()> {
             .output()
     };
     let aws_output = run(aws_s3api())?;
-    dump_if_failed(&aws_output);
+    aws_output.dump_if_failed();
 
     let wsb_output = run(wsb_s3api())?;
-    dump(&wsb_output);
+    wsb_output.dump();
 
-    let aws_json: Value = serde_json::from_slice(&aws_output.stdout)?;
-    let wsb_json: Value = serde_json::from_slice(&wsb_output.stdout)?;
+    let aws_json: Value = serde_json::from_slice(aws_output.stdout())?;
+    let wsb_json: Value = serde_json::from_slice(wsb_output.stdout())?;
     assert_eq!(wsb_json["ETag"], aws_json["ETag"]);
 
     Ok({})
@@ -76,13 +72,9 @@ fn output_e_tag_is_correct() -> PilotResult<()> {
 #[test]
 fn return_non_zero_on_failed() -> PilotResult<()> {
     let output = wsb_s3api().arg("unknown-subcommand").output()?;
-    dump_if_failed(&output);
+    output.dump_if_failed();
 
-    assert_eq!(
-        Some(1),
-        output.status.code(),
-        "return zero if it succeeded."
-    );
+    assert_eq!(1, output.status_code(), "return zero if it succeeded.");
     Ok({})
 }
 

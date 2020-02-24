@@ -1,7 +1,8 @@
+use crate::cmd::CommandOutput;
 use std::ffi::OsStr;
 use std::io;
 use std::path::{Path, PathBuf};
-use std::process::{Command, Output};
+use std::process::Command;
 
 pub struct CommandRunner {
     program: String,
@@ -40,10 +41,12 @@ impl CommandRunner {
         xs
     }
 
-    pub fn output(self) -> io::Result<Output> {
-        Command::new(self.program)
+    pub fn output(self) -> io::Result<CommandOutput> {
+        let output = Command::new(self.program)
             .current_dir(self.current_dir)
             .args(self.args)
-            .output()
+            .output()?;
+
+        Ok(CommandOutput::new(output))
     }
 }

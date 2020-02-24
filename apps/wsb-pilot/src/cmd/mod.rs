@@ -1,2 +1,5 @@
-mod command;
-pub use command::CommandRunner;
+mod runner;
+pub use runner::CommandRunner;
+
+mod output;
+pub use output::CommandOutput;

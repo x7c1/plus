@@ -1,4 +1,4 @@
-use crate::s3api::{dump, TEST_BUCKET, TEST_WORKSPACE_DIR};
+use crate::s3api::{TEST_BUCKET, TEST_WORKSPACE_DIR};
 use serde_json::Value;
 use std::path::PathBuf;
 use wsb_pilot::cmd::CommandRunner;
@@ -18,13 +18,8 @@ fn return_zero_on_succeeded() -> PilotResult<()> {
     };
     let aws_sample = get_sample().mutate(|mut x| x.outfile_dst = "./sample1.aws.tmp".into());
     let aws_output = run(aws_s3api(), aws_sample)?;
-    dump(&aws_output);
-
-    assert_eq!(
-        Some(0),
-        aws_output.status.code(),
-        "return non-zero if it failed."
-    );
+    aws_output.dump();
+    assert_eq!(0, aws_output.status_code(), "return non-zero if it failed.");
 
     /*
     {
@@ -39,16 +34,11 @@ fn return_zero_on_succeeded() -> PilotResult<()> {
 
     let wsb_sample = get_sample().mutate(|mut x| x.outfile_dst = "./sample1.wsb.tmp".into());
     let wsb_output = run(wsb_s3api(), wsb_sample)?;
-    dump(&wsb_output);
+    wsb_output.dump();
+    assert_eq!(0, wsb_output.status_code(), "return non-zero if it failed.");
 
-    assert_eq!(
-        Some(0),
-        wsb_output.status.code(),
-        "return non-zero if it failed."
-    );
-
-    let aws_json: Value = serde_json::from_slice(&aws_output.stdout)?;
-    let wsb_json: Value = serde_json::from_slice(&wsb_output.stdout)?;
+    let aws_json: Value = serde_json::from_slice(aws_output.stdout())?;
+    let wsb_json: Value = serde_json::from_slice(wsb_output.stdout())?;
     assert_eq!(wsb_json["ETag"], aws_json["ETag"]);
 
     Ok({})
@@ -97,7 +87,7 @@ fn init() -> PilotResult<()> {
             .args(&["--body", &mock.file_path.to_string_lossy()])
             .output()?;
 
-        dump(&aws_output);
+        aws_output.dump();
     }
     // */
     Ok({})
