@@ -26,12 +26,12 @@ impl CommandOutput {
             .expect("Process terminated by signal")
     }
 
-    pub fn to_json(&self) -> PilotResult<Value> {
+    pub fn stdout_to_json(&self) -> PilotResult<Value> {
         let value: Value = serde_json::from_slice(self.stdout())?;
         Ok(value)
     }
 
-    pub fn to_stdout_string(&self) -> String {
+    pub fn stdout_to_string(&self) -> String {
         String::from_utf8_lossy(self.stdout()).to_string()
     }
 

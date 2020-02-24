@@ -35,7 +35,7 @@ fn return_zero_on_succeeded() -> PilotResult<()> {
 fn read_to_string(path: &Path) -> io::Result<String> {
     let path_str: &str = &path.to_string_lossy();
     let output = cat().arg(path_str).output()?;
-    Ok(output.to_stdout_string())
+    Ok(output.stdout_to_string())
 }
 
 #[test]
@@ -55,8 +55,8 @@ fn output_e_tag_is_correct() -> PilotResult<()> {
     let wsb_output = run(wsb_s3api())?;
     wsb_output.dump();
 
-    let aws_json = aws_output.to_json()?;
-    let wsb_json = wsb_output.to_json()?;
+    let aws_json = aws_output.stdout_to_json()?;
+    let wsb_json = wsb_output.stdout_to_json()?;
     assert_eq!(wsb_json["ETag"], aws_json["ETag"]);
 
     Ok({})
