@@ -8,6 +8,7 @@ edition = "2018"
 [dependencies]
 env-extractor = { path = "../../env-extractor" }
 sabi-core = { path = "../../sabi-core" }
+async-trait = "0.1"
 failure = "0.1"
 tempfile = "3.1"
 

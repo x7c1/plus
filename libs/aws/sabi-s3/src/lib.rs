@@ -2,6 +2,9 @@
 pub mod actions;
 
 #[macro_use]
+extern crate async_trait;
+
+#[macro_use]
 extern crate failure;
 
 extern crate proc_macro;
