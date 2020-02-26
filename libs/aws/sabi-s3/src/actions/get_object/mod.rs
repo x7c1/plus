@@ -9,7 +9,7 @@ use crate::actions::get_object;
 use crate::client::S3Client;
 use crate::core::response::headers::{AwsHeaderMap, ETag};
 use crate::core::verbs::{HasObjectKey, IsGet};
-use crate::internal::{InternalClient, RequestProvider, ResourceLoader};
+use crate::internal::blocking::{InternalClient, RequestProvider, ResourceLoader};
 use crate::{actions, core, internal};
 use reqwest::header::HeaderMap;
 use sabi_core::io::BodyReceiver;

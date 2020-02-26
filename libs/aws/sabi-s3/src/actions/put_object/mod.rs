@@ -11,7 +11,7 @@ use crate::actions::put_object;
 use crate::client::S3Client;
 use crate::core::response::headers::{AwsHeaderMap, ETag};
 use crate::core::verbs::{HasObjectKey, IsPut};
-use crate::internal::{InternalClient, RequestProvider, ResourceLoader};
+use crate::internal::blocking::{InternalClient, RequestProvider, ResourceLoader};
 use crate::{actions, core, internal};
 use reqwest::header::HeaderMap;
 
