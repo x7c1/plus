@@ -10,6 +10,7 @@ pub struct RequestResource<'a> {
     pub hash: HashedPayload,
     pub region: Option<&'a RegionCode>,
     pub content_type: Option<&'a ContentType>,
+    pub content_length: u64,
     pub requested_at: DateTime<Utc>,
 }
 

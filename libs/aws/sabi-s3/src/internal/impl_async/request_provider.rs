@@ -61,6 +61,8 @@ where
         let headers: HeaderMap = HeaderMap::new()
             .host(&parts.url)?
             .push_if_exists(resource.content_type)?
+            // todo: use ToHeaderFragment
+            .push(("Content-Length", resource.content_length))?
             .push(header::AmzContentSha256::new(parts.hashed_payload.as_str()))?
             .push(header::AmzDate::new(factory.amz_date().as_str()))?
             .authorize_with(factory)?

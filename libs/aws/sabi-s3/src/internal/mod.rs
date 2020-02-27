@@ -1,6 +1,6 @@
 pub mod blocking;
 
-mod impl_async;
+pub mod impl_async;
 
 mod error;
 pub use error::Error;

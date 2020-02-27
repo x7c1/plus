@@ -20,3 +20,13 @@ impl<'a> ToHeaderFragment for (&'static str, &'a str) {
         })
     }
 }
+
+impl ToHeaderFragment for (&'static str, u64) {
+    fn into(self) -> SabiResult<HeaderFragment> {
+        let (key, value) = self;
+        Ok(HeaderFragment {
+            key: key.parse()?,
+            value: value.into(),
+        })
+    }
+}

@@ -9,6 +9,10 @@ use std::time::Duration;
 pub struct InternalClient {}
 
 impl InternalClient {
+    pub fn new() -> InternalClient {
+        InternalClient {}
+    }
+
     pub async fn request_by<'a, A>(
         &'a self,
         provider: RequestProvider<'a, A>,
