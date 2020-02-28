@@ -68,13 +68,12 @@ where
     S: Unpin,
 {
     let mut sha = Sha256::default();
-
-    let xs2 = stream.try_for_each(|item: Bytes| {
-        eprintln!("============== : {}", item.len());
-        sha.input(item);
-        future::ready(Ok({}))
-    });
-    xs2.await;
+    stream
+        .try_for_each(|item: Bytes| {
+            sha.input(item);
+            future::ok({})
+        })
+        .await;
 
     let hex: String = sha.result().as_slice().encode_hex();
     HashedPayload::new(hex)
