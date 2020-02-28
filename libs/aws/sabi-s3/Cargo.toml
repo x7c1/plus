@@ -8,23 +8,17 @@ edition = "2018"
 [dependencies]
 env-extractor = { path = "../../env-extractor" }
 sabi-core = { path = "../../sabi-core" }
+
 async-trait = "0.1"
 failure = "0.1"
 tempfile = "3.1"
+tokio = { version = "0.2", features = ["fs"] }
 
 # sabi-core dependencies
 chrono = "0.4"
 
 # reqwest dependencies
 url = "2.1"
-
-# draft
-hyper = "0.13"
-tokio = { version = "0.2", features = ["fs"] }
-futures-util = "0.3"
-tokio-util = "0.2"
-bytes = "0.5"
-futures = "0.3"
 
 [dependencies.reqwest]
 version = "0.10"
