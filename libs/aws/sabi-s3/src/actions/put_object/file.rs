@@ -80,13 +80,11 @@ impl impl_async::ResourceLoader for FileRequest {
             .try_flatten_stream();
         */
         let file0: tokio::fs::File = self.open_file0().await?;
-        let hash0 = HashedPayload::from_file(file0).await?;
-        eprintln!("hash: {:?}", hash0);
+        let content_length = file0.metadata().await?.len();
+        let hash = HashedPayload::from_file(file0).await?;
 
         // todo: use async i/f
         let mut file = self.open_file()?;
-        let hash = file.reset_cursor_after(|file| HashedPayload::try_from(file))?;
-        let content_length = file.metadata()?.len();
 
         // rf. [Turning a file into futures Stream](https://users.rust-lang.org/t/turning-a-file-into-futures-stream/33480/2)
         let stream1: FramedRead<tokio::fs::File, BytesCodec> = {
