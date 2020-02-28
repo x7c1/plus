@@ -24,4 +24,3 @@ tokio = { version = "0.2", features = ["full"] }
 futures-util = "0.3"
 tokio-util = "0.2"
 bytes = "0.5"
-futures = "0.3"

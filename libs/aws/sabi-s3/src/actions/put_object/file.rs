@@ -81,6 +81,7 @@ impl impl_async::ResourceLoader for FileRequest {
         */
         let file0: tokio::fs::File = self.open_file0().await?;
         let hash0 = HashedPayload::from_file(file0).await?;
+        eprintln!("hash: {:?}", hash0);
 
         // todo: use async i/f
         let mut file = self.open_file()?;

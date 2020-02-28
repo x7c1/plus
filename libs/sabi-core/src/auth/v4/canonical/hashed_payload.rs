@@ -1,6 +1,7 @@
 use crate::SabiResult;
 use bytes::{Bytes, BytesMut};
-// use futures::Stream;
+use futures_util::future;
+use futures_util::stream::Stream;
 use futures_util::TryStreamExt;
 use hex::ToHex;
 use sha2::{Digest, Sha256};
@@ -31,16 +32,10 @@ impl HashedPayload {
         self.0.as_str()
     }
 
-    pub async fn from_file(file: fs::File) -> SabiResult<()> {
+    pub async fn from_file(file: fs::File) -> SabiResult<Self> {
         let stream = FramedRead::new(file, BytesCodec::new()).map_ok(BytesMut::freeze);
-
-        // use futures_core::stream::TryStream;
-        // let u8 = poll_fn(|context| stream.poll_next(context)).await;
-
-        poll_next(stream).await;
-
-        // println!("HashedPayload::from_file...{}", u8);
-        Ok({})
+        let hash = calculate(stream).await;
+        Ok(hash)
     }
 }
 
@@ -67,16 +62,20 @@ impl TryFrom<&File> for HashedPayload {
     }
 }
 
-use futures_util::stream::Stream;
-
-async fn poll_next<S>(mut stream: S)
+async fn calculate<S>(mut stream: S) -> HashedPayload
 where
     S: Stream<Item = Result<Bytes, io::Error>>,
     S: Unpin,
 {
-    let xs: io::Result<Option<Bytes>> = stream.try_next().await;
-    eprintln!(".............{:?}", xs);
+    let mut sha = Sha256::default();
 
-    // Stream::poll_next(stream);
-    // poll_fn(|context| stream.poll_next(context)).await;
+    let xs2 = stream.try_for_each(|item: Bytes| {
+        eprintln!("============== : {}", item.len());
+        sha.input(item);
+        future::ready(Ok({}))
+    });
+    xs2.await;
+
+    let hex: String = sha.result().as_slice().encode_hex();
+    HashedPayload::new(hex)
 }
