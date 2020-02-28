@@ -11,17 +11,13 @@ use crate::actions::put_object;
 use crate::client::S3Client;
 use crate::core::response::headers::{AwsHeaderMap, ETag};
 use crate::core::verbs::{HasObjectKey, IsPut};
-use crate::internal::blocking::{InternalClient, RequestProvider, ResourceLoader};
 use crate::internal::impl_async;
 use crate::{actions, core};
 use reqwest::header::HeaderMap;
 
 /// rf.
 /// [PutObject - Amazon Simple Storage Service](https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObject.html)
-pub trait Request:
-    HasObjectKey + ResourceLoader + impl_async::ResourceLoader + Send + Sync
-{
-}
+pub trait Request: HasObjectKey + impl_async::ResourceLoader + Send + Sync {}
 
 #[derive(Debug)]
 pub struct Response {
@@ -37,20 +33,16 @@ impl<A: Request> IsPut<Response> for A {}
 
 #[async_trait]
 pub trait Requester {
-    async fn put_object0<A>(&self, request: A) -> actions::Result<Response>
+    async fn put_object<A>(&self, request: A) -> actions::Result<Response>
     where
         A: Request,
         A: Send,
         A: Sync;
-
-    fn put_object<A>(&self, request: A) -> actions::Result<Response>
-    where
-        A: Request;
 }
 
 #[async_trait]
 impl Requester for S3Client {
-    async fn put_object0<A>(&self, request: A) -> actions::Result<Response>
+    async fn put_object<A>(&self, request: A) -> actions::Result<Response>
     where
         A: Request,
         A: Send,
@@ -73,23 +65,6 @@ impl Requester for S3Client {
                 Err(put_object::Error::from(e))
             }
         }?;
-        Ok(Response { headers })
-    }
-
-    fn put_object<A>(&self, request: A) -> actions::Result<Response>
-    where
-        A: Request,
-    {
-        let client = InternalClient::new();
-        let provider =
-            RequestProvider::new(&self, &request).map_err(|e| put_object::Error::from(e))?;
-
-        let response = client
-            .request_by(provider)
-            .map_err(|e| put_object::Error::from(e))?;
-
-        let headers = to_headers(response.headers()).map_err(|e| put_object::Error::from(e))?;
-
         Ok(Response { headers })
     }
 }

@@ -43,7 +43,7 @@ impl S3Client {
     where
         A: actions::put_object::Request,
     {
-        actions::put_object::Requester::put_object0(self, request).await
+        actions::put_object::Requester::put_object(self, request).await
     }
 
     pub async fn get_object<A>(&self, request: A) -> actions::Result<actions::get_object::Response>
