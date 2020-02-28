@@ -43,10 +43,7 @@ impl CommandRunner {
 
     pub fn output(&self) -> io::Result<CommandOutput> {
         let reified = self.execute()?;
-        let status_code = reified.status_code();
-        if 0 != status_code {
-            assert!(false, "exit({}) {:#?}", status_code, &self.args);
-        }
+        reified.dump();
         Ok(reified)
     }
 
@@ -57,7 +54,10 @@ impl CommandRunner {
             .output()?;
 
         let reified = CommandOutput::new(output);
-        reified.dump();
+        let status_code = reified.status_code();
+        if 0 != status_code {
+            assert!(false, "exit({}) {:#?}", status_code, &self.args);
+        }
         Ok(reified)
     }
 }
