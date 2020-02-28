@@ -1,5 +1,6 @@
+use crate::io::stream::bytes_stream;
 use crate::SabiResult;
-use bytes::{Bytes, BytesMut};
+use bytes::Bytes;
 use futures_util::{future, stream::Stream, TryStreamExt};
 use hex::ToHex;
 use sha2::{Digest, Sha256};
@@ -8,7 +9,6 @@ use std::fs::File;
 use std::io;
 use std::io::{BufReader, Read};
 use tokio::fs;
-use tokio_util::codec::{BytesCodec, FramedRead};
 
 #[derive(Debug)]
 pub struct HashedPayload(String);
@@ -27,7 +27,7 @@ impl HashedPayload {
     }
 
     pub async fn from_file(file: fs::File) -> SabiResult<Self> {
-        let stream = FramedRead::new(file, BytesCodec::new()).map_ok(BytesMut::freeze);
+        let stream = bytes_stream::from_file(file);
         let hash = calculate(stream).await?;
         Ok(hash)
     }
@@ -58,7 +58,7 @@ impl TryFrom<&File> for HashedPayload {
 
 async fn calculate<S>(stream: S) -> SabiResult<HashedPayload>
 where
-    S: Stream<Item = Result<Bytes, io::Error>>,
+    S: Stream<Item = io::Result<Bytes>>,
     S: Unpin,
 {
     let mut sha = Sha256::default();
