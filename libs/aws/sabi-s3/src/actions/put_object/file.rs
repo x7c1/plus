@@ -59,16 +59,6 @@ impl HasObjectKey for FileRequest {
     }
 }
 
-/// see also:
-/// ~/.cargo/registry/src/github.com-1ecc6299db9ec823/tokio-0.2.11/src/fs/read_dir.rs
-/// ```
-/// impl ReadDir {
-///     /// Returns the next entry in the directory stream.
-///     pub async fn next_entry(&mut self) -> io::Result<Option<DirEntry>> {
-///         use crate::future::poll_fn;
-///         poll_fn(|cx| self.poll_next_entry(cx)).await
-///     }
-/// ```
 #[async_trait]
 impl impl_async::ResourceLoader for FileRequest {
     async fn load<'a>(&'a self) -> internal::Result<impl_async::RequestResource<'a>> {
