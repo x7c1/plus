@@ -20,7 +20,7 @@ http = "0.2"
 url = "2.1"
 
 # draft
-tokio = { version = "0.2", features = ["full"] }
+tokio = { version = "0.2", features = ["fs"] }
 futures-util = "0.3"
 tokio-util = "0.2"
 bytes = "0.5"
