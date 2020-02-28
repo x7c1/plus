@@ -8,6 +8,7 @@ use sabi_core::auth::v4::canonical::HashedPayload;
 use sabi_core::auth::v4::chrono::now;
 use sabi_core::http::header::ContentType;
 use sabi_core::index::RegionCode;
+use sabi_core::io::stream::bytes_stream;
 use std::convert::TryFrom;
 use std::error::Error;
 use std::fs::File;
@@ -43,6 +44,13 @@ impl FileRequest {
                 _ => internal::Error::StdIoError(e),
             })
     }
+
+    async fn to_stream_body(&self) -> internal::Result<reqwest::Body> {
+        let file0: tokio::fs::File = self.open_file0().await?;
+        let stream = bytes_stream::from_file(file0);
+        let body = reqwest::Body::wrap_stream(stream);
+        Ok(body)
+    }
 }
 
 impl HasObjectKey for FileRequest {
@@ -50,10 +58,6 @@ impl HasObjectKey for FileRequest {
         &self.object_key
     }
 }
-
-use bytes::BytesMut;
-use futures_util::TryStreamExt;
-use tokio_util::codec::{BytesCodec, FramedRead};
 
 /// see also:
 /// ~/.cargo/registry/src/github.com-1ecc6299db9ec823/tokio-0.2.11/src/fs/read_dir.rs
@@ -68,34 +72,12 @@ use tokio_util::codec::{BytesCodec, FramedRead};
 #[async_trait]
 impl impl_async::ResourceLoader for FileRequest {
     async fn load<'a>(&'a self) -> internal::Result<impl_async::RequestResource<'a>> {
-        /*
-        let file1: tokio::fs::File = tokio::fs::File::open("C:\\Source\\Backup_Ignore.txt").await?;
-        let stream1: FramedRead<tokio::fs::File, BytesCodec> = FramedRead::new(file1, BytesCodec::new());
-        let stream2 = TryStreamExt::map_ok(stream1, BytesMut::freeze);
-        */
-
-        /*
-        let stream = tokio::fs::File::open("C:\\Source\\Backup_Ignore.txt")
-            .map_ok(|file| FramedRead::new(file, BytesCodec::new()).map_ok(BytesMut::freeze))
-            .try_flatten_stream();
-        */
-        let file0: tokio::fs::File = self.open_file0().await?;
-        let content_length = file0.metadata().await?.len();
-        let hash = HashedPayload::from_file(file0).await?;
-
-        // todo: use async i/f
-        let file = self.open_file()?;
-
-        // rf. [Turning a file into futures Stream](https://users.rust-lang.org/t/turning-a-file-into-futures-stream/33480/2)
-        let stream1: FramedRead<tokio::fs::File, BytesCodec> = {
-            let file1: tokio::fs::File = tokio::fs::File::from_std(file);
-            // todo: use tokio-BufReader
-            FramedRead::new(file1, BytesCodec::new())
-        };
-        let stream2 = TryStreamExt::map_ok(stream1, BytesMut::freeze);
+        let file: tokio::fs::File = self.open_file0().await?;
+        let content_length = file.metadata().await?.len();
+        let hash = HashedPayload::from_file(file).await?;
 
         let resource = impl_async::RequestResource {
-            body: Some(reqwest::Body::wrap_stream(stream2)),
+            body: Some(self.to_stream_body().await?),
             hash,
             region: self.region_code.as_ref(),
             content_type: self.content_type.as_ref(),
