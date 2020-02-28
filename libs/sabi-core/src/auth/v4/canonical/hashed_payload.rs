@@ -1,9 +1,19 @@
 use crate::SabiResult;
+use bytes::{Bytes, BytesMut};
+// use futures::Stream;
+use futures_util::TryStreamExt;
 use hex::ToHex;
 use sha2::{Digest, Sha256};
 use std::convert::TryFrom;
 use std::fs::File;
+use std::io;
 use std::io::{BufReader, Read};
+use std::task::{Context, Poll};
+use tokio::fs;
+use tokio::future::poll_fn;
+use tokio::io::AsyncRead;
+use tokio_util::codec::Decoder;
+use tokio_util::codec::{BytesCodec, FramedRead};
 
 #[derive(Debug)]
 pub struct HashedPayload(String);
@@ -19,6 +29,18 @@ impl HashedPayload {
 
     pub fn as_str(&self) -> &str {
         self.0.as_str()
+    }
+
+    pub async fn from_file(file: fs::File) -> SabiResult<()> {
+        let stream = FramedRead::new(file, BytesCodec::new()).map_ok(BytesMut::freeze);
+
+        // use futures_core::stream::TryStream;
+        // let u8 = poll_fn(|context| stream.poll_next(context)).await;
+
+        poll_next(stream).await;
+
+        // println!("HashedPayload::from_file...{}", u8);
+        Ok({})
     }
 }
 
@@ -43,4 +65,18 @@ impl TryFrom<&File> for HashedPayload {
         let hash = Self::new(hex);
         Ok(hash)
     }
+}
+
+use futures_util::stream::Stream;
+
+async fn poll_next<S>(mut stream: S)
+where
+    S: Stream<Item = Result<Bytes, io::Error>>,
+    S: Unpin,
+{
+    let xs: io::Result<Option<Bytes>> = stream.try_next().await;
+    eprintln!(".............{:?}", xs);
+
+    // Stream::poll_next(stream);
+    // poll_fn(|context| stream.poll_next(context)).await;
 }
