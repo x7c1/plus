@@ -42,22 +42,33 @@ impl CommandRunner {
     }
 
     pub fn output(&self) -> io::Result<CommandOutput> {
-        let reified = self.execute()?;
+        let reified = self.output_silently()?;
         reified.dump();
         Ok(reified)
     }
 
+    pub fn output_silently(&self) -> io::Result<CommandOutput> {
+        let reified = self.execute_silently()?;
+        let status_code = reified.status_code();
+        if 0 != status_code {
+            assert!(false, "exit({}) {:#?}", status_code, &self.args);
+        }
+        Ok(reified)
+    }
+
     pub fn execute(&self) -> io::Result<CommandOutput> {
+        let reified = self.execute_silently()?;
+        reified.dump();
+        Ok(reified)
+    }
+
+    pub fn execute_silently(&self) -> io::Result<CommandOutput> {
         let output = Command::new(&self.program)
             .current_dir(&self.current_dir)
             .args(&self.args)
             .output()?;
 
         let reified = CommandOutput::new(output);
-        let status_code = reified.status_code();
-        if 0 != status_code {
-            assert!(false, "exit({}) {:#?}", status_code, &self.args);
-        }
         Ok(reified)
     }
 }

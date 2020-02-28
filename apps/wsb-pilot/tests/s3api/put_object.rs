@@ -40,7 +40,7 @@ fn download(target: &Sample) -> PilotResult<()> {
 
 fn read_to_string(path: &Path) -> io::Result<String> {
     let path_str: &str = &path.to_string_lossy();
-    let output = cat().arg(path_str).execute()?;
+    let output = cat().arg(path_str).output_silently()?;
     Ok(output.stdout_to_string())
 }
 
