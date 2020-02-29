@@ -19,7 +19,7 @@ pub enum Error {
     #[fail(display = "crate::core::Error > {}", 0)]
     S3CoreError(crate::core::Error),
 
-    #[fail(display = "S3ErrorResponse > {}", 0)]
+    #[fail(display = "S3Error > {}", 0)]
     S3Error(ErrorResponse),
 
     #[fail(display = "std::io::Error > {}", 0)]
