@@ -1,7 +1,7 @@
 use crate::s3api::{TEST_BUCKET, TEST_WORKSPACE_DIR};
 use std::io;
 use std::path::{Path, PathBuf};
-use wsb_pilot::cmd::CommandRunner;
+use wsb_pilot::cmd::{CommandOutput, CommandRunner};
 use wsb_pilot::PilotResult;
 
 #[test]
@@ -16,26 +16,24 @@ fn return_zero_on_succeeded() -> PilotResult<()> {
     };
     let sample = get_sample1();
     let expected = {
-        upload(&sample)?;
+        assert_eq!(upload(&sample)?.status_code(), 0);
         read_to_string(&sample.upload_src)?
     };
     let actual = {
-        download(&sample)?;
+        assert_eq!(download(&sample)?.status_code(), 0);
         read_to_string(&sample.download_dst)?
     };
     assert_eq!(actual, expected, "correctly uploaded.");
     Ok({})
 }
 
-fn download(target: &Sample) -> PilotResult<()> {
+fn download(target: &Sample) -> io::Result<CommandOutput> {
     aws_s3api()
         .arg("get-object")
         .args(&["--bucket", &TEST_BUCKET])
         .args(&["--key", &target.object_key])
         .arg(&target.download_dst)
-        .output()?;
-
-    Ok({})
+        .output()
 }
 
 fn read_to_string(path: &Path) -> io::Result<String> {

@@ -30,7 +30,7 @@ fn main() {
             println!("{}", output.as_str());
         }
         Err(e) => {
-            eprintln!("failed: {:#?}", e);
+            eprintln!("s3api failed: {:#?}", e);
             exit(1);
         }
     }

@@ -49,10 +49,6 @@ impl CommandRunner {
 
     pub fn output_silently(&self) -> io::Result<CommandOutput> {
         let reified = self.execute_silently()?;
-        let status_code = reified.status_code();
-        if 0 != status_code {
-            assert!(false, "exit({}) {:#?}", status_code, &self.args);
-        }
         Ok(reified)
     }
 

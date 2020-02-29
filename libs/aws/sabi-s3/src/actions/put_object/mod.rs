@@ -57,14 +57,7 @@ impl Requester for S3Client {
             .await
             .map_err(|e| put_object::Error::from(e))?;
 
-        let headers = match to_headers(response.headers()) {
-            Ok(h) => Ok(h),
-            Err(e) => {
-                // todo: remove unwrap
-                eprintln!("response.text()...{}", response.text().await.unwrap());
-                Err(put_object::Error::from(e))
-            }
-        }?;
+        let headers = to_headers(response.headers()).map_err(|e| put_object::Error::from(e))?;
         Ok(Response { headers })
     }
 }

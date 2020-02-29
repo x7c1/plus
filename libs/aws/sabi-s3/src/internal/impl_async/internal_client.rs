@@ -1,7 +1,9 @@
 use super::{RequestProvider, ResourceLoader};
 use crate::core::verbs::HasObjectKey;
 use crate::internal;
-use reqwest::{Client, Response};
+use crate::internal::error::Error::S3Error;
+use crate::internal::impl_async::ErrorResponse;
+use reqwest::{Client, Response, StatusCode};
 use std::fmt::Debug;
 use std::time::Duration;
 
@@ -37,13 +39,18 @@ impl InternalClient {
             Some(body) => builder.body(body),
             _ => builder,
         };
-        let response = builder
+        let response: reqwest::Response = builder
             .timeout(Duration::from_secs(5))
             .send()
             .await
             .map_err(|e| internal::Error::ReqwestError(e))?;
 
-        eprintln!("response > {:#?}", response);
-        Ok(response)
+        let status: StatusCode = response.status();
+        if status.is_success() {
+            eprintln!("response > {:#?}", response);
+            Ok(response)
+        } else {
+            Err(S3Error(ErrorResponse::dump(response).await?))
+        }
     }
 }
