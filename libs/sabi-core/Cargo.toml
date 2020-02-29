@@ -9,18 +9,16 @@ edition = "2018"
 characters = { path = "../characters" }
 env-extractor = { path = "../env-extractor" }
 
+bytes = "0.5"
 chrono = "0.4"
 failure = "0.1"
+futures-util = "0.3"
 hex = "0.4"
 hmac = "0.7"
 sha2 = "0.8"
+tokio = { version = "0.2", features = ["fs"] }
+tokio-util = "0.2"
 
 # reqwest dependencies
 http = "0.2"
 url = "2.1"
-
-# draft
-tokio = { version = "0.2", features = ["fs"] }
-tokio-util = "0.2"
-futures-util = "0.3"
-bytes = "0.5"
