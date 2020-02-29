@@ -2,7 +2,7 @@ use super::{RequestProvider, ResourceLoader};
 use crate::core::verbs::HasObjectKey;
 use crate::internal;
 use crate::internal::error::Error::S3Error;
-use crate::internal::impl_async::ErrorResponse;
+use crate::internal::impl_async::S3ErrorResponse;
 use reqwest::{Client, Response, StatusCode};
 use std::fmt::Debug;
 use std::time::Duration;
@@ -50,7 +50,7 @@ impl InternalClient {
             eprintln!("response > {:#?}", response);
             Ok(response)
         } else {
-            Err(S3Error(ErrorResponse::dump(response).await?))
+            Err(S3Error(S3ErrorResponse::dump(response).await?))
         }
     }
 }

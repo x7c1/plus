@@ -1,4 +1,4 @@
-use crate::internal::impl_async::ErrorResponse;
+use crate::internal::impl_async::S3ErrorResponse;
 
 pub type Result<T> = std::result::Result<T, Error>;
 
@@ -19,8 +19,8 @@ pub enum Error {
     #[fail(display = "crate::core::Error > {}", 0)]
     S3CoreError(crate::core::Error),
 
-    #[fail(display = "S3Error > {}", 0)]
-    S3Error(ErrorResponse),
+    #[fail(display = "S3ErrorResponse > {}", 0)]
+    S3Error(S3ErrorResponse),
 
     #[fail(display = "std::io::Error > {}", 0)]
     StdIoError(std::io::Error),
