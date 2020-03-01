@@ -48,17 +48,6 @@ impl CommandRunner {
     }
 
     pub fn output_silently(&self) -> io::Result<CommandOutput> {
-        let reified = self.execute_silently()?;
-        Ok(reified)
-    }
-
-    pub fn execute(&self) -> io::Result<CommandOutput> {
-        let reified = self.execute_silently()?;
-        reified.dump();
-        Ok(reified)
-    }
-
-    pub fn execute_silently(&self) -> io::Result<CommandOutput> {
         let output = Command::new(&self.program)
             .current_dir(&self.current_dir)
             .args(&self.args)
