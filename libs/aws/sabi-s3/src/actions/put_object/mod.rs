@@ -11,13 +11,15 @@ use crate::actions::put_object;
 use crate::client::S3Client;
 use crate::core::response::headers::{AwsHeaderMap, ETag};
 use crate::core::verbs::{HasObjectKey, IsPut};
-use crate::internal::impl_async;
+use crate::internal::impl_async::{InternalClient, RequestProvider, ResourceLoader};
 use crate::{actions, core};
 use reqwest::header::HeaderMap;
 
+type Result<A> = std::result::Result<A, put_object::Error>;
+
 /// rf.
 /// [PutObject - Amazon Simple Storage Service](https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObject.html)
-pub trait Request: HasObjectKey + impl_async::ResourceLoader + Send + Sync {}
+pub trait Request: HasObjectKey + ResourceLoader + Send + Sync {}
 
 #[derive(Debug)]
 pub struct Response {
@@ -48,17 +50,14 @@ impl Requester for S3Client {
         A: Send,
         A: Sync,
     {
-        let client = impl_async::InternalClient::new();
-        let provider = impl_async::RequestProvider::new(&self, &request)
-            .map_err(|e| put_object::Error::from(e))?;
-
-        let response = client
-            .request_by(provider)
-            .await
-            .map_err(|e| put_object::Error::from(e))?;
-
-        let headers = to_headers(response.headers()).map_err(|e| put_object::Error::from(e))?;
-        Ok(Response { headers })
+        let client = InternalClient::new();
+        let headers: put_object::Result<Headers> = async {
+            let provider = RequestProvider::new(&self, &request)?;
+            let response = client.request_by(provider).await?;
+            Ok(to_headers(response.headers())?)
+        }
+        .await;
+        Ok(Response { headers: headers? })
     }
 }
 
