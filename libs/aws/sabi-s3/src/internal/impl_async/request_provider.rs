@@ -1,4 +1,5 @@
-use super::{InternalRequest, ResourceLoader};
+use super::InternalRequest;
+use crate::core::request::ResourceLoader;
 use crate::core::verbs::{HasBucketScope, HasMethod, HasObjectKey, ToEndpoint};
 use crate::internal;
 use crate::internal::Error::RegionNotSpecified;

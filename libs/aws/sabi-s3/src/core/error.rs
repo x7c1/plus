@@ -8,8 +8,20 @@ pub enum Error {
     #[fail(display = "env_extractor::Error > {}", 0)]
     EnvExtractorError(String),
 
+    #[fail(
+        display = "FileNotFound > path: {}, description: {}",
+        path, description
+    )]
+    FileNotFound { path: String, description: String },
+
+    #[fail(display = "sabi_core::Error > {}", 0)]
+    SabiCoreError(sabi_core::Error),
+
     #[fail(display = "headers::Error > {}", 0)]
     S3HeaderError(headers::Error),
+
+    #[fail(display = "std::io::Error > {}", 0)]
+    StdIoError(std::io::Error),
 
     #[fail(display = "url::ParseError > {}", 0)]
     UrlParseError(url::ParseError),
@@ -21,9 +33,21 @@ impl<A: Debug> From<env_extractor::Error<A>> for Error {
     }
 }
 
+impl From<sabi_core::Error> for Error {
+    fn from(e: sabi_core::Error) -> Self {
+        Error::SabiCoreError(e)
+    }
+}
+
 impl From<headers::Error> for Error {
     fn from(e: headers::Error) -> Self {
         Error::S3HeaderError(e)
+    }
+}
+
+impl From<std::io::Error> for Error {
+    fn from(e: std::io::Error) -> Self {
+        Error::StdIoError(e)
     }
 }
 

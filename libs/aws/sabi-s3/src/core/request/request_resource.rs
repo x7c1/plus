@@ -1,4 +1,4 @@
-use crate::internal;
+use crate::core;
 use chrono::{DateTime, Utc};
 use reqwest::Body;
 use sabi_core::auth::v4::canonical::HashedPayload;
@@ -16,5 +16,5 @@ pub struct RequestResource<'a> {
 
 #[async_trait]
 pub trait ResourceLoader {
-    async fn load(&self) -> internal::Result<RequestResource>;
+    async fn load(&self) -> core::Result<RequestResource>;
 }

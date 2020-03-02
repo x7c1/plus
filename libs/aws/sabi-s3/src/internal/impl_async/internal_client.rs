@@ -1,4 +1,5 @@
-use super::{RequestProvider, ResourceLoader};
+use super::RequestProvider;
+use crate::core::request::ResourceLoader;
 use crate::core::verbs::HasObjectKey;
 use crate::internal;
 use crate::internal::error::Error::S3Error;

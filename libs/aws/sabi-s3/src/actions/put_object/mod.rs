@@ -13,8 +13,9 @@ pub use rich_file::RichFile;
 use crate::actions;
 use crate::actions::put_object;
 use crate::client::S3Client;
+use crate::core::request::ResourceLoader;
 use crate::core::verbs::{HasObjectKey, IsPut};
-use crate::internal::impl_async::{InternalClient, RequestProvider, ResourceLoader};
+use crate::internal::impl_async::{InternalClient, RequestProvider};
 
 /// rf.
 /// [PutObject - Amazon Simple Storage Service](https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObject.html)

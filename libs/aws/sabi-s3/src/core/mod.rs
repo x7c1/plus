@@ -5,5 +5,6 @@ mod error;
 pub use error::Error;
 pub use error::Result;
 
+pub mod request;
 pub mod response;
 pub mod verbs;

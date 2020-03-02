@@ -1,6 +1,6 @@
+use crate::core;
+use crate::core::request::{RequestResource, ResourceLoader};
 use crate::core::verbs::HasObjectKey;
-use crate::internal;
-use crate::internal::impl_async;
 use sabi_core::auth::v4::canonical::HashedPayload;
 use sabi_core::auth::v4::chrono::now;
 use sabi_core::http::header::ContentType;
@@ -19,17 +19,17 @@ pub struct FileRequest {
 }
 
 impl FileRequest {
-    async fn open_file(&self) -> internal::Result<File> {
+    async fn open_file(&self) -> core::Result<File> {
         File::open(&self.file_path).await.map_err(|e| match e {
-            _ if e.kind() == NotFound => internal::Error::FileNotFound {
+            _ if e.kind() == NotFound => core::Error::FileNotFound {
                 path: self.file_path.to_string(),
                 description: e.description().to_string(),
             },
-            _ => internal::Error::StdIoError(e),
+            _ => core::Error::StdIoError(e),
         })
     }
 
-    async fn to_stream_body(&self) -> internal::Result<reqwest::Body> {
+    async fn to_stream_body(&self) -> core::Result<reqwest::Body> {
         let file: File = self.open_file().await?;
         let stream = bytes_stream::from_file(file);
         let body = reqwest::Body::wrap_stream(stream);
@@ -44,13 +44,13 @@ impl HasObjectKey for FileRequest {
 }
 
 #[async_trait]
-impl impl_async::ResourceLoader for FileRequest {
-    async fn load<'a>(&'a self) -> internal::Result<impl_async::RequestResource<'a>> {
+impl ResourceLoader for FileRequest {
+    async fn load<'a>(&'a self) -> core::Result<RequestResource<'a>> {
         let file: File = self.open_file().await?;
         let content_length = file.metadata().await?.len();
         let hash = HashedPayload::from_file(file).await?;
 
-        let resource = impl_async::RequestResource {
+        let resource = RequestResource {
             body: Some(self.to_stream_body().await?),
             hash,
             region: self.region_code.as_ref(),
