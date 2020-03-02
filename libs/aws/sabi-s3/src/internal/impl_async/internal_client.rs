@@ -27,11 +27,7 @@ impl InternalClient {
         let request = provider.provide().await?;
         eprintln!("request > {:#?}", request);
 
-        let client: Client = Client::builder()
-            .timeout(Duration::from_secs(5))
-            .build()
-            .map_err(|e| internal::Error::ReqwestError(e))?;
-
+        let client: Client = Client::builder().timeout(Duration::from_secs(5)).build()?;
         let builder = client
             .request(request.method, request.url)
             .headers(request.headers);
@@ -40,12 +36,7 @@ impl InternalClient {
             Some(body) => builder.body(body),
             _ => builder,
         };
-        let response: reqwest::Response = builder
-            .timeout(Duration::from_secs(5))
-            .send()
-            .await
-            .map_err(|e| internal::Error::ReqwestError(e))?;
-
+        let response: reqwest::Response = builder.timeout(Duration::from_secs(5)).send().await?;
         let status: StatusCode = response.status();
         if status.is_success() {
             eprintln!("response > {:#?}", response);
