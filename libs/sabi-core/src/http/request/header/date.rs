@@ -1,4 +1,4 @@
-use crate::http::{HeaderFragment, ToHeaderFragment};
+use crate::http::request::{HeaderFragment, ToHeaderFragment};
 use crate::SabiResult;
 use chrono::{DateTime, Utc};
 use http::header::DATE;

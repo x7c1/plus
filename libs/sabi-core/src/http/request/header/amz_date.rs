@@ -1,12 +1,13 @@
-use crate::http::HeaderFragment;
-use crate::http::ToHeaderFragment;
+use crate::http::request::HeaderFragment;
+use crate::http::request::ToHeaderFragment;
 use crate::SabiResult;
+
 use http::header::HeaderName;
 use std::str::FromStr;
 
-pub struct AmzContentSha256(String);
+pub struct AmzDate(String);
 
-impl AmzContentSha256 {
+impl AmzDate {
     pub fn new<A: Into<String>>(key: A) -> Self {
         Self(key.into())
     }
@@ -16,10 +17,10 @@ impl AmzContentSha256 {
     }
 }
 
-impl ToHeaderFragment for AmzContentSha256 {
+impl ToHeaderFragment for AmzDate {
     fn into(self) -> SabiResult<HeaderFragment> {
         Ok(HeaderFragment {
-            key: HeaderName::from_str("X-Amz-Content-Sha256")?,
+            key: HeaderName::from_str("X-Amz-Date")?,
             value: self.as_str().parse()?,
         })
     }
