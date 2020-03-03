@@ -21,7 +21,7 @@ impl FileRequest {
     pub fn create(object_key: String, file_path: PathBuf) -> actions::Result<Self> {
         Ok(FileRequest {
             object_key,
-            outfile: Outfile::create(file_path).map_err(|e| get_object::Error::from(e))?,
+            outfile: Outfile::create(file_path).map_err(get_object::Error::from)?,
         })
     }
 }

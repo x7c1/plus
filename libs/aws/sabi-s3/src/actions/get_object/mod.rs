@@ -48,9 +48,7 @@ impl Requester for S3Client {
             let provider = RequestProvider::new(&self, &request)?;
             let response = client.request_by(provider).await?;
             let headers = ResponseHeaders::from(response.headers())?;
-            let stream = response
-                .bytes_stream()
-                .map_err(|e| get_object::Error::from(e));
+            let stream = response.bytes_stream().map_err(get_object::Error::from);
 
             request.receive_body_from(stream).await?;
             Ok(headers)
