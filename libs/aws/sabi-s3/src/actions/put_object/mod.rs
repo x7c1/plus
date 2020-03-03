@@ -7,9 +7,6 @@ pub use file::FileRequest;
 mod response;
 pub use response::{Response, ResponseHeaders};
 
-mod rich_file;
-pub use rich_file::RichFile;
-
 use crate::actions;
 use crate::actions::put_object;
 use crate::client::S3Client;
