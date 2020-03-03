@@ -46,7 +46,7 @@ impl HasObjectKey for FileRequest {
 
 #[async_trait]
 impl ResourceLoader for FileRequest {
-    async fn load<'a>(&'a self) -> core::Result<RequestResource<'a>> {
+    async fn load(&self) -> core::Result<RequestResource<'_>> {
         let file: File = self.open_file().await?;
         let content_length = file.metadata().await?.len();
         let hash = HashedPayload::from_file(file).await?;
