@@ -12,12 +12,16 @@ use crate::core::response::headers::{AwsHeaderMap, ETag};
 use crate::core::verbs::{HasObjectKey, IsGet};
 use crate::internal::impl_async::{InternalClient, RequestProvider};
 use crate::{actions, core};
+use futures_util::TryStreamExt;
 use reqwest::header::HeaderMap;
 use sabi_core::io::BodyReceiver;
 
 /// rf.
 /// [GetObject - Amazon Simple Storage Service](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObject.html)
-pub trait Request: HasObjectKey + ResourceLoader + BodyReceiver + Send + Sync {}
+pub trait Request:
+    HasObjectKey + ResourceLoader + BodyReceiver<Err = get_object::Error> + Send + Sync
+{
+}
 
 #[derive(Debug)]
 pub struct Response {
@@ -43,7 +47,7 @@ pub trait Requester {
 
 #[async_trait]
 impl Requester for S3Client {
-    async fn get_object<A>(&self, request: A) -> actions::Result<Response>
+    async fn get_object<A>(&self, mut request: A) -> actions::Result<Response>
     where
         A: Request,
         A: Send,
@@ -52,21 +56,16 @@ impl Requester for S3Client {
         let headers: get_object::Result<Headers> = async {
             let provider = RequestProvider::new(&self, &request)?;
             let response = client.request_by(provider).await?;
-            Ok(to_headers(response.headers())?)
+            let headers = to_headers(response.headers())?;
+            let stream = response
+                .bytes_stream()
+                .map_err(|e| get_object::Error::from(e));
+
+            request.receive_body_from(stream).await?;
+            Ok(headers)
         }
         .await;
         Ok(Response { headers: headers? })
-        /*
-        (|| {
-            let provider = RequestProvider::new(&self, &request)?;
-            let response = client.request_by(provider)?;
-            let headers = to_headers(response.headers())?;
-
-            request.receive_body_from(response)?;
-            Ok(Response { headers })
-        })()
-        .map_err(|e: internal::Error| get_object::Error::from(e).into())
-        */
     }
 }
 

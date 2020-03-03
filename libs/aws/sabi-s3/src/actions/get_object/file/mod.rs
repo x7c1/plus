@@ -7,13 +7,12 @@ use crate::actions::get_object;
 use crate::core;
 use crate::core::request::{RequestResource, ResourceLoader};
 use crate::core::verbs::HasObjectKey;
+use bytes::Bytes;
+use futures_util::stream::Stream;
 use sabi_core::auth::v4::canonical::HashedPayload;
 use sabi_core::auth::v4::chrono::now;
 use sabi_core::io::BodyReceiver;
-use std::io;
-use std::io::Read;
 use std::path::PathBuf;
-use tempfile::NamedTempFile;
 
 #[derive(Debug)]
 pub struct FileRequest {
@@ -51,13 +50,17 @@ impl ResourceLoader for FileRequest {
     }
 }
 
+#[async_trait]
 impl BodyReceiver for FileRequest {
-    fn receive_body_from<A: Read>(&mut self, mut body: A) -> io::Result<u64> {
-        let dir = self.outfile.directory();
-        let mut tmp = NamedTempFile::new_in(dir)?;
-        let size = io::copy(&mut body, &mut tmp)?;
-        tmp.persist(&self.outfile)?;
-        Ok(size)
+    type Err = get_object::Error;
+
+    async fn receive_body_from<S>(&mut self, body: S) -> Result<usize, Self::Err>
+    where
+        S: Stream<Item = Result<Bytes, Self::Err>>,
+        S: Send,
+    {
+        let sum = self.outfile.write(body).await?;
+        Ok(sum)
     }
 }
 

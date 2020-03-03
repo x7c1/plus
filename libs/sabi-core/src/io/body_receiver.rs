@@ -1,6 +1,12 @@
-use std::io;
-use std::io::Read;
+use bytes::Bytes;
+use futures_util::stream::Stream;
 
+#[async_trait]
 pub trait BodyReceiver {
-    fn receive_body_from<R: Read>(&mut self, body: R) -> io::Result<u64>;
+    type Err;
+
+    async fn receive_body_from<S>(&mut self, body: S) -> Result<usize, Self::Err>
+    where
+        S: Stream<Item = Result<Bytes, Self::Err>>,
+        S: Send;
 }
