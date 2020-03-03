@@ -1,9 +1,9 @@
 mod error;
 pub use error::Error;
 
-mod file;
-pub use file::FileRequest;
-pub use file::{Outfile, OutfileError};
+mod request;
+pub use request::FileRequest;
+pub use request::{Outfile, OutfileError};
 
 mod response;
 pub use response::{Response, ResponseHeaders};

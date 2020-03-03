@@ -6,7 +6,7 @@ pub enum Error {
     InternalError(internal::Error),
 
     #[fail(display = "file::OutfileError > {}", 0)]
-    OutFileError(super::file::OutfileError),
+    OutFileError(super::request::OutfileError),
 
     #[fail(display = "reqwest::Error > {}", 0)]
     ReqwestError(reqwest::Error),
@@ -24,8 +24,8 @@ impl From<internal::Error> for Error {
     }
 }
 
-impl From<super::file::OutfileError> for Error {
-    fn from(e: super::file::OutfileError) -> Self {
+impl From<super::request::OutfileError> for Error {
+    fn from(e: super::request::OutfileError) -> Self {
         Error::OutFileError(e)
     }
 }
