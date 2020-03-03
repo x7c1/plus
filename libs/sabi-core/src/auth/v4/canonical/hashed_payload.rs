@@ -39,7 +39,7 @@ where
     stream
         .try_for_each(|item: Bytes| {
             sha.input(item);
-            future::ok({})
+            future::ok(())
         })
         .await?;
 
