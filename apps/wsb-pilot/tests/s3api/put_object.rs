@@ -1,7 +1,7 @@
 use crate::s3api::{TEST_BUCKET, TEST_WORKSPACE_DIR};
 use std::io;
 use std::path::{Path, PathBuf};
-use wsb_pilot::cmd::CommandRunner;
+use wsb_pilot::cmd::{CommandOutput, CommandRunner};
 use wsb_pilot::PilotResult;
 
 #[test]
@@ -16,31 +16,29 @@ fn return_zero_on_succeeded() -> PilotResult<()> {
     };
     let sample = get_sample1();
     let expected = {
-        upload(&sample)?;
+        assert_eq!(upload(&sample)?.status_code(), 0);
         read_to_string(&sample.upload_src)?
     };
     let actual = {
-        download(&sample)?;
+        assert_eq!(download(&sample)?.status_code(), 0);
         read_to_string(&sample.download_dst)?
     };
     assert_eq!(actual, expected, "correctly uploaded.");
     Ok({})
 }
 
-fn download(target: &Sample) -> PilotResult<()> {
+fn download(target: &Sample) -> io::Result<CommandOutput> {
     aws_s3api()
         .arg("get-object")
         .args(&["--bucket", &TEST_BUCKET])
         .args(&["--key", &target.object_key])
         .arg(&target.download_dst)
-        .output()?;
-
-    Ok({})
+        .output()
 }
 
 fn read_to_string(path: &Path) -> io::Result<String> {
     let path_str: &str = &path.to_string_lossy();
-    let output = cat().arg(path_str).output()?;
+    let output = cat().arg(path_str).output_silently()?;
     Ok(output.stdout_to_string())
 }
 
@@ -70,7 +68,7 @@ fn output_e_tag_is_correct() -> PilotResult<()> {
 
 #[test]
 fn return_non_zero_on_failed() -> PilotResult<()> {
-    let output = wsb_s3api().arg("unknown-subcommand").execute()?;
+    let output = wsb_s3api().arg("unknown-subcommand").output()?;
     assert_eq!(1, output.status_code(), "return zero if it succeeded.");
     Ok({})
 }

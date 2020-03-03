@@ -21,7 +21,7 @@ pub use signing_key::SigningKey;
 #[cfg(test)]
 mod tests {
     use super::{Signer, SigningKey};
-    use crate::auth::v4::canonical::{CanonicalRequest, HashedPayload};
+    use crate::auth::v4::canonical::{HashedPayload, HeadersCapturer};
     use crate::auth::v4::chrono::{AmzDate, DateStamp};
     use crate::auth::v4::sign::{Algorithm, CredentialScope, ScopeTermination, StringToSign};
     use crate::auth::SecretKey;
@@ -51,12 +51,12 @@ mod tests {
             let link = "https://iam.amazonaws.com/?Action=ListUsers&Version=2010-05-08";
             let url = Url::parse(link).unwrap();
 
-            let request = CanonicalRequest::from(
-                &Method::GET,
-                &url,
-                &to_headers(&url)?,
-                &HashedPayload::empty(),
-            );
+            let capturer = HeadersCapturer {
+                url: &url,
+                method: &Method::GET,
+                hashed_payload: &HashedPayload::empty(),
+            };
+            let request = capturer.capture(&to_headers(&url)?);
             StringToSign::from(
                 &Algorithm::HmacSha256,
                 &AmzDate::new("20150830T123600Z"),

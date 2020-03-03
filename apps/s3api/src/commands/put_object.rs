@@ -2,7 +2,6 @@ use crate::{CommandOutput, CommandResult};
 use clap::{App, Arg, ArgMatches, SubCommand};
 use clap_extractor::Matcher;
 use clap_task::ClapTask;
-use futures::executor;
 use sabi_s3::actions::put_object;
 use sabi_s3::actions::put_object::FileRequest;
 use sabi_s3::client::S3Client;
@@ -73,7 +72,9 @@ impl ClapTask<CommandResult> for Task {
         };
         let response: put_object::Response = {
             let future = client.put_object(request);
-            executor::block_on(future)?
+
+            // todo: use tokio::main
+            tokio::runtime::Runtime::new()?.block_on(future)?
         };
         let content = Content {
             e_tag: response.headers.e_tag.into_string(),

@@ -4,7 +4,7 @@ pub use outfile::Outfile;
 
 use crate::actions::get_object;
 use crate::core::verbs::HasObjectKey;
-use crate::internal::{RequestResource, ResourceLoader};
+use crate::internal::blocking::{RequestResource, ResourceLoader};
 use crate::{actions, internal};
 use sabi_core::auth::v4::canonical::HashedPayload;
 use sabi_core::auth::v4::chrono::now;

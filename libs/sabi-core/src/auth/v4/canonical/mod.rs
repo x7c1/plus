@@ -8,6 +8,7 @@ pub use canonical_headers::CanonicalHeaders;
 
 mod request;
 pub use request::CanonicalRequest;
+pub use request::HeadersCapturer;
 
 mod uri;
 pub use uri::CanonicalUri;
@@ -34,9 +35,12 @@ mod tests {
         let url =
             Url::parse("https://iam.amazonaws.com/?Action=ListUsers&Version=2010-05-08").unwrap();
 
-        let headers = to_headers(&url)?;
-        let hash = HashedPayload::empty();
-        let request = CanonicalRequest::from(&Method::GET, &url, &headers, &hash);
+        let capturer = HeadersCapturer {
+            url: &url,
+            method: &Method::GET,
+            hashed_payload: &HashedPayload::empty(),
+        };
+        let request = capturer.capture(&to_headers(&url)?);
 
         assert_eq!(
             request.as_hash(),

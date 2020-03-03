@@ -19,6 +19,9 @@ pub enum Error {
     #[fail(display = "serde_json::Error > {}", 0)]
     SerdeJsonError(serde_json::Error),
 
+    #[fail(display = "std::io::Error > {}", 0)]
+    StdIoError(std::io::Error),
+
     #[fail(display = "string::FromUtf8Error > {}", 0)]
     StringFromUtf8Error(string::FromUtf8Error),
 }
@@ -47,6 +50,12 @@ impl<A: IntoS3Error> From<A> for Error {
 impl From<serde_json::Error> for Error {
     fn from(e: serde_json::Error) -> Self {
         Error::SerdeJsonError(e)
+    }
+}
+
+impl From<std::io::Error> for Error {
+    fn from(e: std::io::Error) -> Self {
+        Error::StdIoError(e)
     }
 }
 

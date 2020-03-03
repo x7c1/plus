@@ -4,57 +4,51 @@ pub use error::Error;
 mod file;
 pub use file::FileRequest;
 
+mod response;
+pub use response::{Response, ResponseHeaders};
+
 mod rich_file;
 pub use rich_file::RichFile;
 
+use crate::actions;
 use crate::actions::put_object;
 use crate::client::S3Client;
+use crate::core::request::ResourceLoader;
 use crate::core::verbs::{HasObjectKey, IsPut};
-use crate::core::{ETag, S3HeaderMap};
-use crate::internal::{InternalClient, RequestProvider, ResourceLoader};
-use crate::{actions, core, internal};
-use reqwest::header::HeaderMap;
+use crate::internal::impl_async::{InternalClient, RequestProvider};
 
 /// rf.
 /// [PutObject - Amazon Simple Storage Service](https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObject.html)
-pub trait Request: HasObjectKey + ResourceLoader {}
-
-#[derive(Debug)]
-pub struct Response {
-    pub headers: Headers,
-}
-
-#[derive(Debug)]
-pub struct Headers {
-    pub e_tag: ETag,
-}
+pub trait Request: HasObjectKey + ResourceLoader + Send + Sync {}
 
 impl<A: Request> IsPut<Response> for A {}
 
-pub trait Requester {
-    fn put_object<A>(&self, request: A) -> actions::Result<Response>
-    where
-        A: Request;
-}
+type Result<A> = std::result::Result<A, put_object::Error>;
 
-impl Requester for S3Client {
-    fn put_object<A>(&self, request: A) -> actions::Result<Response>
+#[async_trait]
+pub trait Requester {
+    async fn put_object<A>(&self, request: A) -> actions::Result<Response>
     where
         A: Request,
-    {
-        let client = InternalClient::new();
-        (|| {
-            let provider = RequestProvider::new(&self, &request)?;
-            let response = client.request_by(provider)?;
-            let headers = to_headers(response.headers())?;
-            Ok(Response { headers })
-        })()
-        .map_err(|e: internal::Error| put_object::Error::from(e).into())
-    }
+        A: Send,
+        A: Sync;
 }
 
-fn to_headers(map: &HeaderMap) -> core::Result<Headers> {
-    Ok(Headers {
-        e_tag: map.get_e_tag()?,
-    })
+#[async_trait]
+impl Requester for S3Client {
+    async fn put_object<A>(&self, request: A) -> actions::Result<Response>
+    where
+        A: Request,
+        A: Send,
+        A: Sync,
+    {
+        let client = InternalClient::new();
+        let headers: put_object::Result<ResponseHeaders> = async {
+            let provider = RequestProvider::new(&self, &request)?;
+            let response = client.request_by(provider).await?;
+            Ok(ResponseHeaders::from(response.headers())?)
+        }
+        .await;
+        Ok(Response { headers: headers? })
+    }
 }

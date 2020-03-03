@@ -1,8 +1,8 @@
 use chrono::{DateTime, Utc};
 use reqwest::{Method, Url};
-use sabi_core::auth::v4::canonical::HashedPayload;
+use sabi_core::auth::v4::canonical::{HashedPayload, HeadersCapturer};
 use sabi_core::auth::v4::chrono::DateStamp;
-use sabi_core::auth::v4::request::{AuthorizationRequest, CanonicalFragment};
+use sabi_core::auth::v4::request::AuthorizationParts;
 use sabi_core::auth::v4::sign::CredentialScope;
 use sabi_core::index::{RegionCode, ServiceCode};
 
@@ -32,9 +32,9 @@ impl<'a> RequestParts<'a> {
     }
 }
 
-impl AuthorizationRequest for RequestParts<'_> {
-    fn to_canonical_fragment(&self) -> CanonicalFragment {
-        CanonicalFragment {
+impl AuthorizationParts for RequestParts<'_> {
+    fn to_capturer(&self) -> HeadersCapturer {
+        HeadersCapturer {
             url: &self.url,
             method: &self.method,
             hashed_payload: &self.hashed_payload,

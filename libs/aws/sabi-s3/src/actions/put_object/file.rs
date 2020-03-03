@@ -1,16 +1,14 @@
-use crate::actions::put_object::RichFile;
+use crate::core;
+use crate::core::request::{RequestResource, ResourceLoader};
 use crate::core::verbs::HasObjectKey;
-use crate::internal;
-use crate::internal::{RequestResource, ResourceLoader};
-use reqwest::blocking::Body;
 use sabi_core::auth::v4::canonical::HashedPayload;
 use sabi_core::auth::v4::chrono::now;
 use sabi_core::http::header::ContentType;
 use sabi_core::index::RegionCode;
-use std::convert::TryFrom;
+use sabi_core::io::stream::bytes_stream;
 use std::error::Error;
-use std::fs::File;
 use std::io::ErrorKind::NotFound;
+use tokio::fs::File;
 
 #[derive(Debug)]
 pub struct FileRequest {
@@ -21,14 +19,21 @@ pub struct FileRequest {
 }
 
 impl FileRequest {
-    fn open_file(&self) -> internal::Result<File> {
-        File::open(&self.file_path).map_err(|e| match e {
-            _ if e.kind() == NotFound => internal::Error::FileNotFound {
+    async fn open_file(&self) -> core::Result<File> {
+        File::open(&self.file_path).await.map_err(|e| match e {
+            _ if e.kind() == NotFound => core::Error::FileNotFound {
                 path: self.file_path.to_string(),
                 description: e.description().to_string(),
             },
-            _ => internal::Error::StdIoError(e),
+            _ => core::Error::StdIoError(e),
         })
+    }
+
+    async fn to_stream_body(&self) -> core::Result<reqwest::Body> {
+        let file: File = self.open_file().await?;
+        let stream = bytes_stream::from_file(file);
+        let body = reqwest::Body::wrap_stream(stream);
+        Ok(body)
     }
 }
 
@@ -38,15 +43,19 @@ impl HasObjectKey for FileRequest {
     }
 }
 
+#[async_trait]
 impl ResourceLoader for FileRequest {
-    fn load(&self) -> internal::Result<RequestResource> {
-        let mut file = self.open_file()?;
-        let hash = file.reset_cursor_after(|file| HashedPayload::try_from(file))?;
+    async fn load<'a>(&'a self) -> core::Result<RequestResource<'a>> {
+        let file: File = self.open_file().await?;
+        let content_length = file.metadata().await?.len();
+        let hash = HashedPayload::from_file(file).await?;
+
         let resource = RequestResource {
-            body: Some(Body::from(file)),
+            body: Some(self.to_stream_body().await?),
             hash,
             region: self.region_code.as_ref(),
             content_type: self.content_type.as_ref(),
+            content_length,
             requested_at: now(),
         };
         Ok(resource)

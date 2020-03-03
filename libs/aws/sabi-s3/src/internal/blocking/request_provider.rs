@@ -1,7 +1,8 @@
 use crate::core::verbs::{HasBucketScope, HasMethod, HasObjectKey, ToEndpoint};
 use crate::internal;
+use crate::internal::blocking::{InternalRequest, ResourceLoader};
 use crate::internal::Error::RegionNotSpecified;
-use crate::internal::{InternalRequest, RequestParts, ResourceLoader};
+use crate::internal::RequestParts;
 use reqwest::header::HeaderMap;
 use reqwest::{Method, Url};
 use sabi_core::auth::v4::request::AuthorizationFactory;

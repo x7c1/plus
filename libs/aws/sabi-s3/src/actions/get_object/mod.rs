@@ -7,9 +7,9 @@ pub use file::{Outfile, OutfileError};
 
 use crate::actions::get_object;
 use crate::client::S3Client;
+use crate::core::response::headers::{AwsHeaderMap, ETag};
 use crate::core::verbs::{HasObjectKey, IsGet};
-use crate::core::{ETag, S3HeaderMap};
-use crate::internal::{InternalClient, RequestProvider, ResourceLoader};
+use crate::internal::blocking::{InternalClient, RequestProvider, ResourceLoader};
 use crate::{actions, core, internal};
 use reqwest::header::HeaderMap;
 use sabi_core::io::BodyReceiver;
@@ -56,6 +56,6 @@ impl Requester for S3Client {
 
 fn to_headers(map: &HeaderMap) -> core::Result<Headers> {
     Ok(Headers {
-        e_tag: map.get_e_tag()?,
+        e_tag: map.as_required()?,
     })
 }

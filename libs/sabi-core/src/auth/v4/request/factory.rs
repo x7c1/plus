@@ -1,16 +1,15 @@
 use crate::auth::account::Credentials;
 use crate::auth::v4::calculator::Signer;
-use crate::auth::v4::canonical::{CanonicalRequest, HashedPayload};
+use crate::auth::v4::canonical::HeadersCapturer;
 use crate::auth::v4::chrono::AmzDate;
 use crate::auth::v4::request::Authorization;
 use crate::auth::v4::sign::{Algorithm, CredentialScope, StringToSign};
 use chrono::{DateTime, Utc};
-use http::{HeaderMap, Method};
-use url::Url;
+use http::HeaderMap;
 
 pub struct AuthorizationFactory<'a> {
     credentials: &'a Credentials,
-    fragment: CanonicalFragment<'a>,
+    capturer: HeadersCapturer<'a>,
     scope: &'a CredentialScope<'a>,
     amz_date: AmzDate,
 }
@@ -18,11 +17,11 @@ pub struct AuthorizationFactory<'a> {
 impl AuthorizationFactory<'_> {
     pub fn new<'a, A>(credentials: &'a Credentials, request: &'a A) -> AuthorizationFactory<'a>
     where
-        A: AuthorizationRequest,
+        A: AuthorizationParts,
     {
         AuthorizationFactory {
             credentials,
-            fragment: request.to_canonical_fragment(),
+            capturer: request.to_capturer(),
             scope: request.to_scope(),
             amz_date: AmzDate::from(request.to_datetime()),
         }
@@ -33,7 +32,7 @@ impl AuthorizationFactory<'_> {
     }
 
     pub fn create_from(self, headers: &HeaderMap) -> Authorization {
-        let request = self.fragment.to_canonical(headers);
+        let request = self.capturer.capture(headers);
         let algorithm = Algorithm::HmacSha256;
         let string_to_sign = StringToSign::from(&algorithm, &self.amz_date, &self.scope, &request);
         let signature = {
@@ -50,20 +49,8 @@ impl AuthorizationFactory<'_> {
     }
 }
 
-pub struct CanonicalFragment<'a> {
-    pub url: &'a Url,
-    pub method: &'a Method,
-    pub hashed_payload: &'a HashedPayload,
-}
-
-impl CanonicalFragment<'_> {
-    pub fn to_canonical(&self, headers: &HeaderMap) -> CanonicalRequest {
-        CanonicalRequest::from(&self.method, &self.url, &headers, &self.hashed_payload)
-    }
-}
-
-pub trait AuthorizationRequest {
-    fn to_canonical_fragment(&self) -> CanonicalFragment;
+pub trait AuthorizationParts {
+    fn to_capturer(&self) -> HeadersCapturer;
     fn to_scope(&self) -> &CredentialScope;
     fn to_datetime(&self) -> &DateTime<Utc>;
 }

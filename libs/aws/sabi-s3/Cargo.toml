@@ -8,8 +8,11 @@ edition = "2018"
 [dependencies]
 env-extractor = { path = "../../env-extractor" }
 sabi-core = { path = "../../sabi-core" }
+
+async-trait = "0.1"
 failure = "0.1"
 tempfile = "3.1"
+tokio = { version = "0.2", features = ["fs"] }
 
 # sabi-core dependencies
 chrono = "0.4"
@@ -19,5 +22,5 @@ url = "2.1"
 
 [dependencies.reqwest]
 version = "0.10"
-features = ["blocking", "rustls-tls"]
+features = ["blocking", "rustls-tls", "stream"]
 default-features = false
