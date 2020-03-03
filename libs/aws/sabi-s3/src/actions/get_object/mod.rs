@@ -43,7 +43,7 @@ impl Requester for S3Client {
         A: Request,
         A: Send,
     {
-        let client = InternalClient::new();
+        let client = InternalClient::default();
         let headers: get_object::Result<ResponseHeaders> = async {
             let provider = RequestProvider::new(&self, &request)?;
             let response = client.request_by(provider).await?;
