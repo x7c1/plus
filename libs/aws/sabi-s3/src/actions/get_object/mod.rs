@@ -16,7 +16,7 @@ use sabi_core::io::BodyReceiver;
 
 /// rf.
 /// [GetObject - Amazon Simple Storage Service](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObject.html)
-pub trait Request: HasObjectKey + ResourceLoader + BodyReceiver {}
+pub trait Request: HasObjectKey + ResourceLoader + BodyReceiver + Send {}
 
 #[derive(Debug)]
 pub struct Response {
@@ -30,16 +30,20 @@ pub struct Headers {
 
 impl<A: Request> IsGet<Response> for A {}
 
+#[async_trait]
 pub trait Requester {
-    fn get_object<A>(&self, request: A) -> actions::Result<Response>
-    where
-        A: Request;
-}
-
-impl Requester for S3Client {
-    fn get_object<A>(&self, mut request: A) -> actions::Result<Response>
+    async fn get_object<A>(&self, request: A) -> actions::Result<Response>
     where
         A: Request,
+        A: Send;
+}
+
+#[async_trait]
+impl Requester for S3Client {
+    async fn get_object<A>(&self, mut request: A) -> actions::Result<Response>
+    where
+        A: Request,
+        A: Send,
     {
         let client = InternalClient::new();
         (|| {

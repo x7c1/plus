@@ -3,7 +3,7 @@ pub use error::Error;
 pub use error::Result;
 
 use crate::actions;
-use crate::actions::put_object;
+use crate::actions::{get_object, put_object};
 use crate::core::verbs::HasBucketScope;
 use crate::core::S3Bucket;
 use sabi_core::auth::Credentials;
@@ -47,10 +47,10 @@ impl S3Client {
         put_object::Requester::put_object(self, request).await
     }
 
-    pub async fn get_object<A>(&self, request: A) -> actions::Result<actions::get_object::Response>
+    pub async fn get_object<A>(&self, request: A) -> actions::Result<get_object::Response>
     where
-        A: actions::get_object::Request,
+        A: get_object::Request,
     {
-        actions::get_object::Requester::get_object(self, request)
+        actions::get_object::Requester::get_object(self, request).await
     }
 }
