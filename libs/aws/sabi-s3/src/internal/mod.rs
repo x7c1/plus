@@ -1,5 +1,3 @@
-pub mod blocking;
-
 pub mod impl_async;
 
 mod error;
