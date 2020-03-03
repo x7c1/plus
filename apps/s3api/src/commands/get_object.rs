@@ -47,9 +47,6 @@ impl ClapTask<CommandResult> for Task {
     }
 
     async fn run<'a>(&'a self, matches: &'a ArgMatches<'a>) -> CommandResult {
-        eprintln!("running {}!", self.name());
-        eprintln!("matches: {:#?}", matches);
-
         let client = S3Client::from_env(S3Bucket::from_string(
             matches.single("bucket").as_required()?,
         ))?;
