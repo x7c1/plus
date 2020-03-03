@@ -2,10 +2,11 @@ mod outfile;
 pub use outfile::Error as OutfileError;
 pub use outfile::Outfile;
 
+use crate::actions;
 use crate::actions::get_object;
+use crate::core;
+use crate::core::request::{RequestResource, ResourceLoader};
 use crate::core::verbs::HasObjectKey;
-use crate::internal::blocking::{RequestResource, ResourceLoader};
-use crate::{actions, internal};
 use sabi_core::auth::v4::canonical::HashedPayload;
 use sabi_core::auth::v4::chrono::now;
 use sabi_core::io::BodyReceiver;
@@ -35,13 +36,15 @@ impl HasObjectKey for FileRequest {
     }
 }
 
+#[async_trait]
 impl ResourceLoader for FileRequest {
-    fn load(&self) -> internal::Result<RequestResource> {
+    async fn load<'a>(&'a self) -> core::Result<RequestResource<'a>> {
         let resource = RequestResource {
             body: None,
             hash: HashedPayload::empty(),
             region: None,
             content_type: None,
+            content_length: 0,
             requested_at: now(),
         };
         Ok(resource)
