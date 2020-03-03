@@ -1,4 +1,7 @@
 #[macro_use]
+extern crate async_trait;
+
+#[macro_use]
 extern crate clap;
 
 #[macro_use]
@@ -24,8 +27,9 @@ use clap::App;
 use clap_task::{ClapTasks, TaskRunner};
 use std::process::exit;
 
-fn main() {
-    match run() {
+#[tokio::main]
+async fn main() {
+    match run().await {
         Ok(output) => {
             println!("{}", output.as_str());
         }
@@ -36,12 +40,13 @@ fn main() {
     }
 }
 
-fn run() -> CommandResult {
+async fn run() -> CommandResult {
     let tasks = commands::define_all();
     init()
         .subcommands(tasks.to_apps())
         .get_matches()
-        .run_matched_from(&tasks)?
+        .run_matched_from(&tasks)
+        .await?
 }
 
 fn init<'a, 'b>() -> App<'a, 'b> {

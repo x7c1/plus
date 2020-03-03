@@ -4,5 +4,6 @@ version = "0.0.1"
 edition = "2018"
 
 [dependencies]
+async-trait = "0.1"
 clap = "2.33"
 failure = "0.1"

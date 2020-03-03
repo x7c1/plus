@@ -2,7 +2,6 @@ use crate::{CommandOutput, CommandResult};
 use clap::{App, Arg, ArgMatches, SubCommand};
 use clap_extractor::Matcher;
 use clap_task::ClapTask;
-use sabi_s3::actions::put_object;
 use sabi_s3::actions::put_object::FileRequest;
 use sabi_s3::client::S3Client;
 use sabi_s3::core::S3Bucket;
@@ -16,6 +15,7 @@ pub fn define() -> Box<dyn ClapTask<CommandResult>> {
 
 struct Task;
 
+#[async_trait]
 impl ClapTask<CommandResult> for Task {
     fn name(&self) -> &str {
         "put-object"
@@ -60,7 +60,7 @@ impl ClapTask<CommandResult> for Task {
             )
     }
 
-    fn run(&self, matches: &ArgMatches) -> CommandResult {
+    async fn run<'a>(&'a self, matches: &'a ArgMatches<'a>) -> CommandResult {
         let client = S3Client::from_env(S3Bucket::from_string(
             matches.single("bucket").as_required()?,
         ))?;
@@ -70,12 +70,7 @@ impl ClapTask<CommandResult> for Task {
             content_type: matches.single("content_type").as_optional()?,
             region_code: matches.single("region").as_optional()?,
         };
-        let response: put_object::Response = {
-            let future = client.put_object(request);
-
-            // todo: use tokio::main
-            tokio::runtime::Runtime::new()?.block_on(future)?
-        };
+        let response = client.put_object(request).await?;
         let content = Content {
             e_tag: response.headers.e_tag.into_string(),
         };

@@ -15,6 +15,7 @@ pub fn define() -> Box<dyn ClapTask<CommandResult>> {
 
 struct Task;
 
+#[async_trait]
 impl ClapTask<CommandResult> for Task {
     fn name(&self) -> &str {
         "get-object"
@@ -45,7 +46,7 @@ impl ClapTask<CommandResult> for Task {
             )
     }
 
-    fn run(&self, matches: &ArgMatches) -> CommandResult {
+    async fn run<'a>(&'a self, matches: &'a ArgMatches<'a>) -> CommandResult {
         eprintln!("running {}!", self.name());
         eprintln!("matches: {:#?}", matches);
 
@@ -56,12 +57,7 @@ impl ClapTask<CommandResult> for Task {
             matches.single("key").as_required()?,
             matches.single("outfile").as_required()?,
         )?;
-        let response: get_object::Response = {
-            let future = client.get_object(request);
-
-            // todo: use tokio::main
-            tokio::runtime::Runtime::new()?.block_on(future)?
-        };
+        let response = client.get_object(request).await?;
         let content = Content {
             e_tag: response.headers.e_tag.into_string(),
         };
