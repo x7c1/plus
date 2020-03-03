@@ -8,8 +8,7 @@ use reqwest::header::HeaderMap;
 use reqwest::{Method, Url};
 use sabi_core::auth::v4::request::AuthorizationFactory;
 use sabi_core::auth::Credentials;
-use sabi_core::http::header;
-use sabi_core::http::RichHeaderMap;
+use sabi_core::http::request::{header, RichHeaderMap};
 use sabi_core::index::RegionCode;
 
 pub struct RequestProvider<'a, A>

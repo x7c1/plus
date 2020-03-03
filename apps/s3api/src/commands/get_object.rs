@@ -2,7 +2,6 @@ use crate::{CommandOutput, CommandResult};
 use clap::{App, Arg, ArgMatches, SubCommand};
 use clap_extractor::Matcher;
 use clap_task::ClapTask;
-use futures::executor;
 use sabi_s3::actions::get_object;
 use sabi_s3::client::S3Client;
 use sabi_s3::core::S3Bucket;
@@ -16,6 +15,7 @@ pub fn define() -> Box<dyn ClapTask<CommandResult>> {
 
 struct Task;
 
+#[async_trait]
 impl ClapTask<CommandResult> for Task {
     fn name(&self) -> &str {
         "get-object"
@@ -46,10 +46,7 @@ impl ClapTask<CommandResult> for Task {
             )
     }
 
-    fn run(&self, matches: &ArgMatches) -> CommandResult {
-        eprintln!("running {}!", self.name());
-        eprintln!("matches: {:#?}", matches);
-
+    async fn run<'a>(&'a self, matches: &'a ArgMatches<'a>) -> CommandResult {
         let client = S3Client::from_env(S3Bucket::from_string(
             matches.single("bucket").as_required()?,
         ))?;
@@ -57,10 +54,7 @@ impl ClapTask<CommandResult> for Task {
             matches.single("key").as_required()?,
             matches.single("outfile").as_required()?,
         )?;
-        let response: get_object::Response = {
-            let future = client.get_object(request);
-            executor::block_on(future)?
-        };
+        let response = client.get_object(request).await?;
         let content = Content {
             e_tag: response.headers.e_tag.into_string(),
         };

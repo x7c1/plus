@@ -10,7 +10,9 @@ env-extractor = { path = "../../env-extractor" }
 sabi-core = { path = "../../sabi-core" }
 
 async-trait = "0.1"
+bytes = "0.5"
 failure = "0.1"
+futures-util = "0.3"
 tempfile = "3.1"
 tokio = { version = "0.2", features = ["fs"] }
 

@@ -1,14 +1,11 @@
 mod error;
 pub use error::Error;
 
-mod file;
-pub use file::FileRequest;
+mod request;
+pub use request::FileRequest;
 
 mod response;
 pub use response::{Response, ResponseHeaders};
-
-mod rich_file;
-pub use rich_file::RichFile;
 
 use crate::actions;
 use crate::actions::put_object;

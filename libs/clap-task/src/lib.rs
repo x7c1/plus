@@ -1,4 +1,7 @@
 #[macro_use]
+extern crate async_trait;
+
+#[macro_use]
 extern crate failure;
 
 mod error;
@@ -9,12 +12,13 @@ use crate::error::Error::SubCommandMissing;
 use clap::{App, ArgMatches};
 use std::iter::FromIterator;
 
-pub trait ClapTask<T> {
+#[async_trait]
+pub trait ClapTask<T>: Send + Sync {
     fn name(&self) -> &str;
 
     fn design(&self) -> App;
 
-    fn run(&self, matches: &ArgMatches) -> T;
+    async fn run<'a>(&'a self, matches: &'a ArgMatches<'a>) -> T;
 }
 
 pub trait ClapTasks<T> {
@@ -42,13 +46,23 @@ impl<T> ClapTasks<T> for Vec<Box<dyn ClapTask<T>>> {
     }
 }
 
+#[async_trait]
 pub trait TaskRunner<T> {
-    fn run_matched_from<U: ClapTasks<T>>(&self, tasks: &U) -> ClapTaskResult<T>;
+    async fn run_matched_from<U>(&self, tasks: &U) -> ClapTaskResult<T>
+    where
+        U: ClapTasks<T>,
+        U: Sync;
 }
 
-impl<T> TaskRunner<T> for ArgMatches<'_> {
-    fn run_matched_from<U: ClapTasks<T>>(&self, tasks: &U) -> ClapTaskResult<T> {
+#[async_trait]
+impl<'a, T: 'a> TaskRunner<T> for ArgMatches<'a> {
+    async fn run_matched_from<U>(&self, tasks: &U) -> ClapTaskResult<T>
+    where
+        U: ClapTasks<T>,
+        U: Sync,
+    {
         let (task, sub_matches) = tasks.sub_matches(self)?;
-        Ok(task.run(sub_matches))
+        let item = task.run(sub_matches).await;
+        Ok(item)
     }
 }

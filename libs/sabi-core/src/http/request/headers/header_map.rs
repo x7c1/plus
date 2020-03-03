@@ -1,5 +1,5 @@
 use crate::auth::v4::request::AuthorizationFactory;
-use crate::http::ToHeaderFragment;
+use crate::http::request::ToHeaderFragment;
 use crate::Error::HostNotFound;
 use crate::SabiResult;
 use http::header::{AUTHORIZATION, HOST};

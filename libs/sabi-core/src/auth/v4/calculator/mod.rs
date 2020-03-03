@@ -25,7 +25,7 @@ mod tests {
     use crate::auth::v4::chrono::{AmzDate, DateStamp};
     use crate::auth::v4::sign::{Algorithm, CredentialScope, ScopeTermination, StringToSign};
     use crate::auth::SecretKey;
-    use crate::http::RichHeaderMap;
+    use crate::http::request::RichHeaderMap;
     use crate::index::{RegionCode, ServiceCode};
     use crate::SabiResult;
     use http::{HeaderMap, Method};

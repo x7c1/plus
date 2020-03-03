@@ -9,6 +9,7 @@ edition = "2018"
 characters = { path = "../characters" }
 env-extractor = { path = "../env-extractor" }
 
+async-trait = "0.1"
 bytes = "0.5"
 chrono = "0.4"
 failure = "0.1"

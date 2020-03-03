@@ -1,9 +1,10 @@
+use crate::actions::put_object;
 use crate::core;
 use crate::core::request::{RequestResource, ResourceLoader};
 use crate::core::verbs::HasObjectKey;
 use sabi_core::auth::v4::canonical::HashedPayload;
 use sabi_core::auth::v4::chrono::now;
-use sabi_core::http::header::ContentType;
+use sabi_core::http::request::header::ContentType;
 use sabi_core::index::RegionCode;
 use sabi_core::io::stream::bytes_stream;
 use std::error::Error;
@@ -62,4 +63,4 @@ impl ResourceLoader for FileRequest {
     }
 }
 
-impl super::Request for FileRequest {}
+impl put_object::Request for FileRequest {}

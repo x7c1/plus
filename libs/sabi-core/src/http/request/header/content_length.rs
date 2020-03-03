@@ -1,5 +1,5 @@
-use crate::http::HeaderFragment;
-use crate::http::ToHeaderFragment;
+use crate::http::request::HeaderFragment;
+use crate::http::request::ToHeaderFragment;
 use crate::SabiResult;
 use http::header::HeaderName;
 use std::str::FromStr;

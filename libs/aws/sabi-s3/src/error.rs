@@ -1,7 +1,7 @@
 use crate::{actions, client, core, internal};
 
-/// integrate sabi_s3::*::Error into one sabi-s3::Error.
 /// see also: libs/aws/sabi-s3-macros
+/// sabi-s3-macros helps to integrate sabi_s3::*::Error into one sabi-s3::Error.
 
 #[derive(Fail, Debug)]
 pub enum Error {
