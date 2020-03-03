@@ -5,15 +5,16 @@ mod file;
 pub use file::FileRequest;
 pub use file::{Outfile, OutfileError};
 
+mod response;
+pub use response::{Response, ResponseHeaders};
+
+use crate::actions;
 use crate::actions::get_object;
 use crate::client::S3Client;
 use crate::core::request::ResourceLoader;
-use crate::core::response::headers::{AwsHeaderMap, ETag};
 use crate::core::verbs::{HasObjectKey, IsGet};
 use crate::internal::impl_async::{InternalClient, RequestProvider};
-use crate::{actions, core};
 use futures_util::TryStreamExt;
-use reqwest::header::HeaderMap;
 use sabi_core::io::BodyReceiver;
 
 /// rf.
@@ -21,16 +22,6 @@ use sabi_core::io::BodyReceiver;
 pub trait Request:
     HasObjectKey + ResourceLoader + BodyReceiver<Err = get_object::Error> + Send + Sync
 {
-}
-
-#[derive(Debug)]
-pub struct Response {
-    pub headers: Headers,
-}
-
-#[derive(Debug)]
-pub struct Headers {
-    pub e_tag: ETag,
 }
 
 impl<A: Request> IsGet<Response> for A {}
@@ -53,10 +44,10 @@ impl Requester for S3Client {
         A: Send,
     {
         let client = InternalClient::new();
-        let headers: get_object::Result<Headers> = async {
+        let headers: get_object::Result<ResponseHeaders> = async {
             let provider = RequestProvider::new(&self, &request)?;
             let response = client.request_by(provider).await?;
-            let headers = to_headers(response.headers())?;
+            let headers = ResponseHeaders::from(response.headers())?;
             let stream = response
                 .bytes_stream()
                 .map_err(|e| get_object::Error::from(e));
@@ -67,10 +58,4 @@ impl Requester for S3Client {
         .await;
         Ok(Response { headers: headers? })
     }
-}
-
-fn to_headers(map: &HeaderMap) -> core::Result<Headers> {
-    Ok(Headers {
-        e_tag: map.as_required()?,
-    })
 }
