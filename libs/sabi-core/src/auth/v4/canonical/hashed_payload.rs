@@ -4,10 +4,7 @@ use bytes::Bytes;
 use futures_util::{future, stream::Stream, TryStreamExt};
 use hex::ToHex;
 use sha2::{Digest, Sha256};
-use std::convert::TryFrom;
-use std::fs::File;
 use std::io;
-use std::io::{BufReader, Read};
 use tokio::fs;
 
 #[derive(Debug)]
@@ -29,29 +26,6 @@ impl HashedPayload {
     pub async fn from_file(file: fs::File) -> SabiResult<Self> {
         let stream = bytes_stream::from_file(file);
         let hash = calculate(stream).await?;
-        Ok(hash)
-    }
-}
-
-impl TryFrom<&File> for HashedPayload {
-    type Error = crate::Error;
-
-    fn try_from(file: &File) -> SabiResult<Self> {
-        let mut sha = Sha256::default();
-        let mut reader = BufReader::new(file);
-        let mut buffer = [0; 4];
-        loop {
-            /*
-                rf.
-                https://qiita.com/fujitayy/items/12a80560a356607da637
-            */
-            match reader.read(&mut buffer)? {
-                0 => break,
-                n => sha.input(&buffer[..n]),
-            }
-        }
-        let hex: String = sha.result().as_slice().encode_hex();
-        let hash = Self::new(hex);
         Ok(hash)
     }
 }
