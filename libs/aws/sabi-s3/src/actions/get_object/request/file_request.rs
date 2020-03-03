@@ -8,7 +8,7 @@ use bytes::Bytes;
 use futures_util::stream::Stream;
 use sabi_core::auth::v4::canonical::HashedPayload;
 use sabi_core::auth::v4::chrono::now;
-use sabi_core::io::BodyReceiver;
+use sabi_core::io::stream::BodyReceiver;
 use std::path::PathBuf;
 
 #[derive(Debug)]

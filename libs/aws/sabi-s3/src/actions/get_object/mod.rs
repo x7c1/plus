@@ -15,7 +15,7 @@ use crate::core::request::ResourceLoader;
 use crate::core::verbs::{HasObjectKey, IsGet};
 use crate::internal::impl_async::{InternalClient, RequestProvider};
 use futures_util::TryStreamExt;
-use sabi_core::io::BodyReceiver;
+use sabi_core::io::stream::BodyReceiver;
 
 /// rf.
 /// [GetObject - Amazon Simple Storage Service](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObject.html)
