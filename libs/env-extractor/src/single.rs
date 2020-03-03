@@ -50,7 +50,7 @@ impl SingleValue {
         let maybe = match env::var(&self.key) {
             Ok(x1) => Some(x1),
             Err(VarError::NotPresent) => None,
-            Err(e @ _) => Err(Error::EnvVarError(e))?,
+            Err(e) => Err(Error::EnvVarError(e))?,
         };
         maybe.map(to_parsed).unwrap_or_else(if_not_found)
     }
