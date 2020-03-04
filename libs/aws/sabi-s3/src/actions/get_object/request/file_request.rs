@@ -21,7 +21,7 @@ impl FileRequest {
     pub fn create(object_key: String, file_path: PathBuf) -> actions::Result<Self> {
         Ok(FileRequest {
             object_key,
-            outfile: Outfile::create(file_path).map_err(|e| get_object::Error::from(e))?,
+            outfile: Outfile::create(file_path).map_err(get_object::Error::from)?,
         })
     }
 }
@@ -34,7 +34,7 @@ impl HasObjectKey for FileRequest {
 
 #[async_trait]
 impl ResourceLoader for FileRequest {
-    async fn load<'a>(&'a self) -> core::Result<RequestResource<'a>> {
+    async fn load(&self) -> core::Result<RequestResource<'_>> {
         let resource = RequestResource {
             body: None,
             hash: HashedPayload::empty(),

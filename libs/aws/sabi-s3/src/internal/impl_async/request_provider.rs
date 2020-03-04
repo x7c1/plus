@@ -47,7 +47,7 @@ where
         let resource = self.resource_loader.load().await?;
         let region_code = resource
             .region
-            .or(self.default_region.as_ref())
+            .or_else(|| self.default_region.as_ref())
             .ok_or_else(|| RegionNotSpecified)?;
 
         let parts = RequestParts::new(

@@ -29,5 +29,13 @@ run_unit_tests_for_linux_x86() {
 }
 
 cargo_fmt() {
-  cargo fmt --verbose -- --emit files
+  cargo fmt \
+    --verbose \
+    -- --emit files
+}
+
+cargo_clippy() {
+  cargo clippy \
+    ${BUILD_MODE} \
+    --target="${TARGET_X86}"
 }

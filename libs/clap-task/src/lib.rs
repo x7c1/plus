@@ -24,6 +24,9 @@ pub trait ClapTask<T>: Send + Sync {
 pub trait ClapTasks<T> {
     fn to_apps(&self) -> Vec<App>;
 
+    /// seems like clippy has buggy behavior.
+    /// - see also: [Clippy incorrectly complains about `borrowed_box` when trait object is boxed · Issue #3971](https://github.com/rust-lang/rust-clippy/issues/3971)
+    #[allow(clippy::borrowed_box)]
     fn sub_matches<'a>(
         &'a self,
         matches: &'a ArgMatches,

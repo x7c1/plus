@@ -34,8 +34,8 @@ impl HasBucketScope for &S3Client {
 impl S3Client {
     pub fn from_env(bucket: S3Bucket) -> Result<S3Client> {
         Ok(S3Client {
-            credentials: Credentials::from_env().map_err(|e| CredentialsError(e))?,
-            default_region: RegionCode::find_from_env().map_err(|e| RegionCodeError(e))?,
+            credentials: Credentials::from_env().map_err(CredentialsError)?,
+            default_region: RegionCode::find_from_env().map_err(RegionCodeError)?,
             bucket,
         })
     }

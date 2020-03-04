@@ -40,7 +40,7 @@ impl CommandOutput {
         println!("{}", to_string(&self.stdout()));
 
         let e = to_string(&self.stderr());
-        if e.len() > 0 {
+        if !e.is_empty() {
             println!("stderr: {}", e);
         }
     }

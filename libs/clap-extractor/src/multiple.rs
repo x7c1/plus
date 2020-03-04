@@ -31,7 +31,7 @@ where
         };
         self.matches
             .values_of(self.key)
-            .unwrap_or_else(|| Values::default())
+            .unwrap_or_else(Values::default)
             .map(to_parsed)
             .complete_or_failed()
     }

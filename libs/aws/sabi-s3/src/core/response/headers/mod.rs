@@ -28,7 +28,7 @@ impl AwsHeaderMap for HeaderMap {
                     cause,
                 })
             })
-            .map(|value| A::new(value))?;
+            .map(A::new)?;
 
         Ok(value?)
     }

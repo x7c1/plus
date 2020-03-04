@@ -38,7 +38,7 @@ impl Outfile {
             }
         });
         let (sum, file) = write.await?;
-        file.persist(&self.0).map_err(|e| std::io::Error::from(e))?;
+        file.persist(&self.0).map_err(std::io::Error::from)?;
         Ok(sum)
     }
 }
