@@ -37,7 +37,7 @@ mod status {
     #[test]
     fn is_non_zero_on_failed() -> PilotResult<()> {
         let output = wsb_s3api().arg("unknown-subcommand").output()?;
-        assert_eq!(1, output.status_code(), "return zero if it succeeded.");
+        assert_ne!(0, output.status_code(), "return zero if it succeeded.");
         Ok({})
     }
 
