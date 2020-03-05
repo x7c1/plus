@@ -4,53 +4,57 @@ use std::path::{Path, PathBuf};
 use wsb_pilot::cmd::{CommandOutput, CommandRunner};
 use wsb_pilot::PilotResult;
 
-#[test]
-fn return_zero_on_succeeded() -> PilotResult<()> {
-    let put_object = |target: &Sample| {
-        wsb_s3api()
-            .arg("put-object")
+mod status {
+    use super::*;
+
+    #[test]
+    fn is_zero_on_succeeded() -> PilotResult<()> {
+        let put_object = |target: &Sample| {
+            wsb_s3api()
+                .arg("put-object")
+                .args(&["--bucket", &TEST_BUCKET])
+                .args(&["--key", &target.object_key])
+                .args(&["--body", &target.upload_src.to_string_lossy()])
+                .output()
+        };
+        let sample = Sample {
+            object_key: "s3api/put-object/foo/bar/sample1.txt".to_string(),
+            upload_src: "./sample.txt".into(),
+            download_dst: "./downloaded1.tmp".into(),
+        };
+        let expected = {
+            assert_eq!(put_object(&sample)?.status_code(), 0);
+            read_to_string(&sample.upload_src)?
+        };
+        let actual = {
+            assert_eq!(get_object(&sample)?.status_code(), 0);
+            read_to_string(&sample.download_dst)?
+        };
+        assert_eq!(actual, expected, "correctly uploaded.");
+        Ok({})
+    }
+
+    #[test]
+    fn is_non_zero_on_failed() -> PilotResult<()> {
+        let output = wsb_s3api().arg("unknown-subcommand").output()?;
+        assert_eq!(1, output.status_code(), "return zero if it succeeded.");
+        Ok({})
+    }
+
+    fn get_object(target: &Sample) -> io::Result<CommandOutput> {
+        aws_s3api()
+            .arg("get-object")
             .args(&["--bucket", &TEST_BUCKET])
             .args(&["--key", &target.object_key])
-            .args(&["--body", &target.upload_src.to_string_lossy()])
+            .arg(&target.download_dst)
             .output()
-    };
-    let sample = Sample {
-        object_key: "s3api/put-object/foo/bar/sample1.txt".to_string(),
-        upload_src: "./sample.txt".into(),
-        download_dst: "./downloaded1.tmp".into(),
-    };
-    let expected = {
-        assert_eq!(put_object(&sample)?.status_code(), 0);
-        read_to_string(&sample.upload_src)?
-    };
-    let actual = {
-        assert_eq!(get_object(&sample)?.status_code(), 0);
-        read_to_string(&sample.download_dst)?
-    };
-    assert_eq!(actual, expected, "correctly uploaded.");
-    Ok({})
-}
+    }
 
-fn get_object(target: &Sample) -> io::Result<CommandOutput> {
-    aws_s3api()
-        .arg("get-object")
-        .args(&["--bucket", &TEST_BUCKET])
-        .args(&["--key", &target.object_key])
-        .arg(&target.download_dst)
-        .output()
-}
-
-fn read_to_string(path: &Path) -> io::Result<String> {
-    let path_str: &str = &path.to_string_lossy();
-    let output = cat().arg(path_str).output_silently()?;
-    Ok(output.stdout_to_string())
-}
-
-#[test]
-fn return_non_zero_on_failed() -> PilotResult<()> {
-    let output = wsb_s3api().arg("unknown-subcommand").output()?;
-    assert_eq!(1, output.status_code(), "return zero if it succeeded.");
-    Ok({})
+    fn read_to_string(path: &Path) -> io::Result<String> {
+        let path_str: &str = &path.to_string_lossy();
+        let output = cat().arg(path_str).output_silently()?;
+        Ok(output.stdout_to_string())
+    }
 }
 
 mod output {
