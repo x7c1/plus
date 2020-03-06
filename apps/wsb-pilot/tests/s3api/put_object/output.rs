@@ -5,14 +5,14 @@ use std::io;
 use wsb_pilot::cmd::{CommandOutput, CommandRunner};
 use wsb_pilot::PilotResult;
 
-lazy_static! {
-    static ref OUTPUT: Fixture = upload_sample().unwrap();
-}
-
 #[test]
 fn e_tag_is_correct() -> PilotResult<()> {
     assert_eq!(OUTPUT.wsb["ETag"], OUTPUT.aws["ETag"]);
     Ok({})
+}
+
+lazy_static! {
+    static ref OUTPUT: Fixture = upload_sample().unwrap();
 }
 
 fn upload_sample() -> PilotResult<Fixture> {
