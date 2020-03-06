@@ -1,3 +1,4 @@
+mod output;
 mod status;
 
 use crate::s3api::TEST_WORKSPACE_DIR;
@@ -17,6 +18,10 @@ fn aws_s3api() -> CommandRunner {
 
 fn wsb_s3api() -> CommandRunner {
     super::wsb_s3api().current_dir(&*WORKSPACE)
+}
+
+fn cat() -> CommandRunner {
+    super::cat().current_dir(&*WORKSPACE)
 }
 
 struct Sample {
