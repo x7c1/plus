@@ -4,8 +4,26 @@ use std::path::PathBuf;
 use wsb_pilot::PilotResult;
 
 pub fn run() -> PilotResult<()> {
+    delete_s3_mock_files()?;
     upload_mock_files()?;
-    Ok({})
+    Ok(())
+}
+
+fn delete_s3_mock_files() -> PilotResult<()> {
+    // rf. [delete-objects — AWS CLI 1.18.16 Command Reference](https://docs.aws.amazon.com/cli/latest/reference/s3api/delete-objects.html)
+    let objects = create_mock_params()
+        .iter()
+        .map(|x| x.format_to_delete())
+        .collect::<Vec<String>>()
+        .join(",");
+
+    let _aws_output = aws_s3api()
+        .arg("delete-objects")
+        .args(&["--bucket", &TEST_BUCKET])
+        .args(&["--delete", &format!("Objects=[{}]", objects)])
+        .output()?;
+
+    Ok(())
 }
 
 fn upload_mock_files() -> PilotResult<()> {
@@ -17,7 +35,7 @@ fn upload_mock_files() -> PilotResult<()> {
             .args(&["--body", &params.file_path.to_string_lossy()])
             .output()?;
     }
-    Ok({})
+    Ok(())
 }
 
 fn create_mock_params() -> Vec<MockParameters> {
@@ -36,4 +54,10 @@ fn create_mock_params() -> Vec<MockParameters> {
 struct MockParameters {
     object_key: String,
     file_path: PathBuf,
+}
+
+impl MockParameters {
+    fn format_to_delete(&self) -> String {
+        format!("{{ Key={} }}", self.object_key)
+    }
 }
