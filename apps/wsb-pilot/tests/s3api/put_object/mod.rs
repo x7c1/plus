@@ -26,7 +26,7 @@ fn cat(path: &Path) -> io::Result<String> {
     fs::read_to_string(full_path)
 }
 
-struct Sample {
+struct SampleParameters {
     object_key: String,
     upload_src: PathBuf,
     download_dst: PathBuf,

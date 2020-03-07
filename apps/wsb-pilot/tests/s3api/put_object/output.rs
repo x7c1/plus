@@ -1,4 +1,4 @@
-use crate::s3api::put_object::{aws_s3api, wsb_s3api, Sample};
+use crate::s3api::put_object::{aws_s3api, wsb_s3api, SampleParameters};
 use crate::s3api::TEST_BUCKET;
 use serde_json::Value;
 use std::io;
@@ -16,7 +16,7 @@ lazy_static! {
 }
 
 fn upload_sample() -> PilotResult<Fixture> {
-    let sample = Sample {
+    let sample = SampleParameters {
         object_key: "s3api/put-object/foo/bar/sample2.txt".to_string(),
         upload_src: "./sample.txt".into(),
         download_dst: "./downloaded2.tmp".into(),
@@ -29,12 +29,12 @@ fn upload_sample() -> PilotResult<Fixture> {
     })
 }
 
-fn upload(runner: CommandRunner, target: &Sample) -> io::Result<CommandOutput> {
+fn upload(runner: CommandRunner, params: &SampleParameters) -> io::Result<CommandOutput> {
     runner
         .arg("put-object")
         .args(&["--bucket", &TEST_BUCKET])
-        .args(&["--key", &target.object_key])
-        .args(&["--body", &target.upload_src.to_string_lossy()])
+        .args(&["--key", &params.object_key])
+        .args(&["--body", &params.upload_src.to_string_lossy()])
         .output()
 }
 
