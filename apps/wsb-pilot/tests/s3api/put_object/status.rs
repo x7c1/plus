@@ -1,11 +1,13 @@
-use crate::s3api::put_object::{aws_s3api, cat, wsb_s3api, SampleParameters};
-use crate::s3api::TEST_BUCKET;
-use std::io;
-use wsb_pilot::cmd::CommandOutput;
+use crate::s3api::put_object::fixtures::OUTPUT;
+
+use crate::s3api::put_object::wsb_s3api;
 use wsb_pilot::PilotResult;
 
 #[test]
 fn is_zero_on_succeeded() -> PilotResult<()> {
+    assert_eq!(OUTPUT.wsb.status_code, 0);
+    Ok(())
+    /*
     let put_object = |target: &SampleParameters| {
         wsb_s3api()
             .arg("put-object")
@@ -29,6 +31,7 @@ fn is_zero_on_succeeded() -> PilotResult<()> {
     };
     assert_eq!(actual, expected, "correctly uploaded.");
     Ok(())
+    */
 }
 
 #[test]
@@ -36,13 +39,4 @@ fn is_non_zero_on_failed() -> PilotResult<()> {
     let output = wsb_s3api().arg("unknown-subcommand").output()?;
     assert_ne!(0, output.status_code(), "return zero if it succeeded.");
     Ok(())
-}
-
-fn get_object(target: &SampleParameters) -> io::Result<CommandOutput> {
-    aws_s3api()
-        .arg("get-object")
-        .args(&["--bucket", &TEST_BUCKET])
-        .args(&["--key", &target.object_key])
-        .arg(&target.download_dst)
-        .output()
 }

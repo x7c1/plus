@@ -30,7 +30,6 @@ fn cat(path: &Path) -> io::Result<String> {
 
 fn remove_if_exists(path: &Path) -> io::Result<()> {
     let full_path: PathBuf = WORKSPACE.join(path);
-
     if full_path.exists() {
         fs::remove_file(full_path)
     } else {

@@ -1,3 +1,4 @@
+mod fixtures;
 mod output;
 mod status;
 
@@ -26,7 +27,7 @@ fn cat(path: &Path) -> io::Result<String> {
     fs::read_to_string(full_path)
 }
 
-struct SampleParameters {
+pub struct SampleParameters {
     object_key: String,
     upload_src: PathBuf,
     download_dst: PathBuf,
