@@ -1,4 +1,5 @@
 mod fixture;
+mod outfile;
 mod output;
 mod status;
 
