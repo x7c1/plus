@@ -1,5 +1,5 @@
-use crate::s3api::put_object::aws_s3api;
 use crate::s3api::put_object::fixtures::create_sample_pair;
+use crate::s3api::put_object::workspace;
 use crate::s3api::TEST_BUCKET;
 use wsb_pilot::PilotResult;
 
@@ -17,7 +17,8 @@ fn delete_s3_mock_files() -> PilotResult<()> {
         .collect::<Vec<String>>()
         .join(",");
 
-    let _aws_output = aws_s3api()
+    let _aws_output = workspace()
+        .aws_s3api()
         .arg("delete-objects")
         .args(&["--bucket", &TEST_BUCKET])
         .args(&["--delete", &format!("Objects=[{}]", objects)])

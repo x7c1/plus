@@ -1,5 +1,5 @@
 use crate::s3api::get_object::fixtures::create_sample_pair;
-use crate::s3api::get_object::{aws_s3api, remove_if_exists};
+use crate::s3api::get_object::workspace;
 use crate::s3api::TEST_BUCKET;
 use std::path::PathBuf;
 use wsb_pilot::PilotResult;
@@ -15,14 +15,15 @@ fn delete_downloaded_files() -> PilotResult<()> {
         .as_vec()
         .iter()
         .map(|params| &params.outfile_dst)
-        .try_for_each(|path| remove_if_exists(path))?;
+        .try_for_each(|path| workspace().remove_if_exists(path))?;
 
     Ok(())
 }
 
 fn upload_mock_files() -> PilotResult<()> {
     for params in create_mock_params() {
-        let _aws_output = aws_s3api()
+        let _aws_output = workspace()
+            .aws_s3api()
             .arg("put-object")
             .args(&["--bucket", &TEST_BUCKET])
             .args(&["--key", &params.object_key])

@@ -1,6 +1,6 @@
 mod init;
 
-use crate::s3api::put_object::{aws_s3api, cat, wsb_s3api, SampleParameters};
+use crate::s3api::put_object::{workspace, SampleParameters};
 use crate::s3api::{ParametersPair, TEST_BUCKET};
 use serde_json::Value;
 use std::io;
@@ -24,13 +24,13 @@ pub struct OutputFixture {
 
 impl OutputFixture {
     pub fn uploaded_text(&self) -> PilotResult<String> {
-        let text = cat(&self.parameters.upload_src)?;
+        let text = workspace().cat(&self.parameters.upload_src)?;
         Ok(text)
     }
 
     pub fn download_text(&self) -> PilotResult<String> {
         let _aws_output = download(&self.parameters)?;
-        let text = cat(&self.parameters.download_dst)?;
+        let text = workspace().cat(&self.parameters.download_dst)?;
         Ok(text)
     }
 }
@@ -40,7 +40,7 @@ fn setup_fixture() -> PilotResult<Fixture> {
 
     let pair = create_sample_pair();
     let wsb = {
-        let output = wsb_s3api().run(upload, &pair.wsb)?;
+        let output = workspace().wsb_s3api().run(upload, &pair.wsb)?;
         OutputFixture {
             status_code: output.status_code(),
             json: output.stdout_to_json()?,
@@ -48,7 +48,7 @@ fn setup_fixture() -> PilotResult<Fixture> {
         }
     };
     let aws = {
-        let output = aws_s3api().run(upload, &pair.aws)?;
+        let output = workspace().aws_s3api().run(upload, &pair.aws)?;
         OutputFixture {
             status_code: output.status_code(),
             json: output.stdout_to_json()?,
@@ -83,7 +83,8 @@ fn upload(runner: CommandRunner, target: &SampleParameters) -> io::Result<Comman
 }
 
 fn download(target: &SampleParameters) -> io::Result<CommandOutput> {
-    aws_s3api()
+    workspace()
+        .aws_s3api()
         .arg("get-object")
         .args(&["--bucket", &TEST_BUCKET])
         .args(&["--key", &target.object_key])

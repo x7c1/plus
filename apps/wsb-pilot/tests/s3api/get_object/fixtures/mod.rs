@@ -1,6 +1,6 @@
 mod init;
 
-use crate::s3api::get_object::{aws_s3api, cat, wsb_s3api, SampleParameters};
+use crate::s3api::get_object::{workspace, SampleParameters};
 use crate::s3api::{ParametersPair, TEST_BUCKET};
 use serde_json::Value;
 use std::io;
@@ -24,7 +24,7 @@ pub struct OutputFixture {
 
 impl OutputFixture {
     pub fn outfile_text(&self) -> PilotResult<String> {
-        let text = cat(&self.parameters.outfile_dst)?;
+        let text = workspace().cat(&self.parameters.outfile_dst)?;
         Ok(text)
     }
 }
@@ -34,7 +34,7 @@ fn setup_fixture() -> PilotResult<Fixture> {
 
     let pair = create_sample_pair();
     let wsb = {
-        let output = wsb_s3api().run(download, &pair.wsb)?;
+        let output = workspace().wsb_s3api().run(download, &pair.wsb)?;
         OutputFixture {
             status_code: output.status_code(),
             json: output.stdout_to_json()?,
@@ -42,7 +42,7 @@ fn setup_fixture() -> PilotResult<Fixture> {
         }
     };
     let aws = {
-        let output = aws_s3api().run(download, &pair.aws)?;
+        let output = workspace().aws_s3api().run(download, &pair.aws)?;
         OutputFixture {
             status_code: output.status_code(),
             json: output.stdout_to_json()?,
