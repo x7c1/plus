@@ -1,4 +1,4 @@
-use crate::s3api::get_object::fixture::OUTPUT;
+use crate::s3api::get_object::fixtures::OUTPUT;
 use wsb_pilot::PilotResult;
 
 #[test]

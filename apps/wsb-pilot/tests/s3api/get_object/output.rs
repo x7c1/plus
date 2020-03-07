@@ -1,7 +1,7 @@
-use crate::s3api::get_object::fixture::OUTPUT;
+use crate::s3api::get_object::fixtures::OUTPUT;
 use wsb_pilot::PilotResult;
 
-/*
+/* rf. output example by `aws s3api get-object`
 {
     "AcceptRanges": "bytes",
     "LastModified": "Thu, 20 Feb 2020 13:28:58 GMT",

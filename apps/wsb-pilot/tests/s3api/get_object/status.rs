@@ -1,5 +1,5 @@
 use crate::s3api::get_object::aws_s3api;
-use crate::s3api::get_object::fixture::OUTPUT;
+use crate::s3api::get_object::fixtures::OUTPUT;
 use crate::s3api::TEST_BUCKET;
 use std::path::PathBuf;
 use wsb_pilot::PilotResult;
