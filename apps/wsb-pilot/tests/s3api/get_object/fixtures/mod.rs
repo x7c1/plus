@@ -5,7 +5,7 @@ use crate::s3api::TEST_BUCKET;
 use serde_json::Value;
 use std::io;
 use wsb_pilot::cmd::{CommandOutput, CommandRunner};
-use wsb_pilot::{MutableSelf, PilotResult};
+use wsb_pilot::PilotResult;
 
 lazy_static! {
     pub static ref OUTPUT: Fixture = setup_fixture().unwrap();
@@ -64,16 +64,18 @@ fn setup_fixture() -> PilotResult<Fixture> {
 }
 
 fn create_sample_pair() -> SamplePair {
-    SamplePair {
-        wsb: create_sample().mutate(|mut x| x.outfile_dst = "./sample1.wsb.tmp".into()),
-        aws: create_sample().mutate(|mut x| x.outfile_dst = "./sample1.aws.tmp".into()),
-    }
-}
+    let params = init::create_mock_params();
+    let object_key = &params[0].object_key;
 
-fn create_sample() -> SampleParameters {
-    SampleParameters {
-        object_key: "s3api/get-object/foo/bar/sample1.txt.tmp".to_string(),
-        outfile_dst: "./sample1.tmp".into(),
+    SamplePair {
+        wsb: SampleParameters {
+            object_key: object_key.to_owned(),
+            outfile_dst: "./sample1.wsb.tmp".into(),
+        },
+        aws: SampleParameters {
+            object_key: object_key.to_owned(),
+            outfile_dst: "./sample1.aws.tmp".into(),
+        },
     }
 }
 

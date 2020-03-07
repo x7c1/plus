@@ -32,7 +32,7 @@ fn upload_mock_files() -> PilotResult<()> {
     Ok(())
 }
 
-fn create_mock_params() -> Vec<MockParameters> {
+pub fn create_mock_params() -> Vec<MockParameters> {
     vec![
         MockParameters {
             object_key: "s3api/get-object/foo/bar/sample1.txt.tmp".to_string(),
@@ -45,7 +45,7 @@ fn create_mock_params() -> Vec<MockParameters> {
     ]
 }
 
-struct MockParameters {
-    object_key: String,
+pub struct MockParameters {
+    pub object_key: String,
     file_path: PathBuf,
 }
