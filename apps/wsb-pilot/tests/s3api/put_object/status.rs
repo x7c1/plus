@@ -29,14 +29,14 @@ fn is_zero_on_succeeded() -> PilotResult<()> {
         read_to_string(&sample.download_dst)?
     };
     assert_eq!(actual, expected, "correctly uploaded.");
-    Ok({})
+    Ok(())
 }
 
 #[test]
 fn is_non_zero_on_failed() -> PilotResult<()> {
     let output = wsb_s3api().arg("unknown-subcommand").output()?;
     assert_ne!(0, output.status_code(), "return zero if it succeeded.");
-    Ok({})
+    Ok(())
 }
 
 fn get_object(target: &Sample) -> io::Result<CommandOutput> {

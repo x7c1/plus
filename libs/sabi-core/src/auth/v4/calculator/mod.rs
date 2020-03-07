@@ -41,7 +41,7 @@ mod tests {
             signing_key.to_hex(),
             "c4afb1cc5771d871763a393e44b703571b55cc28424d1a5e86da6ed3c154a4b9"
         );
-        Ok({})
+        Ok(())
     }
 
     #[test]
@@ -73,7 +73,7 @@ mod tests {
             signature.as_str(),
             "5d672d79c15b13162d9279b0855cfba6789a8edb4c82c400e06b5924a6f2b5d7"
         );
-        Ok({})
+        Ok(())
     }
     fn create_secret_key() -> SecretKey {
         SecretKey::new("wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY")
