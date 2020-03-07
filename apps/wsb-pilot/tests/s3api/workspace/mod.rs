@@ -1,4 +1,4 @@
-use crate::s3api::TEST_APPS_DIR;
+use crate::s3api::{TEST_APPS_DIR, TEST_WORKSPACE_DIR};
 use std::path::{Path, PathBuf};
 use std::{fs, io};
 use wsb_pilot::cmd::CommandRunner;
@@ -8,10 +8,10 @@ pub struct Workspace {
 }
 
 impl Workspace {
-    pub fn new<A: AsRef<Path>>(path: A) -> Self {
-        Workspace {
-            dir: path.as_ref().to_path_buf(),
-        }
+    pub fn new(path: &[&str]) -> Workspace {
+        let root = PathBuf::new().join(&*TEST_WORKSPACE_DIR);
+        let dir = path.iter().fold(root, |acc, name| acc.join(name));
+        Workspace { dir }
     }
 
     pub fn aws_s3api(&self) -> CommandRunner {

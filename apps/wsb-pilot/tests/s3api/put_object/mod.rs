@@ -3,18 +3,15 @@ mod fixtures;
 mod output;
 mod status;
 
-use crate::s3api::{Workspace, TEST_WORKSPACE_DIR};
+use crate::s3api::Workspace;
 use std::path::PathBuf;
 
 lazy_static! {
-    static ref WORKSPACE: PathBuf = PathBuf::new()
-        .join(&*TEST_WORKSPACE_DIR)
-        .join("s3api")
-        .join("put-object");
+    static ref WORKSPACE: Workspace = Workspace::new(&["s3api", "put-object"]);
 }
 
-fn workspace() -> Workspace {
-    Workspace::new(&*WORKSPACE)
+fn workspace<'a>() -> &'a Workspace {
+    &*WORKSPACE
 }
 
 pub struct SampleParameters {
