@@ -1,6 +1,9 @@
 use env_extractor::{FromStrResult, SingleValue};
 use wsb_pilot::cmd::CommandRunner;
 
+mod parameters_pair;
+pub use parameters_pair::ParametersPair;
+
 mod get_object;
 mod put_object;
 

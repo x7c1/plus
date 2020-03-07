@@ -1,7 +1,7 @@
 mod init;
 
 use crate::s3api::put_object::{aws_s3api, cat, wsb_s3api, SampleParameters};
-use crate::s3api::TEST_BUCKET;
+use crate::s3api::{ParametersPair, TEST_BUCKET};
 use serde_json::Value;
 use std::io;
 use wsb_pilot::cmd::{CommandOutput, CommandRunner};
@@ -35,17 +35,6 @@ impl OutputFixture {
     }
 }
 
-pub struct SamplePair {
-    wsb: SampleParameters,
-    aws: SampleParameters,
-}
-
-impl SamplePair {
-    pub fn as_vec(&self) -> Vec<&SampleParameters> {
-        vec![&self.wsb, &self.aws]
-    }
-}
-
 fn setup_fixture() -> PilotResult<Fixture> {
     init::run()?;
 
@@ -69,8 +58,8 @@ fn setup_fixture() -> PilotResult<Fixture> {
     Ok(Fixture { wsb, aws })
 }
 
-fn create_sample_pair() -> SamplePair {
-    SamplePair {
+fn create_sample_pair() -> ParametersPair<SampleParameters> {
+    ParametersPair {
         wsb: SampleParameters {
             object_key: "s3api/put-object/foo/bar/sample1.wsb.tmp".to_string(),
             upload_src: "./sample.txt".into(),
