@@ -1,3 +1,5 @@
+mod init;
+
 use crate::s3api::get_object::{aws_s3api, cat, wsb_s3api, SampleParameters};
 use crate::s3api::TEST_BUCKET;
 use serde_json::Value;
@@ -29,6 +31,8 @@ impl OutputFixture {
 }
 
 fn setup_fixture() -> PilotResult<Fixture> {
+    init::run()?;
+
     let wsb = {
         let params = create_sample().mutate(|mut x| x.outfile_dst = "./sample1.wsb.tmp".into());
         let output = wsb_s3api().run(download, &params)?;
