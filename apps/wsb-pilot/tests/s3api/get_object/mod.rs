@@ -28,6 +28,16 @@ fn cat(path: &Path) -> io::Result<String> {
     fs::read_to_string(full_path)
 }
 
+fn remove_if_exists(path: &Path) -> io::Result<()> {
+    let full_path: PathBuf = WORKSPACE.join(path);
+
+    if full_path.exists() {
+        fs::remove_file(full_path)
+    } else {
+        Ok(())
+    }
+}
+
 pub struct SampleParameters {
     object_key: String,
     outfile_dst: PathBuf,

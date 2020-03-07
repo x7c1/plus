@@ -1,9 +1,11 @@
-use crate::s3api::get_object::aws_s3api;
+use crate::s3api::get_object::fixtures::create_sample_pair;
+use crate::s3api::get_object::{aws_s3api, remove_if_exists};
 use crate::s3api::TEST_BUCKET;
 use std::path::PathBuf;
 use wsb_pilot::PilotResult;
 
 pub fn run() -> PilotResult<()> {
+    delete_downloaded_files()?;
     delete_s3_mock_files()?;
     upload_mock_files()?;
     Ok(())
@@ -22,6 +24,16 @@ fn delete_s3_mock_files() -> PilotResult<()> {
         .args(&["--bucket", &TEST_BUCKET])
         .args(&["--delete", &format!("Objects=[{}]", objects)])
         .output()?;
+
+    Ok(())
+}
+
+fn delete_downloaded_files() -> PilotResult<()> {
+    create_sample_pair()
+        .as_vec()
+        .iter()
+        .map(|params| &params.outfile_dst)
+        .try_for_each(|path| remove_if_exists(path))?;
 
     Ok(())
 }

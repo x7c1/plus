@@ -29,28 +29,45 @@ impl OutputFixture {
     }
 }
 
+pub struct SamplePair {
+    wsb: SampleParameters,
+    aws: SampleParameters,
+}
+
+impl SamplePair {
+    pub fn as_vec(&self) -> Vec<&SampleParameters> {
+        vec![&self.wsb, &self.aws]
+    }
+}
+
 fn setup_fixture() -> PilotResult<Fixture> {
     init::run()?;
 
+    let pair = create_sample_pair();
     let wsb = {
-        let params = create_sample().mutate(|mut x| x.outfile_dst = "./sample1.wsb.tmp".into());
-        let output = wsb_s3api().run(download, &params)?;
+        let output = wsb_s3api().run(download, &pair.wsb)?;
         OutputFixture {
             status_code: output.status_code(),
             json: output.stdout_to_json()?,
-            parameters: params,
+            parameters: pair.wsb,
         }
     };
     let aws = {
-        let params = create_sample().mutate(|mut x| x.outfile_dst = "./sample1.aws.tmp".into());
-        let output = aws_s3api().run(download, &params)?;
+        let output = aws_s3api().run(download, &pair.aws)?;
         OutputFixture {
             status_code: output.status_code(),
             json: output.stdout_to_json()?,
-            parameters: params,
+            parameters: pair.aws,
         }
     };
     Ok(Fixture { wsb, aws })
+}
+
+fn create_sample_pair() -> SamplePair {
+    SamplePair {
+        wsb: create_sample().mutate(|mut x| x.outfile_dst = "./sample1.wsb.tmp".into()),
+        aws: create_sample().mutate(|mut x| x.outfile_dst = "./sample1.aws.tmp".into()),
+    }
 }
 
 fn create_sample() -> SampleParameters {
