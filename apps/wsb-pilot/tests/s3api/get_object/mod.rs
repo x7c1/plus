@@ -25,7 +25,7 @@ fn cat() -> CommandRunner {
     super::cat().current_dir(&*WORKSPACE)
 }
 
-struct Sample {
+struct SampleParameters {
     object_key: String,
     outfile_dst: PathBuf,
 }

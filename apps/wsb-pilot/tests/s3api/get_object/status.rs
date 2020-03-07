@@ -1,4 +1,4 @@
-use crate::s3api::get_object::{aws_s3api, cat, wsb_s3api, Sample};
+use crate::s3api::get_object::{aws_s3api, cat, wsb_s3api, SampleParameters};
 use crate::s3api::TEST_BUCKET;
 use std::io;
 use std::path::{Path, PathBuf};
@@ -71,7 +71,7 @@ fn get_mock_files() -> Vec<MockFile> {
     ]
 }
 
-fn download(runner: CommandRunner, target: &Sample) -> io::Result<CommandOutput> {
+fn download(runner: CommandRunner, target: &SampleParameters) -> io::Result<CommandOutput> {
     runner
         .arg("get-object")
         .args(&["--bucket", &TEST_BUCKET])
@@ -80,8 +80,8 @@ fn download(runner: CommandRunner, target: &Sample) -> io::Result<CommandOutput>
         .output()
 }
 
-fn get_sample() -> Sample {
-    Sample {
+fn get_sample() -> SampleParameters {
+    SampleParameters {
         object_key: "s3api/get-object/foo/bar/sample1.txt.tmp".to_string(),
         outfile_dst: "./sample1.tmp".into(),
     }

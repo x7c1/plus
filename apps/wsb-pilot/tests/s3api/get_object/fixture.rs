@@ -1,4 +1,4 @@
-use crate::s3api::get_object::{aws_s3api, wsb_s3api, Sample};
+use crate::s3api::get_object::{aws_s3api, wsb_s3api, SampleParameters};
 use crate::s3api::TEST_BUCKET;
 use serde_json::Value;
 use std::io;
@@ -10,9 +10,13 @@ lazy_static! {
 }
 
 pub struct Fixture {
+    pub wsb: CliOutput,
+    pub aws: CliOutput,
+}
+
+pub struct CliOutput {
     pub status_code: i32,
-    pub wsb: Value,
-    pub aws: Value,
+    pub json: Value,
 }
 
 fn setup_fixture() -> PilotResult<Fixture> {
@@ -25,20 +29,25 @@ fn setup_fixture() -> PilotResult<Fixture> {
         aws_s3api().run(download, &sample)?
     };
     Ok(Fixture {
-        status_code: by_wsb.status_code(),
-        wsb: by_wsb.stdout_to_json()?,
-        aws: by_aws.stdout_to_json()?,
+        wsb: CliOutput {
+            status_code: by_wsb.status_code(),
+            json: by_wsb.stdout_to_json()?,
+        },
+        aws: CliOutput {
+            status_code: by_aws.status_code(),
+            json: by_aws.stdout_to_json()?,
+        },
     })
 }
 
-fn create_sample() -> Sample {
-    Sample {
+fn create_sample() -> SampleParameters {
+    SampleParameters {
         object_key: "s3api/get-object/foo/bar/sample1.txt.tmp".to_string(),
         outfile_dst: "./sample1.tmp".into(),
     }
 }
 
-fn download(runner: CommandRunner, target: &Sample) -> io::Result<CommandOutput> {
+fn download(runner: CommandRunner, target: &SampleParameters) -> io::Result<CommandOutput> {
     runner
         .arg("get-object")
         .args(&["--bucket", &TEST_BUCKET])
