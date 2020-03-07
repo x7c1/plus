@@ -1,3 +1,4 @@
+mod body;
 mod fixtures;
 mod output;
 mod status;

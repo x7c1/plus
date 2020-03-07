@@ -3,7 +3,7 @@ use crate::s3api::TEST_BUCKET;
 use serde_json::Value;
 use std::io;
 use wsb_pilot::cmd::{CommandOutput, CommandRunner};
-use wsb_pilot::{MutableSelf, PilotResult};
+use wsb_pilot::PilotResult;
 
 lazy_static! {
     pub static ref OUTPUT: Fixture = setup_fixture().unwrap();
@@ -21,7 +21,13 @@ pub struct OutputFixture {
 }
 
 impl OutputFixture {
-    pub fn outfile_text(&self) -> PilotResult<String> {
+    pub fn uploaded_text(&self) -> PilotResult<String> {
+        let text = cat(&self.parameters.upload_src)?;
+        Ok(text)
+    }
+
+    pub fn download_text(&self) -> PilotResult<String> {
+        let _aws_output = download(&self.parameters)?;
         let text = cat(&self.parameters.download_dst)?;
         Ok(text)
     }
@@ -62,16 +68,16 @@ fn setup_fixture() -> PilotResult<Fixture> {
 
 fn create_sample_pair() -> SamplePair {
     SamplePair {
-        wsb: create_sample().mutate(|mut x| x.download_dst = "./downloaded.wsb.tmp".into()),
-        aws: create_sample().mutate(|mut x| x.download_dst = "./downloaded.aws.tmp".into()),
-    }
-}
-
-fn create_sample() -> SampleParameters {
-    SampleParameters {
-        object_key: "s3api/put-object/foo/bar/sample1.txt.tmp".to_string(),
-        upload_src: "./sample.txt".into(),
-        download_dst: "./downloaded.tmp".into(),
+        wsb: SampleParameters {
+            object_key: "s3api/put-object/foo/bar/sample1.wsb.tmp".to_string(),
+            upload_src: "./sample.txt".into(),
+            download_dst: "./downloaded.wsb.tmp".into(),
+        },
+        aws: SampleParameters {
+            object_key: "s3api/put-object/foo/bar/sample1.aws.tmp".to_string(),
+            upload_src: "./sample.txt".into(),
+            download_dst: "./downloaded.aws.tmp".into(),
+        },
     }
 }
 
@@ -81,5 +87,14 @@ fn upload(runner: CommandRunner, target: &SampleParameters) -> io::Result<Comman
         .args(&["--bucket", &TEST_BUCKET])
         .args(&["--key", &target.object_key])
         .args(&["--body", &target.upload_src.to_string_lossy()])
+        .output()
+}
+
+fn download(target: &SampleParameters) -> io::Result<CommandOutput> {
+    aws_s3api()
+        .arg("get-object")
+        .args(&["--bucket", &TEST_BUCKET])
+        .args(&["--key", &target.object_key])
+        .arg(&target.download_dst)
         .output()
 }
