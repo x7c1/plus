@@ -1,3 +1,4 @@
+mod fixture;
 mod output;
 mod status;
 
