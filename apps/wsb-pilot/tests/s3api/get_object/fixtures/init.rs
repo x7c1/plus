@@ -9,31 +9,31 @@ pub fn run() -> PilotResult<()> {
 }
 
 fn upload_mock_files() -> PilotResult<()> {
-    for mock in get_mock_files() {
+    for params in create_mock_params() {
         let _aws_output = aws_s3api()
             .arg("put-object")
             .args(&["--bucket", &TEST_BUCKET])
-            .args(&["--key", &mock.object_key])
-            .args(&["--body", &mock.file_path.to_string_lossy()])
+            .args(&["--key", &params.object_key])
+            .args(&["--body", &params.file_path.to_string_lossy()])
             .output()?;
     }
     Ok({})
 }
 
-fn get_mock_files() -> Vec<MockFile> {
+fn create_mock_params() -> Vec<MockParameters> {
     vec![
-        MockFile {
+        MockParameters {
             object_key: "s3api/get-object/foo/bar/sample1.txt.tmp".to_string(),
             file_path: "./sample1.txt".into(),
         },
-        MockFile {
+        MockParameters {
             object_key: "s3api/get-object/foo/bar/sample2.txt.tmp".to_string(),
             file_path: "./sample2.txt".into(),
         },
     ]
 }
 
-struct MockFile {
+struct MockParameters {
     object_key: String,
     file_path: PathBuf,
 }
