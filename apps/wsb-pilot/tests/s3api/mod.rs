@@ -18,10 +18,6 @@ fn wsb_s3api() -> CommandRunner {
     CommandRunner::new(format!("{}/s3api", *TEST_APPS_DIR))
 }
 
-fn cat() -> CommandRunner {
-    CommandRunner::new("cat")
-}
-
 fn load_test_bucket() -> FromStrResult<String> {
     SingleValue::new("WSB_TEST_BUCKET").as_required()
 }

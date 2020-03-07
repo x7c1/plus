@@ -4,7 +4,6 @@ use crate::s3api::get_object::{aws_s3api, cat, wsb_s3api, SampleParameters};
 use crate::s3api::TEST_BUCKET;
 use serde_json::Value;
 use std::io;
-use std::path::Path;
 use wsb_pilot::cmd::{CommandOutput, CommandRunner};
 use wsb_pilot::{MutableSelf, PilotResult};
 
@@ -25,7 +24,7 @@ pub struct OutputFixture {
 
 impl OutputFixture {
     pub fn outfile_text(&self) -> PilotResult<String> {
-        let text = read_to_string(&self.parameters.outfile_dst)?;
+        let text = cat(&self.parameters.outfile_dst)?;
         Ok(text)
     }
 }
@@ -68,10 +67,4 @@ fn download(runner: CommandRunner, target: &SampleParameters) -> io::Result<Comm
         .args(&["--key", &target.object_key])
         .arg(&target.outfile_dst)
         .output()
-}
-
-fn read_to_string(path: &Path) -> io::Result<String> {
-    let path_str: &str = &path.to_string_lossy();
-    let output = cat().arg(path_str).output_silently()?;
-    Ok(output.stdout_to_string())
 }

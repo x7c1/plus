@@ -1,7 +1,6 @@
 use crate::s3api::put_object::{aws_s3api, cat, wsb_s3api, Sample};
 use crate::s3api::TEST_BUCKET;
 use std::io;
-use std::path::Path;
 use wsb_pilot::cmd::CommandOutput;
 use wsb_pilot::PilotResult;
 
@@ -22,11 +21,11 @@ fn is_zero_on_succeeded() -> PilotResult<()> {
     };
     let expected = {
         assert_eq!(put_object(&sample)?.status_code(), 0);
-        read_to_string(&sample.upload_src)?
+        cat(&sample.upload_src)?
     };
     let actual = {
         assert_eq!(get_object(&sample)?.status_code(), 0);
-        read_to_string(&sample.download_dst)?
+        cat(&sample.download_dst)?
     };
     assert_eq!(actual, expected, "correctly uploaded.");
     Ok(())
@@ -46,10 +45,4 @@ fn get_object(target: &Sample) -> io::Result<CommandOutput> {
         .args(&["--key", &target.object_key])
         .arg(&target.download_dst)
         .output()
-}
-
-fn read_to_string(path: &Path) -> io::Result<String> {
-    let path_str: &str = &path.to_string_lossy();
-    let output = cat().arg(path_str).output_silently()?;
-    Ok(output.stdout_to_string())
 }
