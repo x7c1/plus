@@ -46,7 +46,7 @@ mod tests {
             request.as_hash(),
             "f536975d06c0309214f805bb90ccff089219ecd68b2577efef23edd43b7e1a59"
         );
-        Ok({})
+        Ok(())
     }
 
     fn to_headers(url: &Url) -> SabiResult<HeaderMap> {

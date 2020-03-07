@@ -56,4 +56,11 @@ impl CommandRunner {
         let reified = CommandOutput::new(output);
         Ok(reified)
     }
+
+    pub fn run<F, X1, Y>(self, f: F, x1: X1) -> Y
+    where
+        F: Fn(CommandRunner, X1) -> Y,
+    {
+        f(self, x1)
+    }
 }

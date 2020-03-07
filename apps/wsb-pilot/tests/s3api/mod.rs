@@ -1,5 +1,10 @@
 use env_extractor::{FromStrResult, SingleValue};
-use wsb_pilot::cmd::CommandRunner;
+
+mod parameters_pair;
+pub use parameters_pair::ParametersPair;
+
+mod workspace;
+pub use workspace::Workspace;
 
 mod get_object;
 mod put_object;
@@ -8,18 +13,6 @@ lazy_static! {
     static ref TEST_BUCKET: String = load_test_bucket().unwrap();
     static ref TEST_APPS_DIR: String = load_apps_dir().unwrap();
     static ref TEST_WORKSPACE_DIR: String = load_workspace_dir().unwrap();
-}
-
-fn aws_s3api() -> CommandRunner {
-    CommandRunner::new("aws").arg("s3api")
-}
-
-fn wsb_s3api() -> CommandRunner {
-    CommandRunner::new(format!("{}/s3api", *TEST_APPS_DIR))
-}
-
-fn cat() -> CommandRunner {
-    CommandRunner::new("cat")
 }
 
 fn load_test_bucket() -> FromStrResult<String> {
