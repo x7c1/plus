@@ -33,3 +33,9 @@ pub struct SampleParameters {
     upload_src: PathBuf,
     download_dst: PathBuf,
 }
+
+impl SampleParameters {
+    pub fn format_to_delete(&self) -> String {
+        format!("{{ Key={} }}", self.object_key)
+    }
+}

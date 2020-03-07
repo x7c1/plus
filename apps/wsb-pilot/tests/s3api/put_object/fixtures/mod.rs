@@ -1,3 +1,5 @@
+mod init;
+
 use crate::s3api::put_object::{aws_s3api, cat, wsb_s3api, SampleParameters};
 use crate::s3api::TEST_BUCKET;
 use serde_json::Value;
@@ -45,7 +47,8 @@ impl SamplePair {
 }
 
 fn setup_fixture() -> PilotResult<Fixture> {
-    // init::run()?;
+    init::run()?;
+
     let pair = create_sample_pair();
     let wsb = {
         let output = wsb_s3api().run(upload, &pair.wsb)?;
