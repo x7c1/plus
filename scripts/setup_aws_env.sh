@@ -4,9 +4,9 @@
 # $ source ./scripts/setup_aws_env.local.sh "profile-to-load"
 
 if [ -z $1 ]; then
-  echo "Usage:"
-  echo $0 '"profile-to-load"'
-  exit 1
+  echo "USAGE:"
+  echo "source $0" '[profile-to-load]'
+  return 1 || exit 1
 fi
 
 export AWS_PROFILE=$1

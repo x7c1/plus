@@ -18,4 +18,5 @@ for arch in $(get_arch_labels); do
     "$arch" &
 done
 
+# till finish background archiving.
 wait
