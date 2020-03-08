@@ -16,7 +16,13 @@ for arch in $(get_arch_labels); do
   if [[ -n "$file_path" ]]; then
     cp "$file_path" "$arch_dir/wsb_pilot_tests"
   fi
+  # create workspace directory.
+  cp -r "./dist.bundle/wsb-pilot-workspace" "$arch_dir"
+
   # create runner script.
   template="./dist.bundle/run_pilot_tests.sh.template"
   cp $template "$arch_dir/run_pilot_tests.sh"
+
+  # create archive.
+  tar -Jcvf "$arch_dir.tar.xz" -C "${ARTIFACTS_DIR}" "$arch"
 done
