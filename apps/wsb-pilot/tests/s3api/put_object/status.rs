@@ -11,7 +11,11 @@ fn is_zero_on_succeeded() -> PilotResult<()> {
 
 #[test]
 fn is_non_zero_on_invalid_subcommand() -> PilotResult<()> {
-    let output = workspace().wsb_s3api().arg("unknown-subcommand").output()?;
+    let output = workspace()
+        .wsb_s3api()
+        .arg("unknown-subcommand")
+        .execute()?;
+
     assert_ne!(0, output.status_code(), "return zero if it succeeded.");
     Ok(())
 }
@@ -25,7 +29,7 @@ fn is_non_zero_if_body_not_found() -> PilotResult<()> {
         .args(&["--bucket", &TEST_BUCKET])
         .args(&["--key", "sample-object-key"])
         .args(&["--body", body])
-        .output()?;
+        .execute()?;
 
     assert_ne!(output.status_code(), 0);
     assert!(output.stderr_to_string().contains(body));
