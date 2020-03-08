@@ -12,11 +12,17 @@ main() {
   println "copying apps..."
   ./scripts/run_builder.sh copy-as-artifacts.sh
 
+  println "archiving..."
+  ./scripts/run_builder.sh archive-all.sh
+
   println "before strip"
   show_file_size
 
   println "stripping..."
   ./scripts/run_builder.sh strip-files.sh
+
+  println "archiving..."
+  ./scripts/run_builder.sh archive-all.sh
 
   println "after strip"
   show_file_size

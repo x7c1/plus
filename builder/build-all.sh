@@ -22,7 +22,4 @@ for arch in $(get_arch_labels); do
   # create runner script.
   template="./dist.bundle/run_pilot_tests.sh.template"
   cp $template "$arch_dir/run_pilot_tests.sh"
-
-  # create archive.
-  tar -Jcvf "$arch_dir.tar.xz" -C "${ARTIFACTS_DIR}" "$arch"
 done
