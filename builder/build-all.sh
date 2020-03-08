@@ -16,4 +16,7 @@ for arch in $(get_arch_labels); do
   if [[ -n "$file_path" ]]; then
     cp "$file_path" "$arch_dir/wsb_pilot_tests"
   fi
+  # create runner script.
+  template="./dist.bundle/run_pilot_tests.sh.template"
+  cp $template "$arch_dir/run_pilot_tests.sh"
 done
