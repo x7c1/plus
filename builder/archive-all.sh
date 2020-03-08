@@ -15,5 +15,7 @@ for arch in $(get_arch_labels); do
   tar --xz \
     --create --file "$arch_dir.tar.xz" \
     --directory "${ARTIFACTS_DIR}" \
-    "$arch"
+    "$arch" &
 done
+
+wait
