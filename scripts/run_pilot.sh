@@ -18,14 +18,10 @@
 #   https://doc.rust-lang.org/book/ch11-02-running-tests.html
 
 
-# stop if non-zero returned.
-set -e
-
-# not allow undefined values.
-set -u
-
-# show executed commands.
-set -x
+# x: show executed commands.
+# u: not allow undefined values.
+# e: stop if non-zero returned.
+set -xue
 
 ./scripts/run_builder.sh \
   build-and-test.sh \
