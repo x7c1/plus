@@ -4,6 +4,7 @@ extern crate failure;
 pub mod cmd;
 
 mod error;
+pub use error::Error;
 pub use error::Result as PilotResult;
 
 mod mutable_self;

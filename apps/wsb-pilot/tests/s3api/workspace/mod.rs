@@ -2,16 +2,20 @@ use crate::s3api::{TEST_APPS_DIR, TEST_WORKSPACE_DIR};
 use std::path::{Path, PathBuf};
 use std::{fs, io};
 use wsb_pilot::cmd::CommandRunner;
+use wsb_pilot::Error::InvalidWorkspace;
+use wsb_pilot::PilotResult;
 
+#[derive(Debug)]
 pub struct Workspace {
     dir: PathBuf,
 }
 
 impl Workspace {
-    pub fn new(path: &[&str]) -> Workspace {
+    pub fn new(path: &[&str]) -> PilotResult<Workspace> {
         let root = PathBuf::new().join(&*TEST_WORKSPACE_DIR);
         let dir = path.iter().fold(root, |acc, name| acc.join(name));
-        Workspace { dir }
+        let canonical = dir.canonicalize().map_err(|e| InvalidWorkspace(dir, e))?;
+        Ok(Workspace { dir: canonical })
     }
 
     pub fn aws_s3api(&self) -> CommandRunner {
@@ -36,5 +40,14 @@ impl Workspace {
         } else {
             Ok(())
         }
+    }
+}
+
+#[test]
+fn error_if_directory_not_found() {
+    let result = Workspace::new(&["invalid", "path"]);
+    match result {
+        Err(InvalidWorkspace(_, _)) => assert!(true),
+        other => assert!(false, "unexpected result: {:#?}", other),
     }
 }
