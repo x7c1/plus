@@ -3,6 +3,12 @@
 # Usage:
 # $ source ./scripts/setup_aws_env.local.sh "profile-to-load"
 
+if [ -z $1 ]; then
+  echo "Usage:"
+  echo $0 '"profile-to-load"'
+  exit 1
+fi
+
 export AWS_PROFILE=$1
 
 AWS_ACCESS_KEY_ID=$(aws configure get aws_access_key_id)
