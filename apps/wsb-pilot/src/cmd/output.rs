@@ -35,6 +35,10 @@ impl CommandOutput {
         String::from_utf8_lossy(self.stdout()).to_string()
     }
 
+    pub fn stderr_to_string(&self) -> String {
+        String::from_utf8_lossy(self.stderr()).to_string()
+    }
+
     pub fn dump(&self) {
         let to_string = |vec| String::from_utf8_lossy(vec).to_string();
         println!("{}", to_string(&self.stdout()));

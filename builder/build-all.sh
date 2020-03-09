@@ -13,7 +13,13 @@ for arch in $(get_arch_labels); do
   build_apps_for_${arch}
 
   file_path=$(build_e2e_tests_for_${arch})
-  if [[ -n $file_path ]]; then
-    cp ${file_path} ${arch_dir}/wsb_pilot_tests
+  if [[ -n "$file_path" ]]; then
+    cp "$file_path" "$arch_dir/wsb_pilot_tests"
   fi
+  # create workspace directory.
+  cp -r "./dist.bundle/wsb-pilot-workspace" "$arch_dir"
+
+  # create runner script.
+  template="./dist.bundle/run_pilot_tests.sh.template"
+  cp $template "$arch_dir/run_pilot_tests.sh"
 done

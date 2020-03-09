@@ -1,6 +1,7 @@
 extern crate failure;
 
 use std::fmt::Debug;
+use std::path::PathBuf;
 
 pub type Result<T> = std::result::Result<T, Error>;
 
@@ -11,6 +12,9 @@ pub enum Error {
 
     #[fail(display = "std::io::Error > {}", 0)]
     StdIoError(std::io::Error),
+
+    #[fail(display = "workspace invalid > path: {:?}, cause: {}", 0, 1)]
+    InvalidWorkspace(PathBuf, std::io::Error),
 }
 
 impl From<serde_json::Error> for Error {

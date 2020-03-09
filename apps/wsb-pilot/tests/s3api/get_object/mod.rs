@@ -7,7 +7,7 @@ use crate::s3api::Workspace;
 use std::path::PathBuf;
 
 lazy_static! {
-    static ref WORKSPACE: Workspace = Workspace::new(&["s3api", "get-object"]);
+    static ref WORKSPACE: Workspace = Workspace::new(&["s3api", "get-object"]).unwrap();
 }
 
 fn workspace<'a>() -> &'a Workspace {

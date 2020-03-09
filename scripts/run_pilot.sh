@@ -18,14 +18,10 @@
 #   https://doc.rust-lang.org/book/ch11-02-running-tests.html
 
 
-# stop if non-zero returned.
-set -e
-
-# not allow undefined values.
-set -u
-
-# show executed commands.
-set -x
+# x: show executed commands.
+# u: not allow undefined values.
+# e: stop if non-zero returned.
+set -xue
 
 ./scripts/run_builder.sh \
   build-and-test.sh \
@@ -40,9 +36,12 @@ output=run_pilot_path.tmp
     --opt-level=0 \
     --pilot-output=${output}
 
-export WSB_APPS_DIR="$(pwd)/target/x86_64-unknown-linux-musl/debug"
-export WSB_WORKSPACE_DIR="$(pwd)/wsb-pilot-workspace"
+WSB_APPS_DIR="$(pwd)/target/x86_64-unknown-linux-musl/debug"
+export WSB_APPS_DIR
+
+WSB_WORKSPACE_DIR="$(pwd)/dist.bundle/wsb-pilot-workspace"
+export WSB_WORKSPACE_DIR
 
 . ./scripts/run_pilot.local.sh
 
-$(cat ./scripts/${output}) $@
+$(cat ./scripts/${output}) "$@"
