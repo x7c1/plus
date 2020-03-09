@@ -26,7 +26,7 @@ async fn main() {
             println!("{}", output.as_str());
         }
         Err(e) => {
-            eprintln!("s3api failed: {:#?}", e);
+            eprintln!("wsb-task failed: {:#?}", e);
             exit(1);
         }
     }
