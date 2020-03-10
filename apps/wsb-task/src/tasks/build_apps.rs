@@ -1,8 +1,7 @@
+use crate::commands::cargo_build;
 use crate::{TaskOutput, TaskResult};
 use clap::{App, ArgMatches, SubCommand};
 use clap_task::ClapTask;
-use std::io::{stdout, Read};
-use std::process::{Command, Stdio};
 
 pub fn define() -> Box<dyn ClapTask<TaskResult<TaskOutput>>> {
     Box::new(Task)
@@ -20,20 +19,9 @@ impl ClapTask<TaskResult<TaskOutput>> for Task {
         SubCommand::with_name(self.name()).about("build wasabi applications.")
     }
 
-    async fn run<'a>(&'a self, matches: &'a ArgMatches<'a>) -> TaskResult<TaskOutput> {
-        println!("running!!");
-
-        // rf. [rust - How would you stream output from a Process?](https://stackoverflow.com/questions/31992237/how-would-you-stream-output-from-a-process)
-        let mut child = Command::new("cargo")
-            .arg("build")
-            .args(&["--target", "x86_64-unknown-linux-musl"])
-            .stderr(Stdio::inherit())
-            .stdout(Stdio::inherit())
-            .spawn()?;
-
-        let status = child.wait()?;
-        println!("status...{:?}", status.code());
-
-        Ok(TaskOutput::empty())
+    async fn run<'a>(&'a self, _matches: &'a ArgMatches<'a>) -> TaskResult<TaskOutput> {
+        cargo_build::spawn(cargo_build::Params {
+            target: "x86_64-unknown-linux-musl".to_string(),
+        })
     }
 }

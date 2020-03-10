@@ -14,8 +14,12 @@ pub use error::Error;
 pub use error::Result as TaskResult;
 
 mod output;
-mod tasks;
 pub use output::TaskOutput;
+mod tasks;
+
+use clap::App;
+use clap_task::{ClapTasks, TaskRunner};
+use std::process::exit;
 
 #[tokio::main]
 async fn main() {
