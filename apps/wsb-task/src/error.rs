@@ -18,6 +18,9 @@ pub enum Error {
 
     #[fail(display = "string::FromUtf8Error > {}", 0)]
     StringFromUtf8Error(string::FromUtf8Error),
+
+    #[fail(display = "task failed")]
+    CommandFailed { code: Option<i32>, command: String },
 }
 
 impl From<clap_task::Error> for Error {

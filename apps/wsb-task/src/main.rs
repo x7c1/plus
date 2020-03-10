@@ -7,9 +7,7 @@ extern crate clap;
 #[macro_use]
 extern crate failure;
 
-use clap::App;
-use clap_task::{ClapTasks, TaskRunner};
-use std::process::exit;
+pub mod commands;
 
 mod error;
 pub use error::Error;
