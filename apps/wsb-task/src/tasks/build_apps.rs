@@ -1,4 +1,6 @@
 use crate::commands::cargo_build;
+use crate::commands::cargo_build::CanBuild;
+use crate::core::targets::{BuildTarget, LinuxArmV7, LinuxX86, MacX86};
 use crate::{TaskOutput, TaskResult};
 use clap::{App, ArgMatches, SubCommand};
 use clap_task::ClapTask;
@@ -19,9 +21,15 @@ impl ClapTask<TaskResult<TaskOutput>> for Task {
         SubCommand::with_name(self.name()).about("build wasabi applications.")
     }
 
-    async fn run<'a>(&'a self, _matches: &'a ArgMatches<'a>) -> TaskResult<TaskOutput> {
-        cargo_build::spawn(cargo_build::Params {
-            target: "x86_64-unknown-linux-musl".to_string(),
-        })
+    async fn run<'a>(&'a self, matches: &'a ArgMatches<'a>) -> TaskResult<TaskOutput> {
+        build(LinuxX86, matches)?;
+        build(LinuxArmV7, matches)?;
+        build(MacX86, matches)?;
+        Ok(TaskOutput::empty())
     }
+}
+
+fn build<T: BuildTarget + CanBuild>(target: T, _matches: &ArgMatches) -> TaskResult<()> {
+    let params = cargo_build::Params::builder().target(target).build();
+    cargo_build::spawn(&params)
 }

@@ -19,7 +19,7 @@ pub enum Error {
     #[fail(display = "string::FromUtf8Error > {}", 0)]
     StringFromUtf8Error(string::FromUtf8Error),
 
-    #[fail(display = "task failed")]
+    #[fail(display = "command failed > code: {:?}, command: {}", code, command)]
     CommandFailed { code: Option<i32>, command: String },
 }
 
