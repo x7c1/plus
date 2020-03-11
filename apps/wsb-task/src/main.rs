@@ -8,6 +8,7 @@ extern crate clap;
 extern crate failure;
 
 pub mod commands;
+pub mod core;
 
 mod error;
 pub use error::Error;
