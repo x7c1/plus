@@ -5,10 +5,22 @@ use crate::core::targets::LinuxX86;
 use crate::core::targets::{BuildTarget, LinuxArmV7, MacX86};
 use crate::error::Error::CommandFailed;
 use crate::TaskResult;
-use std::process::{Child, Command, Stdio};
+use shellwork::core::{command, ExitedProcess};
 
 pub fn spawn<T: BuildTarget + CanBuild>(params: &Params<T>) -> TaskResult<()> {
     T::spawn(params)
+}
+
+fn create_sender<T>(params: &Params<T>) -> command::Sender
+where
+    T: BuildTarget,
+{
+    // todo: move opt-level to params
+    command::Sender::program("cargo")
+        .arg("build")
+        .arg("--verbose")
+        .args(&["--target", &params.target.as_triple()])
+        .env("RUSTFLAGS", "-C opt-level=0")
 }
 
 pub trait CanBuild: Sized {
@@ -19,33 +31,16 @@ pub trait CanBuild: Sized {
 
 impl CanBuild for LinuxX86 {
     fn spawn(params: &Params<Self>) -> TaskResult<()> {
-        // rf. [rust - How would you stream output from a Process?](https://stackoverflow.com/questions/31992237/how-would-you-stream-output-from-a-process)
-        let child = Command::new("cargo")
-            .arg("build")
-            .arg("--verbose")
-            .args(&["--target", &params.target.as_triple()])
-            .env("RUSTFLAGS", "-C opt-level=0")
-            .stderr(Stdio::inherit())
-            .stdout(Stdio::inherit())
-            .spawn()?;
-
+        let sender = create_sender(params);
+        let child = sender.spawn()?;
         output(child, params)
     }
 }
 
 impl CanBuild for LinuxArmV7 {
     fn spawn(params: &Params<Self>) -> TaskResult<()> {
-        // todo: remove duplicates
-        let child = Command::new("cargo")
-            .arg("build")
-            .arg("--verbose")
-            .args(&["--target", &params.target.as_triple()])
-            .env("RUSTFLAGS", "-C opt-level=0")
-            .env("CC", "arm-linux-gnueabihf-gcc")
-            .stderr(Stdio::inherit())
-            .stdout(Stdio::inherit())
-            .spawn()?;
-
+        let sender = create_sender(params).env("CC", "arm-linux-gnueabihf-gcc");
+        let child = sender.spawn()?;
         output(child, params)
     }
 }
@@ -53,31 +48,21 @@ impl CanBuild for LinuxArmV7 {
 impl CanBuild for MacX86 {
     fn spawn(params: &Params<Self>) -> TaskResult<()> {
         // todo: check if sdk exists
-        // todo: remove duplicates
-        let child = Command::new("cargo")
-            .arg("build")
-            .arg("--verbose")
-            .args(&["--target", &params.target.as_triple()])
-            .env("RUSTFLAGS", "-C opt-level=0")
-            .env("CC", "x86_64-apple-darwin19-clang")
-            .stderr(Stdio::inherit())
-            .stdout(Stdio::inherit())
-            .spawn()?;
-
+        let sender = create_sender(params).env("CC", "x86_64-apple-darwin19-clang");
+        let child = sender.spawn()?;
         output(child, params)
     }
 }
 
-fn output<T>(mut child: Child, params: &Params<T>) -> TaskResult<()>
+fn output<T>(child: ExitedProcess, params: &Params<T>) -> TaskResult<()>
 where
     T: BuildTarget,
 {
-    let status = child.wait()?;
-    if status.success() {
+    if child.success() {
         Ok(())
     } else {
         Err(CommandFailed {
-            code: status.code(),
+            code: child.status_code(),
             // todo: remove duplicates
             command: format!("cargo build --target {}", &params.target.as_triple()),
         })

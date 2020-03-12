@@ -13,6 +13,9 @@ pub enum Error {
     #[fail(display = "clap_extractor::Error > {}", 0)]
     ClapExtractorError(String),
 
+    #[fail(display = "shellwork::Error > {}", 0)]
+    ShellworkError(shellwork::Error),
+
     #[fail(display = "std::io::Error > {}", 0)]
     StdIoError(std::io::Error),
 
@@ -32,6 +35,12 @@ impl From<clap_task::Error> for Error {
 impl<A: Debug> From<clap_extractor::Error<A>> for Error {
     fn from(e: clap_extractor::Error<A>) -> Self {
         Error::ClapExtractorError(format!("{:?}", e))
+    }
+}
+
+impl From<shellwork::Error> for Error {
+    fn from(e: shellwork::Error) -> Self {
+        Error::ShellworkError(e)
     }
 }
 
