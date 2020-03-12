@@ -1,8 +1,10 @@
 use crate::core::ExitedProcess;
 use std::collections::HashMap;
 use std::ffi::OsStr;
+use std::fmt::Debug;
 use std::process::{Command, Stdio};
 
+#[derive(Debug)]
 pub struct Sender {
     program: String,
     args: Vec<String>,
@@ -59,4 +61,17 @@ impl Sender {
         let child = ExitedProcess::wait(raw)?;
         Ok(child)
     }
+
+    pub fn create_summary(&self) -> SenderSummary {
+        SenderSummary {
+            command: format!("{} {}", &self.program, &self.args.join(" ")),
+            env: self.env_vars.clone(),
+        }
+    }
+}
+
+#[derive(Debug)]
+pub struct SenderSummary {
+    command: String,
+    env: HashMap<String, String>,
 }

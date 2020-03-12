@@ -5,7 +5,7 @@ use crate::core::targets::LinuxX86;
 use crate::core::targets::{BuildTarget, LinuxArmV7, MacX86};
 use crate::error::Error::CommandFailed;
 use crate::TaskResult;
-use shellwork::core::{command, ExitedProcess};
+use shellwork::core::command;
 
 pub fn spawn<T: BuildTarget + CanBuild>(params: &Params<T>) -> TaskResult<()> {
     T::spawn(params)
@@ -32,16 +32,14 @@ pub trait CanBuild: Sized {
 impl CanBuild for LinuxX86 {
     fn spawn(params: &Params<Self>) -> TaskResult<()> {
         let sender = create_sender(params);
-        let child = sender.spawn()?;
-        output(child, params)
+        run(&sender)
     }
 }
 
 impl CanBuild for LinuxArmV7 {
     fn spawn(params: &Params<Self>) -> TaskResult<()> {
         let sender = create_sender(params).env("CC", "arm-linux-gnueabihf-gcc");
-        let child = sender.spawn()?;
-        output(child, params)
+        run(&sender)
     }
 }
 
@@ -49,22 +47,18 @@ impl CanBuild for MacX86 {
     fn spawn(params: &Params<Self>) -> TaskResult<()> {
         // todo: check if sdk exists
         let sender = create_sender(params).env("CC", "x86_64-apple-darwin19-clang");
-        let child = sender.spawn()?;
-        output(child, params)
+        run(&sender)
     }
 }
 
-fn output<T>(child: ExitedProcess, params: &Params<T>) -> TaskResult<()>
-where
-    T: BuildTarget,
-{
+fn run(sender: &command::Sender) -> TaskResult<()> {
+    let child = sender.spawn()?;
     if child.success() {
         Ok(())
     } else {
         Err(CommandFailed {
             code: child.status_code(),
-            // todo: remove duplicates
-            command: format!("cargo build --target {}", &params.target.as_triple()),
+            summary: sender.create_summary(),
         })
     }
 }
