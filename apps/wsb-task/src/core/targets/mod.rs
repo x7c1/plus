@@ -17,11 +17,13 @@ impl dyn BuildTarget {
     }
 }
 
-#[macro_export]
 macro_rules! try_foreach_targets {
     (|$arg:ident| $x:expr) => {
-        (|$arg| $x)(crate::core::targets::LinuxX86)?;
-        (|$arg| $x)(crate::core::targets::LinuxArmV7)?;
-        (|$arg| $x)(crate::core::targets::MacX86)?;
+        #[allow(clippy::redundant_closure_call)]
+        {
+            (|$arg| $x)(crate::core::targets::LinuxX86)?;
+            (|$arg| $x)(crate::core::targets::LinuxArmV7)?;
+            (|$arg| $x)(crate::core::targets::MacX86)?;
+        }
     };
 }
