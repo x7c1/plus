@@ -8,6 +8,8 @@ extern crate clap;
 extern crate failure;
 
 pub mod commands;
+
+#[macro_use]
 pub mod core;
 
 mod error;
@@ -16,6 +18,7 @@ pub use error::Result as TaskResult;
 
 mod output;
 pub use output::TaskOutput;
+
 mod tasks;
 
 use clap::App;
