@@ -8,6 +8,7 @@ edition = "2018"
 [dependencies]
 clap-extractor = { path = "../../libs/clap-extractor" }
 clap-task = { path = "../../libs/clap-task" }
+shellwork = { path = "../../libs/shellwork" }
 
 async-trait = "0.1"
 clap = "2.33"
