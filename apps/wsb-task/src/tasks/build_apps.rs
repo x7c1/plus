@@ -1,5 +1,5 @@
 use crate::commands::cargo_build;
-use crate::commands::cargo_build::CanBuild;
+use crate::commands::cargo_build::BuildRunner;
 use crate::core::targets::BuildTarget;
 use crate::{TaskOutput, TaskResult};
 use clap::{App, ArgMatches, SubCommand};
@@ -32,7 +32,7 @@ impl ClapTask<TaskResult<TaskOutput>> for Task {
 
 fn to_params<T>(target: T, _matches: &ArgMatches) -> cargo_build::Params<T>
 where
-    T: BuildTarget + CanBuild,
+    T: BuildTarget + BuildRunner,
 {
     cargo_build::Params::builder().target(target).build()
 }
