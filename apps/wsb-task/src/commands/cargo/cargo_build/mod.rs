@@ -6,6 +6,7 @@ use crate::core::targets::{BuildTarget, LinuxArmV7, MacX86};
 use crate::error::Error::CommandFailed;
 use crate::TaskResult;
 use shellwork::core::command;
+use shellwork::core::command::Sender;
 
 pub fn spawn<T: BuildTarget + CanBuild>(params: &Params<T>) -> TaskResult<()> {
     T::spawn(params)
@@ -24,41 +25,45 @@ where
 }
 
 pub trait CanBuild: Sized {
-    fn spawn(params: &Params<Self>) -> TaskResult<()>
+    fn sender(params: &Params<Self>) -> TaskResult<Sender>
     where
         Self: BuildTarget;
+
+    fn spawn(params: &Params<Self>) -> TaskResult<()>
+    where
+        Self: BuildTarget,
+    {
+        let sender = Self::sender(params)?;
+        let child = sender.spawn()?;
+        if child.success() {
+            Ok(())
+        } else {
+            Err(CommandFailed {
+                code: child.status_code(),
+                summary: sender.create_summary(),
+            })
+        }
+    }
 }
 
 impl CanBuild for LinuxX86 {
-    fn spawn(params: &Params<Self>) -> TaskResult<()> {
+    fn sender(params: &Params<Self>) -> TaskResult<Sender> {
         let sender = create_sender(params);
-        run(&sender)
+        Ok(sender)
     }
 }
 
 impl CanBuild for LinuxArmV7 {
-    fn spawn(params: &Params<Self>) -> TaskResult<()> {
+    fn sender(params: &Params<Self>) -> TaskResult<Sender> {
         let sender = create_sender(params).env("CC", "arm-linux-gnueabihf-gcc");
-        run(&sender)
+        Ok(sender)
     }
 }
 
 impl CanBuild for MacX86 {
-    fn spawn(params: &Params<Self>) -> TaskResult<()> {
+    fn sender(params: &Params<Self>) -> TaskResult<Sender> {
         // todo: check if sdk exists
         let sender = create_sender(params).env("CC", "x86_64-apple-darwin19-clang");
-        run(&sender)
-    }
-}
-
-fn run(sender: &command::Sender) -> TaskResult<()> {
-    let child = sender.spawn()?;
-    if child.success() {
-        Ok(())
-    } else {
-        Err(CommandFailed {
-            code: child.status_code(),
-            summary: sender.create_summary(),
-        })
+        Ok(sender)
     }
 }
