@@ -11,7 +11,12 @@ pub fn spawn<A>(params: &Params<A>) -> TaskResult<()>
 where
     A: BuildTarget + CanBuild,
 {
-    if A::unsupported() {
+    if let Some(reason) = A::unsupported() {
+        eprintln!(
+            "unsupported target: {} > {:#?}",
+            params.target.as_triple(),
+            reason
+        );
         return Ok(());
     }
     let _status = A::prepare(params)?.spawn()?;
@@ -30,11 +35,14 @@ where
         .env("RUSTFLAGS", "-C opt-level=0")
 }
 
+#[derive(Debug)]
+pub struct UnsupportedReason;
+
 pub trait CanBuild: BuildTarget + Sized {
     fn runner(params: &Params<Self>) -> TaskResult<Runner<Unprepared>>;
 
-    fn unsupported() -> bool {
-        false
+    fn unsupported() -> Option<UnsupportedReason> {
+        None
     }
 
     fn prepare(params: &Params<Self>) -> TaskResult<Runner<Prepared>> {
@@ -62,8 +70,8 @@ impl CanBuild for MacX86 {
         let runner = base_runner(params).env("CC", "x86_64-apple-darwin19-clang");
         Ok(runner)
     }
-    fn unsupported() -> bool {
+    fn unsupported() -> Option<UnsupportedReason> {
         // todo: check if sdk exists
-        false
+        None
     }
 }
