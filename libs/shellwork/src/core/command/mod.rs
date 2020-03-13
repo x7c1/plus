@@ -1,25 +1,20 @@
 use crate::core::ExitedProcess;
+use crate::error::Error::CommandFailed;
 use std::collections::HashMap;
 use std::ffi::OsStr;
 use std::fmt::Debug;
+use std::marker::PhantomData;
 use std::process::{Command, Stdio};
 
 #[derive(Debug)]
-pub struct Runner {
+pub struct Runner<T> {
     program: String,
     args: Vec<String>,
     env_vars: HashMap<String, String>,
+    _prepared_state: PhantomData<T>,
 }
 
-impl Runner {
-    pub fn program<A: Into<String>>(program: A) -> Self {
-        Self {
-            program: program.into(),
-            args: vec![],
-            env_vars: HashMap::default(),
-        }
-    }
-
+impl<T> Runner<T> {
     pub fn arg<A: AsRef<OsStr>>(mut self, arg: A) -> Self {
         self.args.push(arg.as_ref().to_string_lossy().to_string());
         self
@@ -49,6 +44,26 @@ impl Runner {
         self
     }
 
+    pub fn create_summary(&self) -> RunnerSummary {
+        RunnerSummary {
+            command: format!("{} {}", &self.program, &self.args.join(" ")),
+            env: self.env_vars.clone(),
+        }
+    }
+}
+
+pub fn program<A: Into<String>>(program: A) -> Runner<Unprepared> {
+    Runner {
+        program: program.into(),
+        args: vec![],
+        env_vars: HashMap::default(),
+        _prepared_state: PhantomData,
+    }
+}
+
+pub struct Prepared;
+
+impl Runner<Prepared> {
     pub fn spawn(&self) -> crate::Result<ExitedProcess> {
         // rf. [rust - How would you stream output from a Process?](https://stackoverflow.com/questions/31992237/how-would-you-stream-output-from-a-process)
         let raw = Command::new(&self.program)
@@ -59,13 +74,26 @@ impl Runner {
             .spawn()?;
 
         let child = ExitedProcess::wait(raw)?;
-        Ok(child)
+        if child.success() {
+            Ok(child)
+        } else {
+            Err(CommandFailed {
+                code: child.status_code(),
+                summary: self.create_summary(),
+            })
+        }
     }
+}
 
-    pub fn create_summary(&self) -> RunnerSummary {
-        RunnerSummary {
-            command: format!("{} {}", &self.program, &self.args.join(" ")),
-            env: self.env_vars.clone(),
+pub struct Unprepared;
+
+impl Runner<Unprepared> {
+    pub fn into_prepared(self) -> Runner<Prepared> {
+        Runner {
+            program: self.program,
+            args: self.args,
+            env_vars: self.env_vars,
+            _prepared_state: PhantomData,
         }
     }
 }

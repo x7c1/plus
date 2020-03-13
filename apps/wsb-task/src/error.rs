@@ -1,6 +1,5 @@
 extern crate failure;
 
-use shellwork::core::command::RunnerSummary;
 use std::fmt::Debug;
 use std::string;
 
@@ -22,12 +21,6 @@ pub enum Error {
 
     #[fail(display = "string::FromUtf8Error > {}", 0)]
     StringFromUtf8Error(string::FromUtf8Error),
-
-    #[fail(display = "command failed > code: {:?}, summary: {:?}", code, summary)]
-    CommandFailed {
-        code: Option<i32>,
-        summary: RunnerSummary,
-    },
 }
 
 impl From<clap_task::Error> for Error {
