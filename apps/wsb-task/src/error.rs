@@ -1,6 +1,6 @@
 extern crate failure;
 
-use shellwork::core::command::SenderSummary;
+use shellwork::core::command::RunnerSummary;
 use std::fmt::Debug;
 use std::string;
 
@@ -26,7 +26,7 @@ pub enum Error {
     #[fail(display = "command failed > code: {:?}, summary: {:?}", code, summary)]
     CommandFailed {
         code: Option<i32>,
-        summary: SenderSummary,
+        summary: RunnerSummary,
     },
 }
 

@@ -11,10 +11,8 @@ pub trait BuildTarget {
     fn as_triple(&self) -> &str;
 }
 
-impl dyn BuildTarget {
-    pub fn all() -> Vec<Box<dyn BuildTarget>> {
-        vec![Box::new(LinuxX86), Box::new(LinuxArmV7), Box::new(MacX86)]
-    }
+pub fn all() -> Vec<Box<dyn BuildTarget>> {
+    vec![Box::new(LinuxX86), Box::new(LinuxArmV7), Box::new(MacX86)]
 }
 
 macro_rules! try_foreach_targets {

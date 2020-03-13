@@ -5,13 +5,13 @@ use std::fmt::Debug;
 use std::process::{Command, Stdio};
 
 #[derive(Debug)]
-pub struct Sender {
+pub struct Runner {
     program: String,
     args: Vec<String>,
     env_vars: HashMap<String, String>,
 }
 
-impl Sender {
+impl Runner {
     pub fn program<A: Into<String>>(program: A) -> Self {
         Self {
             program: program.into(),
@@ -62,8 +62,8 @@ impl Sender {
         Ok(child)
     }
 
-    pub fn create_summary(&self) -> SenderSummary {
-        SenderSummary {
+    pub fn create_summary(&self) -> RunnerSummary {
+        RunnerSummary {
             command: format!("{} {}", &self.program, &self.args.join(" ")),
             env: self.env_vars.clone(),
         }
@@ -71,7 +71,7 @@ impl Sender {
 }
 
 #[derive(Debug)]
-pub struct SenderSummary {
+pub struct RunnerSummary {
     command: String,
     env: HashMap<String, String>,
 }
