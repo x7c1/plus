@@ -1,5 +1,6 @@
 use crate::commands::cargo::build_pilot;
-use crate::core::targets::{BuildTarget, LinuxArmV7, LinuxX86, MacX86};
+use crate::core::targets::InsertCC;
+use crate::core::targets::{BuildTarget, LinuxArmV7, LinuxX86, MacX86, RequireCC};
 use crate::TaskResult;
 use shellwork::core::command;
 use shellwork::core::command::{
@@ -35,39 +36,10 @@ mod linux_x86 {
     impl ShouldRun for build_pilot::Params<LinuxX86> {}
 }
 
-pub trait AppendCC {}
-
-impl<T> CanDefine for build_pilot::Params<T>
-where
-    T: BuildTarget,
-    T: RequiredCC,
-    build_pilot::Params<T>: AppendCC,
-{
-    type Params = build_pilot::Params<T>;
-    type Err = crate::Error;
-
-    fn define(&self, params: &Self::Params) -> Result<Runner<Unprepared>, Self::Err> {
-        let runner = base_runner(params).env("CC", T::CC);
-        Ok(runner)
-    }
-}
-
-pub trait RequiredCC {
-    const CC: &'static str;
-}
-
-impl RequiredCC for LinuxArmV7 {
-    const CC: &'static str = "arm-linux-gnueabihf-gcc";
-}
-
-impl RequiredCC for MacX86 {
-    const CC: &'static str = "x86_64-apple-darwin19-clang";
-}
-
 mod linux_arm_v7 {
     use super::*;
 
-    impl AppendCC for build_pilot::Params<LinuxArmV7> {}
+    impl InsertCC for build_pilot::Params<LinuxArmV7> {}
 
     impl ShouldRun for build_pilot::Params<LinuxArmV7> {}
 }
@@ -75,12 +47,27 @@ mod linux_arm_v7 {
 mod mac_x86 {
     use super::*;
 
-    impl AppendCC for build_pilot::Params<MacX86> {}
+    impl InsertCC for build_pilot::Params<MacX86> {}
 
     impl MayRun for build_pilot::Params<MacX86> {
         fn unsupported(&self) -> Option<UnsupportedReport> {
             // todo: check if sdk exists
             None
         }
+    }
+}
+
+impl<T> CanDefine for build_pilot::Params<T>
+where
+    T: BuildTarget,
+    T: RequireCC,
+    build_pilot::Params<T>: InsertCC,
+{
+    type Params = build_pilot::Params<T>;
+    type Err = crate::Error;
+
+    fn define(&self, params: &Self::Params) -> Result<Runner<Unprepared>, Self::Err> {
+        let runner = base_runner(params).env("CC", T::CC);
+        Ok(runner)
     }
 }
