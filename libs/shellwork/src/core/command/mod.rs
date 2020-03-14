@@ -1,3 +1,12 @@
+mod provider;
+pub use provider::CommandProvider;
+
+mod should_run;
+pub use should_run::ShouldRun;
+
+mod may_run;
+pub use may_run::{MayRun, UnsupportedReport};
+
 use crate::core::ExitedProcess;
 use crate::error::Error::CommandFailed;
 use std::collections::HashMap;

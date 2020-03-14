@@ -1,9 +1,9 @@
 use crate::commands::cargo_build;
-use crate::commands::cargo_build::{MayBuild, ShouldBuild};
 use crate::core::targets::BuildTarget;
 use crate::{TaskOutput, TaskResult};
 use clap::{App, ArgMatches, SubCommand};
 use clap_task::ClapTask;
+use shellwork::core::command::{MayRun, ShouldRun};
 
 pub fn define() -> Box<dyn ClapTask<TaskResult<TaskOutput>>> {
     Box::new(Task)
