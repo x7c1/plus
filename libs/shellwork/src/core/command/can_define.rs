@@ -1,6 +1,6 @@
 use crate::core::command::{Prepared, Runner, Unprepared};
 
-pub trait CommandProvider: Sized {
+pub trait CanDefine: Sized {
     type Params;
     type Err;
 

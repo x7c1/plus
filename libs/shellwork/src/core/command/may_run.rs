@@ -1,9 +1,9 @@
-use crate::core::command::CommandProvider;
+use crate::core::command::CanDefine;
 
-pub trait MayRun: CommandProvider {
+pub trait MayRun: CanDefine {
     fn spawn(&self, params: &Self::Params) -> Result<(), Self::Err>
     where
-        <Self as CommandProvider>::Err: From<crate::Error>,
+        <Self as CanDefine>::Err: From<crate::Error>,
     {
         if let Some(report) = self.unsupported() {
             eprintln!("unsupported command > {:#?}", report);

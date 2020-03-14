@@ -1,5 +1,5 @@
-mod provider;
-pub use provider::CommandProvider;
+mod can_define;
+pub use can_define::CanDefine;
 
 mod should_run;
 pub use should_run::ShouldRun;
