@@ -1,4 +1,4 @@
-use crate::core::targets::BuildTarget;
+use crate::core::targets::{BuildTarget, RequireCC};
 
 pub struct Params<T: BuildTarget> {
     pub target: T,
@@ -8,6 +8,16 @@ impl<T: BuildTarget> Params<T> {
     pub fn builder() -> ParamsBuilder<T> {
         ParamsBuilder { target: None }
     }
+}
+
+impl<T: BuildTarget> BuildTarget for Params<T> {
+    fn as_triple(&self) -> &str {
+        self.target.as_triple()
+    }
+}
+
+impl<T: RequireCC + BuildTarget> RequireCC for Params<T> {
+    const CC: &'static str = T::CC;
 }
 
 pub struct ParamsBuilder<T: BuildTarget> {

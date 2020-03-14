@@ -1,8 +1,8 @@
-use crate::commands::cargo::build_pilot;
 use crate::commands::cargo::mac;
+use crate::commands::cargo::{build_pilot, BaseRunner};
 use crate::commands::Action;
 use crate::core::targets::InsertCC;
-use crate::core::targets::{BuildTarget, LinuxArmV7, LinuxX86, MacX86, RequireCC};
+use crate::core::targets::{BuildTarget, LinuxArmV7, LinuxX86, MacX86};
 use crate::TaskResult;
 use shellwork::core::command;
 use shellwork::core::command::{CanDefine, Runner, ShouldRun, Unprepared};
@@ -48,17 +48,12 @@ mod mac_x86 {
     impl mac::RunMaybe for build_pilot::Params<MacX86> {}
 }
 
-impl<T> CanDefine for Action<build_pilot::Params<T>>
+impl<A> BaseRunner for build_pilot::Params<A>
 where
-    T: BuildTarget,
-    T: RequireCC,
-    build_pilot::Params<T>: InsertCC,
+    A: BuildTarget,
+    build_pilot::Params<A>: InsertCC,
 {
-    type Params = build_pilot::Params<T>;
-    type Err = crate::Error;
-
-    fn define(&self, params: &Self::Params) -> Result<Runner<Unprepared>, Self::Err> {
-        let runner = base_runner(params).env("CC", T::CC);
-        Ok(runner)
+    fn runner(params: &Self) -> Runner<Unprepared> {
+        base_runner(&params)
     }
 }
