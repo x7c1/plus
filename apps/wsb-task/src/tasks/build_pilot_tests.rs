@@ -23,14 +23,14 @@ impl ClapTask<TaskResult<TaskOutput>> for Task {
 
     async fn run<'a>(&'a self, matches: &'a ArgMatches<'a>) -> TaskResult<TaskOutput> {
         try_foreach_targets!(|target| {
-            let action = to_params(target, matches);
+            let action = to_action(target, matches);
             action.spawn(&action.0)
         });
         Ok(TaskOutput::empty())
     }
 }
 
-fn to_params<T>(target: T, _matches: &ArgMatches) -> Action<build_pilot::Params<T>>
+fn to_action<T>(target: T, _matches: &ArgMatches) -> Action<build_pilot::Params<T>>
 where
     T: BuildTarget,
 {
