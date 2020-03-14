@@ -39,3 +39,7 @@ cargo_clippy() {
     ${BUILD_MODE} \
     --target="${TARGET_X86}"
 }
+
+task_runner_for_linux_x86() {
+  task_runner ${TARGET_X86} "$@"
+}

@@ -60,7 +60,6 @@ build_apps() {
     --target=$1
 }
 
-
 build_e2e_tests() {
   build_pilot $1
   build_pilot_and_output_json $1
@@ -129,4 +128,12 @@ setup_artifacts_directory() {
     arch_dir="${ARTIFACTS_DIR}/${arch}"
     [[ -d ${arch_dir} ]] || mkdir ${arch_dir}
   done
+}
+
+task_runner() {
+  cargo run \
+    ${BUILD_MODE} \
+    --target=$1 \
+    --package=wsb-task \
+    "${@:2}"
 }
