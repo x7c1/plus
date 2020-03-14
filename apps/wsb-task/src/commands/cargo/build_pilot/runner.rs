@@ -35,33 +35,41 @@ mod linux_x86 {
     impl ShouldRun for build_pilot::Params<LinuxX86> {}
 }
 
+impl<T> CanDefine for build_pilot::Params<T>
+where
+    T: BuildTarget,
+    T: RequiredCC,
+{
+    type Params = build_pilot::Params<T>;
+    type Err = crate::Error;
+
+    fn define(&self, params: &Self::Params) -> Result<Runner<Unprepared>, Self::Err> {
+        let runner = base_runner(params).env("CC", T::CC);
+        Ok(runner)
+    }
+}
+
+pub trait RequiredCC {
+    const CC: &'static str;
+}
+
+impl RequiredCC for LinuxArmV7 {
+    const CC: &'static str = "arm-linux-gnueabihf-gcc";
+}
+
+impl RequiredCC for MacX86 {
+    const CC: &'static str = "x86_64-apple-darwin19-clang";
+}
+
 mod linux_arm_v7 {
     use super::*;
 
-    impl CanDefine for build_pilot::Params<LinuxArmV7> {
-        type Params = Self;
-        type Err = crate::Error;
-
-        fn define(&self, params: &Self) -> TaskResult<Runner<Unprepared>> {
-            let runner = base_runner(params).env("CC", "arm-linux-gnueabihf-gcc");
-            Ok(runner)
-        }
-    }
     impl ShouldRun for build_pilot::Params<LinuxArmV7> {}
 }
 
 mod mac_x86 {
     use super::*;
 
-    impl CanDefine for build_pilot::Params<MacX86> {
-        type Params = Self;
-        type Err = crate::Error;
-
-        fn define(&self, params: &Self) -> TaskResult<Runner<Unprepared>> {
-            let runner = base_runner(params).env("CC", "x86_64-apple-darwin19-clang");
-            Ok(runner)
-        }
-    }
     impl MayRun for build_pilot::Params<MacX86> {
         fn unsupported(&self) -> Option<UnsupportedReport> {
             // todo: check if sdk exists
