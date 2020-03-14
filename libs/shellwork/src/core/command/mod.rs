@@ -79,7 +79,7 @@ impl Runner<Prepared> {
         } else {
             Err(CommandFailed {
                 code: child.status_code(),
-                summary: self.create_summary(),
+                runner: self.create_summary(),
             })
         }
     }
@@ -88,13 +88,18 @@ impl Runner<Prepared> {
 pub struct Unprepared;
 
 impl Runner<Unprepared> {
-    pub fn into_prepared(self) -> Runner<Prepared> {
-        Runner {
+    pub fn prepare<F, E>(self, f: F) -> Result<Runner<Prepared>, E>
+    where
+        F: Fn(&Self) -> Result<(), E>,
+    {
+        f(&self)?;
+        let runner = Runner {
             program: self.program,
             args: self.args,
             env_vars: self.env_vars,
             _prepared_state: PhantomData,
-        }
+        };
+        Ok(runner)
     }
 }
 

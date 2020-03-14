@@ -19,9 +19,9 @@ macro_rules! try_foreach_targets {
     (|$arg:ident| $x:expr) => {
         #[allow(clippy::redundant_closure_call)]
         {
-            (|$arg| $x)(crate::core::targets::LinuxX86)?;
-            (|$arg| $x)(crate::core::targets::LinuxArmV7)?;
-            (|$arg| $x)(crate::core::targets::MacX86)?;
+            (|$arg: crate::core::targets::LinuxX86| $x)(crate::core::targets::LinuxX86)?;
+            (|$arg: crate::core::targets::LinuxArmV7| $x)(crate::core::targets::LinuxArmV7)?;
+            (|$arg: crate::core::targets::MacX86| $x)(crate::core::targets::MacX86)?;
         }
     };
 }
