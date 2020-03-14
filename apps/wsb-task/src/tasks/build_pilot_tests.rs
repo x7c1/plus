@@ -1,4 +1,4 @@
-use crate::commands::build_pilot;
+use crate::commands::{build_pilot, Action};
 use crate::core::targets::BuildTarget;
 use crate::{TaskOutput, TaskResult};
 use clap::{App, ArgMatches, SubCommand};
@@ -23,16 +23,17 @@ impl ClapTask<TaskResult<TaskOutput>> for Task {
 
     async fn run<'a>(&'a self, matches: &'a ArgMatches<'a>) -> TaskResult<TaskOutput> {
         try_foreach_targets!(|target| {
-            let params = to_params(target, matches);
-            params.spawn(&params)
+            let action = to_params(target, matches);
+            action.spawn(&action.0)
         });
         Ok(TaskOutput::empty())
     }
 }
 
-fn to_params<T>(target: T, _matches: &ArgMatches) -> build_pilot::Params<T>
+fn to_params<T>(target: T, _matches: &ArgMatches) -> Action<build_pilot::Params<T>>
 where
     T: BuildTarget,
 {
-    build_pilot::Params::builder().target(target).build()
+    let params = build_pilot::Params::builder().target(target).build();
+    Action(params)
 }

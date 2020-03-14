@@ -1,10 +1,10 @@
+use crate::commands::cargo::mac;
 use crate::commands::cargo_build;
+use crate::commands::Action;
 use crate::core::targets::{BuildTarget, InsertCC, LinuxArmV7, LinuxX86, MacX86, RequireCC};
 use crate::TaskResult;
 use shellwork::core::command;
-use shellwork::core::command::{
-    CanDefine, MayRun, Runner, ShouldRun, Unprepared, UnsupportedReport,
-};
+use shellwork::core::command::{CanDefine, Runner, ShouldRun, Unprepared};
 
 fn base_runner<T>(params: &cargo_build::Params<T>) -> Runner<Unprepared>
 where
@@ -21,40 +21,31 @@ where
 mod linux_x86 {
     use super::*;
 
-    impl CanDefine for cargo_build::Params<LinuxX86> {
-        type Params = Self;
+    impl CanDefine for Action<cargo_build::Params<LinuxX86>> {
+        type Params = cargo_build::Params<LinuxX86>;
         type Err = crate::Error;
 
-        fn define(&self, params: &Self) -> TaskResult<Runner<Unprepared>> {
+        fn define(&self, params: &Self::Params) -> TaskResult<Runner<Unprepared>> {
             let runner = base_runner(params);
             Ok(runner)
         }
     }
-    impl ShouldRun for cargo_build::Params<LinuxX86> {}
+    impl ShouldRun for Action<cargo_build::Params<LinuxX86>> {}
 }
 
 mod linux_arm_v7 {
     use super::*;
-
     impl InsertCC for cargo_build::Params<LinuxArmV7> {}
-
-    impl ShouldRun for cargo_build::Params<LinuxArmV7> {}
+    impl ShouldRun for Action<cargo_build::Params<LinuxArmV7>> {}
 }
 
 mod mac_x86 {
     use super::*;
-
     impl InsertCC for cargo_build::Params<MacX86> {}
-
-    impl MayRun for cargo_build::Params<MacX86> {
-        fn unsupported(&self) -> Option<UnsupportedReport> {
-            // todo: check if sdk exists
-            None
-        }
-    }
+    impl mac::RunMaybe for cargo_build::Params<MacX86> {}
 }
 
-impl<T> CanDefine for cargo_build::Params<T>
+impl<T> CanDefine for Action<cargo_build::Params<T>>
 where
     T: BuildTarget,
     T: RequireCC,
