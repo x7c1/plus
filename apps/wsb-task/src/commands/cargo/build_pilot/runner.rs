@@ -35,10 +35,13 @@ mod linux_x86 {
     impl ShouldRun for build_pilot::Params<LinuxX86> {}
 }
 
+pub trait AppendCC {}
+
 impl<T> CanDefine for build_pilot::Params<T>
 where
     T: BuildTarget,
     T: RequiredCC,
+    build_pilot::Params<T>: AppendCC,
 {
     type Params = build_pilot::Params<T>;
     type Err = crate::Error;
@@ -64,11 +67,15 @@ impl RequiredCC for MacX86 {
 mod linux_arm_v7 {
     use super::*;
 
+    impl AppendCC for build_pilot::Params<LinuxArmV7> {}
+
     impl ShouldRun for build_pilot::Params<LinuxArmV7> {}
 }
 
 mod mac_x86 {
     use super::*;
+
+    impl AppendCC for build_pilot::Params<MacX86> {}
 
     impl MayRun for build_pilot::Params<MacX86> {
         fn unsupported(&self) -> Option<UnsupportedReport> {
