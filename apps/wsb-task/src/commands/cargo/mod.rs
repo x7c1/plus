@@ -3,5 +3,5 @@ pub mod cargo_build;
 
 pub mod mac;
 
-mod runner;
-pub use runner::BaseRunner;
+mod cc;
+pub use cc::CanDefineByCC;

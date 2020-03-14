@@ -1,5 +1,5 @@
 use crate::commands::cargo::mac;
-use crate::commands::cargo::{build_pilot, BaseRunner};
+use crate::commands::cargo::{build_pilot, CanDefineByCC};
 use crate::commands::Action;
 use crate::core::targets::InsertCC;
 use crate::core::targets::{BuildTarget, LinuxArmV7, LinuxX86, MacX86};
@@ -48,12 +48,12 @@ mod mac_x86 {
     impl mac::RunMaybe for build_pilot::Params<MacX86> {}
 }
 
-impl<A> BaseRunner for build_pilot::Params<A>
+impl<A> CanDefineByCC for build_pilot::Params<A>
 where
     A: BuildTarget,
     build_pilot::Params<A>: InsertCC,
 {
-    fn runner(params: &Self) -> Runner<Unprepared> {
-        base_runner(&params)
+    fn define(params: &Self) -> TaskResult<Runner<Unprepared>> {
+        Ok(base_runner(&params))
     }
 }
