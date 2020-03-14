@@ -1,12 +1,12 @@
-use crate::commands::cargo::cargo_build::Params;
-use crate::core::targets::{BuildTarget, LinuxArmV7, LinuxX86, MacX86};
+use crate::commands::cargo_build;
+use crate::core::targets::{BuildTarget, InsertCC, LinuxArmV7, LinuxX86, MacX86, RequireCC};
 use crate::TaskResult;
 use shellwork::core::command;
 use shellwork::core::command::{
     CanDefine, MayRun, Runner, ShouldRun, Unprepared, UnsupportedReport,
 };
 
-fn base_runner<T>(params: &Params<T>) -> Runner<Unprepared>
+fn base_runner<T>(params: &cargo_build::Params<T>) -> Runner<Unprepared>
 where
     T: BuildTarget,
 {
@@ -21,7 +21,7 @@ where
 mod linux_x86 {
     use super::*;
 
-    impl CanDefine for Params<LinuxX86> {
+    impl CanDefine for cargo_build::Params<LinuxX86> {
         type Params = Self;
         type Err = crate::Error;
 
@@ -30,40 +30,41 @@ mod linux_x86 {
             Ok(runner)
         }
     }
-    impl ShouldRun for Params<LinuxX86> {}
+    impl ShouldRun for cargo_build::Params<LinuxX86> {}
 }
 
 mod linux_arm_v7 {
     use super::*;
 
-    impl CanDefine for Params<LinuxArmV7> {
-        type Params = Self;
-        type Err = crate::Error;
+    impl InsertCC for cargo_build::Params<LinuxArmV7> {}
 
-        fn define(&self, params: &Self) -> TaskResult<Runner<Unprepared>> {
-            let runner = base_runner(params).env("CC", "arm-linux-gnueabihf-gcc");
-            Ok(runner)
-        }
-    }
-    impl ShouldRun for Params<LinuxArmV7> {}
+    impl ShouldRun for cargo_build::Params<LinuxArmV7> {}
 }
 
 mod mac_x86 {
     use super::*;
 
-    impl CanDefine for Params<MacX86> {
-        type Params = Self;
-        type Err = crate::Error;
+    impl InsertCC for cargo_build::Params<MacX86> {}
 
-        fn define(&self, params: &Self) -> TaskResult<Runner<Unprepared>> {
-            let runner = base_runner(params).env("CC", "x86_64-apple-darwin19-clang");
-            Ok(runner)
-        }
-    }
-    impl MayRun for Params<MacX86> {
+    impl MayRun for cargo_build::Params<MacX86> {
         fn unsupported(&self) -> Option<UnsupportedReport> {
             // todo: check if sdk exists
             None
         }
+    }
+}
+
+impl<T> CanDefine for cargo_build::Params<T>
+where
+    T: BuildTarget,
+    T: RequireCC,
+    cargo_build::Params<T>: InsertCC,
+{
+    type Params = cargo_build::Params<T>;
+    type Err = crate::Error;
+
+    fn define(&self, params: &Self::Params) -> Result<Runner<Unprepared>, Self::Err> {
+        let runner = base_runner(params).env("CC", T::CC);
+        Ok(runner)
     }
 }
