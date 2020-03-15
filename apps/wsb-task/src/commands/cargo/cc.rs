@@ -1,10 +1,27 @@
 use crate::commands::Action;
 use crate::core::targets::{BuildTarget, InsertCC, RequireCC};
-use crate::TaskResult;
+use crate::{Error, TaskResult};
 use shellwork::core::command::{CanDefine, Runner, Unprepared};
 
+// todo: rename
 pub trait CanDefineByCC {
-    fn define(&self) -> TaskResult<Runner<Unprepared>>;
+    fn with_cc<F>(&self, f: F) -> TaskResult<Runner<Unprepared>>
+    where
+        Self: Sized,
+        F: Fn(&Self) -> Runner<Unprepared>;
+}
+
+impl<A> CanDefineByCC for A
+where
+    A: RequireCC,
+{
+    fn with_cc<F>(&self, f: F) -> TaskResult<Runner<Unprepared>>
+    where
+        F: Fn(&Self) -> Runner<Unprepared>,
+    {
+        let runner = f(self).env("CC", A::CC);
+        Ok(runner)
+    }
 }
 
 /*

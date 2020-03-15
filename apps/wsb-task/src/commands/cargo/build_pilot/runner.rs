@@ -30,31 +30,17 @@ mod linux_x86 {
             Ok(base_runner(self))
         }
     }
-    /*
-    impl CanDefine for Action<build_pilot::Params<LinuxX86>> {
-        type Params = build_pilot::Params<LinuxX86>;
-        type Err = crate::Error;
-
-        fn define(&self, params: &Self::Params) -> TaskResult<Runner<Unprepared>> {
-            let runner = base_runner(params);
-            Ok(runner)
-        }
-    }
-    // */
     impl ShouldRun for Action<build_pilot::Params<LinuxX86>> {}
 }
 
 mod linux_arm_v7 {
     use super::*;
 
-    impl InsertCC for build_pilot::Params<LinuxArmV7> {}
-
     impl ShouldRun for Action<build_pilot::Params<LinuxArmV7>> {}
 
     impl CanDefine2 for build_pilot::Params<LinuxArmV7> {
         fn define(&self) -> TaskResult<Runner<Unprepared>> {
-            // todo: add CC
-            Ok(base_runner(self))
+            self.with_cc(base_runner)
         }
     }
 }
@@ -62,26 +48,11 @@ mod linux_arm_v7 {
 mod mac_x86 {
     use super::*;
 
-    impl InsertCC for build_pilot::Params<MacX86> {}
-
     impl mac::RunMaybe for build_pilot::Params<MacX86> {}
 
     impl CanDefine2 for build_pilot::Params<MacX86> {
         fn define(&self) -> TaskResult<Runner<Unprepared>> {
-            // todo: add CC
-            Ok(base_runner(self))
+            self.with_cc(base_runner)
         }
     }
 }
-
-/*
-impl<A> CanDefineByCC for build_pilot::Params<A>
-where
-    A: BuildTarget,
-    build_pilot::Params<A>: InsertCC,
-{
-    fn define(&self) -> TaskResult<Runner<Unprepared>> {
-        Ok(base_runner(self))
-    }
-}
-*/
