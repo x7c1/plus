@@ -1,6 +1,7 @@
 use crate::commands::cargo::{mac, CanDefineByCC};
 use crate::commands::cargo_build;
 use crate::commands::Action;
+use crate::commands::CanDefine2;
 use crate::core::targets::{BuildTarget, InsertCC, LinuxArmV7, LinuxX86, MacX86};
 use crate::TaskResult;
 use shellwork::core::command;
@@ -35,22 +36,42 @@ mod linux_x86 {
 
 mod linux_arm_v7 {
     use super::*;
+
     impl InsertCC for cargo_build::Params<LinuxArmV7> {}
+
     impl ShouldRun for Action<cargo_build::Params<LinuxArmV7>> {}
+
+    impl CanDefine2 for cargo_build::Params<LinuxArmV7> {
+        fn define(&self) -> TaskResult<Runner<Unprepared>> {
+            // todo: add CC
+            Ok(base_runner(self))
+        }
+    }
 }
 
 mod mac_x86 {
     use super::*;
+
     impl InsertCC for cargo_build::Params<MacX86> {}
+
     impl mac::RunMaybe for cargo_build::Params<MacX86> {}
+
+    impl CanDefine2 for cargo_build::Params<MacX86> {
+        fn define(&self) -> TaskResult<Runner<Unprepared>> {
+            // todo: add CC
+            Ok(base_runner(self))
+        }
+    }
 }
 
+/*
 impl<A> CanDefineByCC for cargo_build::Params<A>
 where
     A: BuildTarget,
     cargo_build::Params<A>: InsertCC,
 {
-    fn define(params: &Self) -> TaskResult<Runner<Unprepared>> {
-        Ok(base_runner(&params))
+    fn define(&self) -> TaskResult<Runner<Unprepared>> {
+        Ok(base_runner(self))
     }
 }
+*/

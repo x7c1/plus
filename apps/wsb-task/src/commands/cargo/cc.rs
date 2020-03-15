@@ -4,9 +4,10 @@ use crate::TaskResult;
 use shellwork::core::command::{CanDefine, Runner, Unprepared};
 
 pub trait CanDefineByCC {
-    fn define(params: &Self) -> TaskResult<Runner<Unprepared>>;
+    fn define(&self) -> TaskResult<Runner<Unprepared>>;
 }
 
+/*
 impl<X> CanDefine for Action<X>
 where
     X: BuildTarget,
@@ -22,3 +23,4 @@ where
         Ok(runner)
     }
 }
+*/
