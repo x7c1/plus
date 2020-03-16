@@ -1,6 +1,6 @@
 use crate::core::command::CanDefine;
 
-pub trait MayRun: CanDefine {
+pub trait MayRun<A>: CanDefine {
     fn spawn(&self, params: &Self::Params) -> Result<(), Self::Err>
     where
         <Self as CanDefine>::Err: From<crate::Error>,

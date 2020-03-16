@@ -10,12 +10,6 @@ impl<T: BuildTarget> Params<T> {
     }
 }
 
-impl<T: BuildTarget> BuildTarget for Params<T> {
-    fn as_triple(&self) -> &str {
-        self.target.as_triple()
-    }
-}
-
 impl<T: RequireCC + BuildTarget> RequireCC for Params<T> {
     const CC: &'static str = T::CC;
 }

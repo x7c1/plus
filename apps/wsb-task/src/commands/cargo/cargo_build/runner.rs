@@ -1,5 +1,5 @@
-use crate::commands::cargo::{mac, CanDefineByCC};
 use crate::commands::cargo_build;
+use crate::commands::support::{mac, CanDefineByCC};
 use crate::commands::Action;
 use crate::commands::CanDefine2;
 use crate::core::targets::{BuildTarget, LinuxArmV7, LinuxX86, MacX86};
