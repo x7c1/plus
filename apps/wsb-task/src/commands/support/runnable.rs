@@ -3,14 +3,13 @@ use crate::TaskResult;
 use shellwork::core::command;
 use shellwork::core::command::{Runner, Unprepared};
 
-// todo: rename
-pub trait CanDefine2 {
+pub trait Runnable {
     fn define(&self) -> TaskResult<Runner<Unprepared>>;
 }
 
 impl<X> command::CanDefine for Action<X>
 where
-    X: CanDefine2,
+    X: Runnable,
 {
     type Params = X;
     type Err = crate::Error;

@@ -2,15 +2,14 @@ use crate::core::targets::RequireCC;
 use crate::TaskResult;
 use shellwork::core::command::{Runner, Unprepared};
 
-// todo: rename
-pub trait CanDefineByCC {
+pub trait CanInsertCC {
     fn with_cc<F>(&self, f: F) -> TaskResult<Runner<Unprepared>>
     where
         Self: Sized,
         F: Fn(&Self) -> Runner<Unprepared>;
 }
 
-impl<A> CanDefineByCC for A
+impl<A> CanInsertCC for A
 where
     A: RequireCC,
 {

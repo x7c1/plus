@@ -1,7 +1,6 @@
 use crate::commands::cargo::build_pilot;
-use crate::commands::support::{mac, CanDefineByCC};
+use crate::commands::support::{mac, CanInsertCC, Runnable};
 use crate::commands::Action;
-use crate::commands::CanDefine2;
 use crate::core::targets::{BuildTarget, LinuxArmV7, LinuxX86, MacX86};
 use crate::TaskResult;
 use shellwork::core::command;
@@ -24,7 +23,7 @@ where
 mod linux_x86 {
     use super::*;
 
-    impl CanDefine2 for build_pilot::Params<LinuxX86> {
+    impl Runnable for build_pilot::Params<LinuxX86> {
         fn define(&self) -> TaskResult<Runner<Unprepared>> {
             Ok(base_runner(self))
         }
@@ -35,7 +34,7 @@ mod linux_x86 {
 mod linux_arm_v7 {
     use super::*;
 
-    impl CanDefine2 for build_pilot::Params<LinuxArmV7> {
+    impl Runnable for build_pilot::Params<LinuxArmV7> {
         fn define(&self) -> TaskResult<Runner<Unprepared>> {
             self.with_cc(base_runner)
         }
@@ -46,7 +45,7 @@ mod linux_arm_v7 {
 mod mac_x86 {
     use super::*;
 
-    impl CanDefine2 for build_pilot::Params<MacX86> {
+    impl Runnable for build_pilot::Params<MacX86> {
         fn define(&self) -> TaskResult<Runner<Unprepared>> {
             self.with_cc(base_runner)
         }
