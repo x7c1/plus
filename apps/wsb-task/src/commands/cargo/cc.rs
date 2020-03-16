@@ -1,7 +1,6 @@
-use crate::commands::Action;
-use crate::core::targets::{BuildTarget, InsertCC, RequireCC};
-use crate::{Error, TaskResult};
-use shellwork::core::command::{CanDefine, Runner, Unprepared};
+use crate::core::targets::RequireCC;
+use crate::TaskResult;
+use shellwork::core::command::{Runner, Unprepared};
 
 // todo: rename
 pub trait CanDefineByCC {
@@ -23,21 +22,3 @@ where
         Ok(runner)
     }
 }
-
-/*
-impl<X> CanDefine for Action<X>
-where
-    X: BuildTarget,
-    X: RequireCC,
-    X: InsertCC,
-    X: CanDefineByCC,
-{
-    type Params = X;
-    type Err = crate::Error;
-
-    fn define(&self, params: &Self::Params) -> TaskResult<Runner<Unprepared>> {
-        let runner = X::define(params)?.env("CC", X::CC);
-        Ok(runner)
-    }
-}
-*/

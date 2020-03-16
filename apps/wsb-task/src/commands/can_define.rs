@@ -1,7 +1,7 @@
 use crate::commands::Action;
 use crate::TaskResult;
 use shellwork::core::command;
-use shellwork::core::command::{CanDefine, Runner, Unprepared};
+use shellwork::core::command::{Runner, Unprepared};
 
 // todo: rename
 pub trait CanDefine2 {

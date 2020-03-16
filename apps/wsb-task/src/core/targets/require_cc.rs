@@ -11,5 +11,3 @@ impl RequireCC for LinuxArmV7 {
 impl RequireCC for MacX86 {
     const CC: &'static str = "x86_64-apple-darwin19-clang";
 }
-
-pub trait InsertCC {}
