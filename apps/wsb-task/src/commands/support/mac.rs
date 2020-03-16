@@ -5,10 +5,10 @@ use shellwork::core::command::{CanDefine, UnsupportedReport};
 
 pub trait RunMaybe {}
 
-impl<A> command::MayRun for Action<A, MacX86>
+impl<A> command::MayRun for Action<MacX86, A>
 where
     A: RunMaybe,
-    Action<A, MacX86>: CanDefine,
+    Action<MacX86, A>: CanDefine,
 {
     fn unsupported(&self) -> Option<UnsupportedReport> {
         // todo: check if sdk exists

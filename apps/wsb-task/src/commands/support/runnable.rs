@@ -7,15 +7,15 @@ pub trait Runnable {
     fn define(&self) -> TaskResult<Runner<Unprepared>>;
 }
 
-impl<X, T> command::CanDefine for Action<X, T>
+impl<T, P> command::CanDefine for Action<T, P>
 where
-    X: Runnable,
+    P: Runnable,
 {
-    type Params = X;
+    type Params = P;
     type Err = crate::Error;
 
     fn define(&self, params: &Self::Params) -> Result<Runner<Unprepared>, Self::Err> {
-        let runner = X::define(params)?;
+        let runner = P::define(params)?;
         Ok(runner)
     }
 }

@@ -5,16 +5,16 @@ use shellwork::core::command::CanDefine;
 
 pub trait Run {}
 
-impl<A> command::ShouldRun for Action<A, LinuxX86>
+impl<A> command::ShouldRun for Action<LinuxX86, A>
 where
     A: Run,
-    Action<A, LinuxX86>: CanDefine,
+    Action<LinuxX86, A>: CanDefine,
 {
 }
 
-impl<A> command::ShouldRun for Action<A, LinuxArmV7>
+impl<A> command::ShouldRun for Action<LinuxArmV7, A>
 where
     A: Run,
-    Action<A, LinuxArmV7>: CanDefine,
+    Action<LinuxArmV7, A>: CanDefine,
 {
 }

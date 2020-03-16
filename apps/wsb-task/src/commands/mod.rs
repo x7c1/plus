@@ -1,17 +1,20 @@
 mod cargo;
+
 pub use cargo::build_pilot;
 pub use cargo::cargo_build;
+use clap::ArgMatches;
 use std::marker::PhantomData;
 
 pub mod support;
 
-pub struct Action<A, X>(A, PhantomData<X>);
+pub struct Action<TARGET, PARAMS>(PhantomData<(TARGET, PARAMS)>);
 
-impl<A, X> Action<A, X> {
-    pub fn new(a: A) -> Action<A, X> {
-        Action(a, PhantomData)
-    }
-    pub fn value(&self) -> &A {
-        &self.0
+impl<T, P> Action<T, P> {
+    pub fn from<F>(target: T, matches: &ArgMatches, to_params: F) -> (Action<T, P>, P)
+    where
+        F: Fn(T, &ArgMatches) -> P,
+    {
+        let params = to_params(target, matches);
+        (Action(PhantomData), params)
     }
 }
