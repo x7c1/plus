@@ -24,16 +24,16 @@ impl ClapTask<TaskResult<TaskOutput>> for Task {
     async fn run<'a>(&'a self, matches: &'a ArgMatches<'a>) -> TaskResult<TaskOutput> {
         try_foreach_targets!(|target| {
             let action = to_action(target, matches);
-            action.spawn(&action.0)
+            action.spawn(action.value())
         });
         Ok(TaskOutput::empty())
     }
 }
 
-fn to_action<T>(target: T, _matches: &ArgMatches) -> Action<cargo_build::Params<T>>
+fn to_action<T>(target: T, _matches: &ArgMatches) -> Action<cargo_build::Params<T>, T>
 where
     T: BuildTarget,
 {
     let params = cargo_build::Params::builder().target(target).build();
-    Action(params)
+    Action::new(params)
 }

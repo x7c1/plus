@@ -7,7 +7,7 @@ pub trait Runnable {
     fn define(&self) -> TaskResult<Runner<Unprepared>>;
 }
 
-impl<X> command::CanDefine for Action<X>
+impl<X, T> command::CanDefine for Action<X, T>
 where
     X: Runnable,
 {
