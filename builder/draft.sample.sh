@@ -9,11 +9,12 @@
 . ./builder/setup-env.sh
 
 cd "$PROJECT_ROOT" || exit 1
-
 . ./builder/lib.linux_x86.sh
 
 main() {
   set -x
+
+  test_shellwork ${TARGET_X86}
 
   build_apps_for_linux_x86
 
