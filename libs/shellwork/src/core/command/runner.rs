@@ -170,8 +170,9 @@ mod tests {
     fn it_works() -> crate::Result<()> {
         // du -ah . | sort -hr | head -n 10
 
-        let run0 = program("du").args(&["-ah", "."]);
-        run0.pipe(program("sort").args(&["-hr"]))
+        program("du")
+            .args(&["-ah", "."])
+            .pipe(program("sort").args(&["-hr"]))
             .pipe(program("head").args(&["-n", "10"]))
             .into_prepared()
             .spawn()?;
