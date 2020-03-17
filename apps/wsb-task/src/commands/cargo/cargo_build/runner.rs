@@ -12,7 +12,6 @@ where
     // todo: move opt-level to params
     command::program("cargo")
         .arg("build")
-        // .arg("--verbose")
         .args(&["--target", &params.target.as_triple()])
         .args(&["--workspace", "--exclude=shellwork", "--exclude=wsb-task"])
         .env("RUSTFLAGS", "-C opt-level=0")

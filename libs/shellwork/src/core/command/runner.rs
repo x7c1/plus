@@ -1,4 +1,3 @@
-use crate::core::ExitedProcess;
 use crate::error::Error::CommandFailed;
 use std::collections::HashMap;
 use std::ffi::OsStr;
@@ -37,8 +36,16 @@ where
     }
 
     pub fn pipe(mut self, next: Runner<T>) -> Self {
-        self.next_runner = Box::new(Some(next));
+        self.append_runner(next);
         self
+    }
+
+    fn append_runner(&mut self, runner: Runner<T>)  {
+        if let Some(ref mut next) = *self.next_runner {
+            next.append_runner(runner);
+        } else {
+            self.next_runner = Box::new(Some(runner));
+        }
     }
 
     pub fn env<K, V>(mut self, key: K, val: V) -> Self
@@ -86,22 +93,21 @@ impl Runner<Prepared> {
             next_runner.receive(child)
         } else {
             // rf. [rust - How would you stream output from a Process?](https://stackoverflow.com/questions/31992237/how-would-you-stream-output-from-a-process)
-            let raw = Command::new(&self.program)
+            let mut raw = Command::new(&self.program)
                 .args(&self.args)
                 .envs(&self.env_vars)
-                .stderr(Stdio::inherit())
                 .stdout(Stdio::inherit())
                 .spawn()?;
 
             // todo: use logger
             println!("{:#?}", self.create_summary());
 
-            let child = ExitedProcess::wait(raw)?;
-            if child.success() {
+            let status = raw.wait()?;
+            if status.success() {
                 Ok(())
             } else {
                 Err(CommandFailed {
-                    code: child.status_code(),
+                    code: status.code(),
                     runner: self.create_summary(),
                 })
             }
@@ -109,20 +115,33 @@ impl Runner<Prepared> {
         result
     }
 
-    pub fn receive(&self, mut child0: Child) -> crate::Result<()> {
-        if let Some(output0) = child0.stdout.take() {
-            let mut child1 = Command::new(&self.program)
-                .args(&self.args)
-                .envs(&self.env_vars)
-                .stdin(output0)
-                .spawn()?;
-
-            let _status = child0.wait()?;
+    fn receive(&self, mut previous: Child) -> crate::Result<()> {
+        if let Some(output) = previous.stdout.take() {
             if let Some(next_runner) = &*self.next_runner {
-                next_runner.receive(child1)?
+                let current = Command::new(&self.program)
+                    .args(&self.args)
+                    .envs(&self.env_vars)
+                    .stdin(output)
+                    .stdout(Stdio::piped())
+                    .spawn()?;
+
+                let _status = previous.wait()?;
+
+                next_runner.receive(current)?
             } else {
-                let _status = child1.wait()?;
+                let mut current = Command::new(&self.program)
+                    .args(&self.args)
+                    .envs(&self.env_vars)
+                    .stdin(output)
+                    .stdout(Stdio::inherit())
+                    .spawn()?;
+
+                let _status1 = current.wait()?;
+
+                let _status2 = previous.wait()?;
             }
+        } else {
+            let _status = previous.wait()?;
         }
         Ok(())
     }
@@ -174,6 +193,7 @@ mod tests {
             .args(&["-ah", "."])
             .pipe(program("sort").args(&["-hr"]))
             .pipe(program("head").args(&["-n", "10"]))
+            // .pipe(program("grep").args(&["foobarfoobar"]))
             .into_prepared()
             .spawn()?;
 
