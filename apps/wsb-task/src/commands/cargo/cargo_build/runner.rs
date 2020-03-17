@@ -1,5 +1,5 @@
 use crate::commands::cargo_build;
-use crate::commands::support::{mac, should, CanInsertCC, Runnable};
+use crate::commands::support::{mac, should, CanInsertCC, Definable};
 use crate::core::targets::{BuildTarget, LinuxArmV7, LinuxX86, MacX86};
 use crate::TaskResult;
 use shellwork::core::command;
@@ -20,7 +20,7 @@ where
 mod linux_x86 {
     use super::*;
 
-    impl Runnable for cargo_build::Params<LinuxX86> {
+    impl Definable for cargo_build::Params<LinuxX86> {
         fn define(&self) -> TaskResult<Runner<Unprepared>> {
             Ok(base_runner(self))
         }
@@ -31,7 +31,7 @@ mod linux_x86 {
 mod linux_arm_v7 {
     use super::*;
 
-    impl Runnable for cargo_build::Params<LinuxArmV7> {
+    impl Definable for cargo_build::Params<LinuxArmV7> {
         fn define(&self) -> TaskResult<Runner<Unprepared>> {
             self.with_cc(base_runner)
         }
@@ -42,7 +42,7 @@ mod linux_arm_v7 {
 mod mac_x86 {
     use super::*;
 
-    impl Runnable for cargo_build::Params<MacX86> {
+    impl Definable for cargo_build::Params<MacX86> {
         fn define(&self) -> TaskResult<Runner<Unprepared>> {
             self.with_cc(base_runner)
         }

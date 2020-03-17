@@ -3,7 +3,7 @@ pub use cc::CanInsertCC;
 
 pub mod mac;
 
-mod runnable;
-pub use runnable::Runnable;
+mod definable;
+pub use definable::Definable;
 
 pub mod should;
