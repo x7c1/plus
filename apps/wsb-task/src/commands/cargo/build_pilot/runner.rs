@@ -15,6 +15,7 @@ where
         .arg("test")
         .arg("--verbose")
         .args(&["--target", &params.target.as_triple()])
+        .args(&["--package", "wsb-pilot"])
         .arg("--no-run")
         .env("RUSTFLAGS", "-C opt-level=0")
 }
