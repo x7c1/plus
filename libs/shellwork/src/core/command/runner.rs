@@ -83,12 +83,14 @@ pub struct Prepared;
 
 impl Runner<Prepared> {
     pub fn spawn(&self) -> crate::Result<()> {
+        // todo: use Foo
         self.if_next_exists(
             |next| next.receive(self.spawn_to_piped()?),
             |_otherwise| self.spawn_and_wait(),
         )
     }
 
+    // todo: remove
     fn if_next_exists<F1, F2>(&self, if_exists: F1, otherwise: F2) -> crate::Result<()>
     where
         F1: Fn(&Runner<Prepared>) -> crate::Result<()>,
@@ -101,29 +103,41 @@ impl Runner<Prepared> {
         }
     }
 
-    fn receive(&self, mut previous: Child) -> crate::Result<()> {
-        if let Some(previous_output) = previous.stdout.take() {
-            /*
-            self.if_next_exists(
-                |next| {
-                    let child = self.receive_and_spawn(previous, previous_output)?;
-                    next.receive(child)
-                },
-                |_otherwise| {
-                    self.receive_and_inherit(previous, previous_output)
-                }
-            )
-            */
-            if let Some(next_runner) = &*self.next_runner {
-                let child = self.receive_and_spawn(previous, previous_output)?;
-                next_runner.receive(child)?;
-            } else {
-                self.receive_and_inherit(previous, previous_output)?;
-            }
+    fn receive(&self, previous: Child) -> crate::Result<()> {
+        if let Some(next_runner) = &*self.next_runner {
+            (self, previous).spawn_to_next(next_runner)
         } else {
-            let _status = previous.wait()?;
+            (self, previous).spawn_to_end()
         }
-        Ok(())
+    }
+}
+
+// todo: rename
+trait Foo {
+    fn spawn_to_next(self, next: &Runner<Prepared>) -> crate::Result<()>;
+    fn spawn_to_end(self) -> crate::Result<()>;
+}
+
+impl Foo for (&Runner<Prepared>, Child) {
+    fn spawn_to_next(mut self, next: &Runner<Prepared>) -> crate::Result<()> {
+        let child = if let Some(previous_output) = self.1.stdout.take() {
+            self.0.receive_and_spawn(self.1, previous_output)?
+        } else {
+            // todo: reject non-zero status
+            let _status = self.1.wait()?;
+            self.0.spawn_to_piped()?
+        };
+        next.receive(child)
+    }
+
+    fn spawn_to_end(mut self) -> crate::Result<()> {
+        if let Some(previous_output) = self.1.stdout.take() {
+            self.0.receive_and_inherit(self.1, previous_output)
+        } else {
+            // todo: reject non-zero status
+            let _status = self.1.wait()?;
+            self.0.spawn_and_wait()
+        }
     }
 }
 
