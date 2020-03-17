@@ -1,7 +1,6 @@
 use std::process::{Child, ExitStatus};
 
 pub struct ExitedProcess {
-    #[allow(dead_code)]
     status: ExitStatus,
 
     #[allow(dead_code)]
