@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use std::ffi::OsStr;
 use std::fmt::Debug;
 use std::marker::PhantomData;
-use std::process::{Child, Command, Stdio};
+use std::process::{Child, ChildStdout, Command, Stdio};
 
 #[derive(Debug)]
 pub struct Runner<T> {
@@ -83,66 +83,114 @@ pub struct Prepared;
 
 impl Runner<Prepared> {
     pub fn spawn(&self) -> crate::Result<()> {
-        let result = if let Some(next_runner) = &*self.next_runner {
-            let child = Command::new(&self.program)
-                .args(&self.args)
-                .envs(&self.env_vars)
-                .stdout(Stdio::piped())
-                .spawn()?;
+        self.if_next_exists(
+            |next| next.receive(self.spawn_to_piped()?),
+            |_otherwise| self.spawn_and_wait(),
+        )
+    }
 
-            next_runner.receive(child)
+    fn if_next_exists<F1, F2>(&self, if_exists: F1, otherwise: F2) -> crate::Result<()>
+    where
+        F1: Fn(&Runner<Prepared>) -> crate::Result<()>,
+        F2: Fn(()) -> crate::Result<()>,
+    {
+        if let Some(next_runner) = &*self.next_runner {
+            if_exists(next_runner)
         } else {
-            // rf. [rust - How would you stream output from a Process?](https://stackoverflow.com/questions/31992237/how-would-you-stream-output-from-a-process)
-            let mut raw = Command::new(&self.program)
-                .args(&self.args)
-                .envs(&self.env_vars)
-                .stdout(Stdio::inherit())
-                .spawn()?;
-
-            // todo: use logger
-            println!("{:#?}", self.create_summary());
-
-            let status = raw.wait()?;
-            if status.success() {
-                Ok(())
-            } else {
-                Err(CommandFailed {
-                    code: status.code(),
-                    runner: self.create_summary(),
-                })
-            }
-        };
-        result
+            otherwise(())
+        }
     }
 
     fn receive(&self, mut previous: Child) -> crate::Result<()> {
-        if let Some(output) = previous.stdout.take() {
+        if let Some(previous_output) = previous.stdout.take() {
+            /*
+            self.if_next_exists(
+                |next| {
+                    let child = self.receive_and_spawn(previous, previous_output)?;
+                    next.receive(child)
+                },
+                |_otherwise| {
+                    self.receive_and_inherit(previous, previous_output)
+                }
+            )
+            */
             if let Some(next_runner) = &*self.next_runner {
-                let current = Command::new(&self.program)
-                    .args(&self.args)
-                    .envs(&self.env_vars)
-                    .stdin(output)
-                    .stdout(Stdio::piped())
-                    .spawn()?;
-
-                let _status = previous.wait()?;
-
-                next_runner.receive(current)?
+                let child = self.receive_and_spawn(previous, previous_output)?;
+                next_runner.receive(child)?;
             } else {
-                let mut current = Command::new(&self.program)
-                    .args(&self.args)
-                    .envs(&self.env_vars)
-                    .stdin(output)
-                    .stdout(Stdio::inherit())
-                    .spawn()?;
-
-                let _status1 = current.wait()?;
-
-                let _status2 = previous.wait()?;
+                self.receive_and_inherit(previous, previous_output)?;
             }
         } else {
             let _status = previous.wait()?;
         }
+        Ok(())
+    }
+}
+
+impl Runner<Prepared> {
+    fn spawn_to_piped(&self) -> crate::Result<Child> {
+        let child = Command::new(&self.program)
+            .args(&self.args)
+            .envs(&self.env_vars)
+            .stdout(Stdio::piped())
+            .spawn()?;
+
+        Ok(child)
+    }
+
+    fn spawn_and_wait(&self) -> crate::Result<()> {
+        let mut child = Command::new(&self.program)
+            .args(&self.args)
+            .envs(&self.env_vars)
+            .stdout(Stdio::inherit())
+            .spawn()?;
+
+        // todo: use logger
+        println!("{:#?}", self.create_summary());
+
+        let status = child.wait()?;
+        if status.success() {
+            Ok(())
+        } else {
+            Err(CommandFailed {
+                code: status.code(),
+                runner: self.create_summary(),
+            })
+        }
+    }
+
+    fn receive_and_spawn(
+        &self,
+        mut previous: Child,
+        previous_output: ChildStdout,
+    ) -> crate::Result<Child> {
+        let current = Command::new(&self.program)
+            .args(&self.args)
+            .envs(&self.env_vars)
+            .stdin(previous_output)
+            .stdout(Stdio::piped())
+            .spawn()?;
+
+        let _status = previous.wait()?;
+        // todo: reject non-zero status
+        Ok(current)
+    }
+
+    fn receive_and_inherit(
+        &self,
+        mut previous: Child,
+        previous_output: ChildStdout,
+    ) -> crate::Result<()> {
+        let mut current = Command::new(&self.program)
+            .args(&self.args)
+            .envs(&self.env_vars)
+            .stdin(previous_output)
+            .stdout(Stdio::inherit())
+            .spawn()?;
+
+        let _previous_status = previous.wait()?;
+        let _current_status = current.wait()?;
+        // todo: reject non-zero status
         Ok(())
     }
 }
