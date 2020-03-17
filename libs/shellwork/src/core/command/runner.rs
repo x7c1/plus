@@ -40,7 +40,7 @@ where
         self
     }
 
-    fn append_runner(&mut self, runner: Runner<T>)  {
+    fn append_runner(&mut self, runner: Runner<T>) {
         if let Some(ref mut next) = *self.next_runner {
             next.append_runner(runner);
         } else {
