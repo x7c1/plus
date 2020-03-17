@@ -73,6 +73,9 @@ impl Runner<Prepared> {
             .stdout(Stdio::inherit())
             .spawn()?;
 
+        // todo: use logger
+        println!("{:#?}", self.create_summary());
+
         let child = ExitedProcess::wait(raw)?;
         if child.success() {
             Ok(child)
