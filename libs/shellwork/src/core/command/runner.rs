@@ -83,19 +83,21 @@ pub struct Prepared;
 
 impl Runner<Prepared> {
     pub fn spawn(&self) -> crate::Result<()> {
-        self.spawn_by(self)
-    }
-
-    fn receive(&self, previous: Child) -> crate::Result<()> {
-        self.spawn_by((self, previous))
-    }
-
-    fn spawn_by<A: CanSpawn>(&self, a: A) -> crate::Result<()> {
         if let Some(next_runner) = &*self.next_runner {
-            next_runner.receive(a.spawn_to_next()?)
+            next_runner.spawn_recursively(self.spawn_to_next()?)
         } else {
-            a.spawn_to_end()
+            self.spawn_to_end()
         }
+    }
+
+    /// Call `wait` and `spawn` recursively to the end of next_runner.
+    fn spawn_recursively(&self, previous: Child) -> crate::Result<()> {
+        let mut pair = (self, previous);
+        while let Some(next_runner) = &*(pair.0).next_runner {
+            let child = pair.spawn_to_next()?;
+            pair = (next_runner, child);
+        }
+        pair.spawn_to_end()
     }
 }
 
