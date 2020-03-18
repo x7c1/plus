@@ -83,47 +83,43 @@ pub struct Prepared;
 
 impl Runner<Prepared> {
     pub fn spawn(&self) -> crate::Result<()> {
-        // todo: use Foo
-        self.if_next_exists(
-            |next| next.receive(self.spawn_to_piped()?),
-            |_otherwise| self.spawn_and_wait(),
-        )
-    }
-
-    // todo: remove
-    fn if_next_exists<F1, F2>(&self, if_exists: F1, otherwise: F2) -> crate::Result<()>
-    where
-        F1: Fn(&Runner<Prepared>) -> crate::Result<()>,
-        F2: Fn(()) -> crate::Result<()>,
-    {
-        if let Some(next_runner) = &*self.next_runner {
-            if_exists(next_runner)
-        } else {
-            otherwise(())
-        }
+        self.spawn_by(self)
     }
 
     fn receive(&self, previous: Child) -> crate::Result<()> {
+        self.spawn_by((self, previous))
+    }
+
+    fn spawn_by<A: CanSpawn>(&self, a: A) -> crate::Result<()> {
         if let Some(next_runner) = &*self.next_runner {
-            (self, previous).spawn_to_next(next_runner)
+            a.spawn_to_next(next_runner)
         } else {
-            (self, previous).spawn_to_end()
+            a.spawn_to_end()
         }
     }
 }
 
-// todo: rename
-trait Foo {
+trait CanSpawn {
     fn spawn_to_next(self, next: &Runner<Prepared>) -> crate::Result<()>;
     fn spawn_to_end(self) -> crate::Result<()>;
 }
 
-impl Foo for (&Runner<Prepared>, Child) {
+impl CanSpawn for &Runner<Prepared> {
+    fn spawn_to_next(self, next: &Runner<Prepared>) -> crate::Result<()> {
+        next.receive(self.spawn_to_piped()?)
+    }
+
+    fn spawn_to_end(self) -> crate::Result<()> {
+        self.spawn_and_wait()
+    }
+}
+
+impl CanSpawn for (&Runner<Prepared>, Child) {
     fn spawn_to_next(mut self, next: &Runner<Prepared>) -> crate::Result<()> {
         let child = if let Some(previous_output) = self.1.stdout.take() {
             self.0.receive_and_spawn(self.1, previous_output)?
         } else {
-            // todo: reject non-zero status
+            // todo: reject non-zero status?
             let _status = self.1.wait()?;
             self.0.spawn_to_piped()?
         };
