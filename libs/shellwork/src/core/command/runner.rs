@@ -92,7 +92,7 @@ impl Runner<Prepared> {
 
     fn spawn_by<A: CanSpawn>(&self, a: A) -> crate::Result<()> {
         if let Some(next_runner) = &*self.next_runner {
-            a.spawn_to_next(next_runner)
+            next_runner.receive(a.spawn_to_next()?)
         } else {
             a.spawn_to_end()
         }
@@ -100,13 +100,13 @@ impl Runner<Prepared> {
 }
 
 trait CanSpawn {
-    fn spawn_to_next(self, next: &Runner<Prepared>) -> crate::Result<()>;
+    fn spawn_to_next(self) -> crate::Result<Child>;
     fn spawn_to_end(self) -> crate::Result<()>;
 }
 
 impl CanSpawn for &Runner<Prepared> {
-    fn spawn_to_next(self, next: &Runner<Prepared>) -> crate::Result<()> {
-        next.receive(self.spawn_to_piped()?)
+    fn spawn_to_next(self) -> crate::Result<Child> {
+        self.spawn_to_piped()
     }
 
     fn spawn_to_end(self) -> crate::Result<()> {
@@ -115,15 +115,14 @@ impl CanSpawn for &Runner<Prepared> {
 }
 
 impl CanSpawn for (&Runner<Prepared>, Child) {
-    fn spawn_to_next(mut self, next: &Runner<Prepared>) -> crate::Result<()> {
-        let child = if let Some(previous_output) = self.1.stdout.take() {
-            self.0.receive_and_spawn(self.1, previous_output)?
+    fn spawn_to_next(mut self) -> crate::Result<Child> {
+        if let Some(previous_output) = self.1.stdout.take() {
+            self.0.receive_and_spawn(self.1, previous_output)
         } else {
             // todo: reject non-zero status?
             let _status = self.1.wait()?;
-            self.0.spawn_to_piped()?
-        };
-        next.receive(child)
+            self.0.spawn_to_piped()
+        }
     }
 
     fn spawn_to_end(mut self) -> crate::Result<()> {
@@ -138,22 +137,27 @@ impl CanSpawn for (&Runner<Prepared>, Child) {
 }
 
 impl Runner<Prepared> {
-    fn spawn_to_piped(&self) -> crate::Result<Child> {
+    fn start_spawning<T1, T2>(&self, stdin: T1, stdout: T2) -> crate::Result<Child>
+    where
+        T1: Into<Stdio>,
+        T2: Into<Stdio>,
+    {
         let child = Command::new(&self.program)
             .args(&self.args)
             .envs(&self.env_vars)
-            .stdout(Stdio::piped())
+            .stdin(stdin)
+            .stdout(stdout)
             .spawn()?;
 
         Ok(child)
     }
 
+    fn spawn_to_piped(&self) -> crate::Result<Child> {
+        self.start_spawning(Stdio::inherit(), Stdio::piped())
+    }
+
     fn spawn_and_wait(&self) -> crate::Result<()> {
-        let mut child = Command::new(&self.program)
-            .args(&self.args)
-            .envs(&self.env_vars)
-            .stdout(Stdio::inherit())
-            .spawn()?;
+        let mut child = self.start_spawning(Stdio::inherit(), Stdio::inherit())?;
 
         // todo: use logger
         println!("{:#?}", self.create_summary());
@@ -174,13 +178,7 @@ impl Runner<Prepared> {
         mut previous: Child,
         previous_output: ChildStdout,
     ) -> crate::Result<Child> {
-        let current = Command::new(&self.program)
-            .args(&self.args)
-            .envs(&self.env_vars)
-            .stdin(previous_output)
-            .stdout(Stdio::piped())
-            .spawn()?;
-
+        let current = self.start_spawning(previous_output, Stdio::piped())?;
         let _status = previous.wait()?;
         // todo: reject non-zero status
         Ok(current)
@@ -191,13 +189,7 @@ impl Runner<Prepared> {
         mut previous: Child,
         previous_output: ChildStdout,
     ) -> crate::Result<()> {
-        let mut current = Command::new(&self.program)
-            .args(&self.args)
-            .envs(&self.env_vars)
-            .stdin(previous_output)
-            .stdout(Stdio::inherit())
-            .spawn()?;
-
+        let mut current = self.start_spawning(previous_output, Stdio::inherit())?;
         let _previous_status = previous.wait()?;
         let _current_status = current.wait()?;
         // todo: reject non-zero status
