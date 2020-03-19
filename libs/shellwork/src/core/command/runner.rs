@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use std::ffi::OsStr;
 use std::fmt::Debug;
 use std::marker::PhantomData;
-use std::process::{Child, ChildStdout, Command, Stdio};
+use std::process::{Child, Command, Stdio};
 
 #[derive(Debug)]
 pub struct Runner<T> {
@@ -83,62 +83,34 @@ pub struct Prepared;
 
 impl Runner<Prepared> {
     pub fn spawn(&self) -> crate::Result<()> {
-        if let Some(next_runner) = &*self.next_runner {
-            next_runner.spawn_recursively(self.spawn_to_next()?)
+        let child = if let Some(next_runner) = &*self.next_runner {
+            next_runner.spawn_recursively(self.spawn_to_pipe()?)
         } else {
-            self.spawn_to_end()
+            // todo: use logger
+            println!("{:#?}", self.create_summary());
+            self.spawn_lastly()
+        };
+        let status = child?.wait()?;
+        if status.success() {
+            Ok(())
+        } else {
+            Err(CommandFailed {
+                code: status.code(),
+                runner: self.create_summary(),
+            })
         }
     }
 
     /// Call `wait` and `spawn` recursively to the end of next_runner.
-    fn spawn_recursively(&self, previous: Child) -> crate::Result<()> {
+    fn spawn_recursively(&self, previous: Child) -> crate::Result<Child> {
         let mut pair = (self, previous);
         while let Some(next_runner) = &*(pair.0).next_runner {
-            let child = pair.spawn_to_next()?;
+            let child = pair.spawn_to_pipe()?;
             pair = (next_runner, child);
         }
-        pair.spawn_to_end()
-    }
-}
-
-trait CanSpawn {
-    fn spawn_to_next(self) -> crate::Result<Child>;
-    fn spawn_to_end(self) -> crate::Result<()>;
-}
-
-impl CanSpawn for &Runner<Prepared> {
-    fn spawn_to_next(self) -> crate::Result<Child> {
-        self.spawn_to_piped()
+        pair.spawn_lastly()
     }
 
-    fn spawn_to_end(self) -> crate::Result<()> {
-        self.spawn_and_wait()
-    }
-}
-
-impl CanSpawn for (&Runner<Prepared>, Child) {
-    fn spawn_to_next(mut self) -> crate::Result<Child> {
-        if let Some(previous_output) = self.1.stdout.take() {
-            self.0.receive_and_spawn(self.1, previous_output)
-        } else {
-            // todo: reject non-zero status?
-            let _status = self.1.wait()?;
-            self.0.spawn_to_piped()
-        }
-    }
-
-    fn spawn_to_end(mut self) -> crate::Result<()> {
-        if let Some(previous_output) = self.1.stdout.take() {
-            self.0.receive_and_inherit(self.1, previous_output)
-        } else {
-            // todo: reject non-zero status
-            let _status = self.1.wait()?;
-            self.0.spawn_and_wait()
-        }
-    }
-}
-
-impl Runner<Prepared> {
     fn start_spawning<T1, T2>(&self, stdin: T1, stdout: T2) -> crate::Result<Child>
     where
         T1: Into<Stdio>,
@@ -153,49 +125,51 @@ impl Runner<Prepared> {
 
         Ok(child)
     }
+}
 
-    fn spawn_to_piped(&self) -> crate::Result<Child> {
+trait CanSpawn {
+    fn spawn_to_pipe(self) -> crate::Result<Child>;
+
+    fn spawn_lastly(self) -> crate::Result<Child>;
+}
+
+impl CanSpawn for &Runner<Prepared> {
+    fn spawn_to_pipe(self) -> crate::Result<Child> {
         self.start_spawning(Stdio::inherit(), Stdio::piped())
     }
 
-    fn spawn_and_wait(&self) -> crate::Result<()> {
-        let mut child = self.start_spawning(Stdio::inherit(), Stdio::inherit())?;
+    fn spawn_lastly(self) -> crate::Result<Child> {
+        self.start_spawning(Stdio::inherit(), Stdio::inherit())
+    }
+}
 
-        // todo: use logger
-        println!("{:#?}", self.create_summary());
+impl CanSpawn for (&Runner<Prepared>, Child) {
+    fn spawn_to_pipe(mut self) -> crate::Result<Child> {
+        if let Some(previous_output) = self.1.stdout.take() {
+            let current = self.0.start_spawning(previous_output, Stdio::piped())?;
 
-        let status = child.wait()?;
-        if status.success() {
-            Ok(())
+            // todo: reject non-zero status
+            let _status = self.1.wait()?;
+            Ok(current)
         } else {
-            Err(CommandFailed {
-                code: status.code(),
-                runner: self.create_summary(),
-            })
+            // todo: reject non-zero status?
+            let _status = self.1.wait()?;
+            self.0.spawn_to_pipe()
         }
     }
 
-    fn receive_and_spawn(
-        &self,
-        mut previous: Child,
-        previous_output: ChildStdout,
-    ) -> crate::Result<Child> {
-        let current = self.start_spawning(previous_output, Stdio::piped())?;
-        let _status = previous.wait()?;
-        // todo: reject non-zero status
-        Ok(current)
-    }
+    fn spawn_lastly(mut self) -> crate::Result<Child> {
+        if let Some(previous_output) = self.1.stdout.take() {
+            let current = self.0.start_spawning(previous_output, Stdio::inherit())?;
 
-    fn receive_and_inherit(
-        &self,
-        mut previous: Child,
-        previous_output: ChildStdout,
-    ) -> crate::Result<()> {
-        let mut current = self.start_spawning(previous_output, Stdio::inherit())?;
-        let _previous_status = previous.wait()?;
-        let _current_status = current.wait()?;
-        // todo: reject non-zero status
-        Ok(())
+            // todo: reject non-zero status?
+            let _status = self.1.wait()?;
+            Ok(current)
+        } else {
+            // todo: reject non-zero status?
+            let _status = self.1.wait()?;
+            self.0.spawn_lastly()
+        }
     }
 }
 
