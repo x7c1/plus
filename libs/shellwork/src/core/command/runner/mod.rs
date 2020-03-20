@@ -129,7 +129,6 @@ impl Runner<Prepared> {
 
 trait CanSpawn {
     fn spawn_to_pipe(self) -> crate::Result<Child>;
-
     fn spawn_lastly(self) -> crate::Result<Child>;
 }
 
