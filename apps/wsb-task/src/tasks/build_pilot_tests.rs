@@ -1,3 +1,4 @@
+use crate::commands::build_pilot::{DefaultFormat, ShowFileName};
 use crate::commands::{build_pilot, Action};
 use crate::core::targets::BuildTarget;
 use crate::{TaskOutput, TaskResult};
@@ -23,16 +24,37 @@ impl ClapTask<TaskResult<TaskOutput>> for Task {
 
     async fn run<'a>(&'a self, matches: &'a ArgMatches<'a>) -> TaskResult<TaskOutput> {
         try_foreach_targets!(|target| {
-            let (action, params) = Action::from(target, matches, to_params);
-            action.spawn(&params)
+            let (action, params) = Action::from(target.clone(), matches, to_params);
+            action.spawn(&params)?;
+
+            let (action, params) = Action::from(target, matches, to_params_for_file_name);
+            let _output = action.capture(&params);
+            _output
         });
         Ok(TaskOutput::empty())
     }
 }
 
-fn to_params<T>(target: T, _matches: &ArgMatches) -> build_pilot::Params<T>
+fn params_base<T, F>(target: T, _matches: &ArgMatches, format: F) -> build_pilot::Params<T, F>
 where
     T: BuildTarget,
 {
-    build_pilot::Params::builder().target(target).build()
+    build_pilot::Params::builder(format).target(target).build()
+}
+
+fn to_params<T>(target: T, _matches: &ArgMatches) -> build_pilot::Params<T, DefaultFormat>
+where
+    T: BuildTarget,
+{
+    params_base(target, _matches, DefaultFormat)
+}
+
+fn to_params_for_file_name<T>(
+    target: T,
+    _matches: &ArgMatches,
+) -> build_pilot::Params<T, ShowFileName>
+where
+    T: BuildTarget,
+{
+    params_base(target, _matches, ShowFileName)
 }

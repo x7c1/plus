@@ -1,4 +1,4 @@
 mod runner;
 
 mod params;
-pub use params::Params;
+pub use params::{DefaultFormat, Params, ShowFileName};
