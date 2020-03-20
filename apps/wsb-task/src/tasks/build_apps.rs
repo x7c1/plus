@@ -1,4 +1,4 @@
-use crate::commands::{cargo_build, Action};
+use crate::commands::{build_apps, Action};
 use crate::core::targets::BuildTarget;
 use crate::{TaskOutput, TaskResult};
 use clap::{App, ArgMatches, SubCommand};
@@ -30,9 +30,9 @@ impl ClapTask<TaskResult<TaskOutput>> for Task {
     }
 }
 
-fn to_params<T>(target: T, _matches: &ArgMatches) -> cargo_build::Params<T>
+fn to_params<T>(target: T, _matches: &ArgMatches) -> build_apps::Params<T>
 where
     T: BuildTarget,
 {
-    cargo_build::Params::builder().target(target).build()
+    build_apps::Params::builder().target(target).build()
 }

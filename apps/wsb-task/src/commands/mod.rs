@@ -1,7 +1,7 @@
 mod cargo;
 
+pub use cargo::build_apps;
 pub use cargo::build_pilot;
-pub use cargo::cargo_build;
 use clap::ArgMatches;
 use std::marker::PhantomData;
 

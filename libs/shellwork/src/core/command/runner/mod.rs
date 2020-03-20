@@ -200,7 +200,6 @@ mod tests {
         let output = piped_once.capture()?;
         let expected = "11\n22\n33\n";
         assert_eq!(output.stdout(), expected);
-
         Ok(())
     }
 
@@ -215,7 +214,6 @@ mod tests {
         let output = piped_twice.capture()?;
         let expected = "55\n44\n33\n";
         assert_eq!(output.stdout(), expected);
-
         Ok(())
     }
 }
