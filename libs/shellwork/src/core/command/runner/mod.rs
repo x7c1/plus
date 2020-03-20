@@ -192,12 +192,12 @@ mod tests {
 
     #[test]
     fn it_can_pipe_once() -> crate::Result<()> {
-        let piped_once = program("echo")
-            .args(&["11\n22\n33\n44\n55"])
-            .pipe(program("head").args(&["-n", "3"]))
-            .into_prepared();
-
-        let output = piped_once.capture()?;
+        let p1 = program("echo").args(&["11\n22\n33\n44\n55"]);
+        let p2 = program("head").args(&["-n", "3"]);
+        let output = {
+            let piped_once = p1.pipe(p2).into_prepared();
+            piped_once.capture()?
+        };
         let expected = "11\n22\n33\n";
         assert_eq!(output.stdout(), expected);
         Ok(())
@@ -205,13 +205,13 @@ mod tests {
 
     #[test]
     fn it_can_pipe_twice() -> crate::Result<()> {
-        let piped_twice = program("echo")
-            .args(&["11\n22\n33\n44\n55"])
-            .pipe(program("sort").args(&["-r"]))
-            .pipe(program("head").args(&["-n", "3"]))
-            .into_prepared();
-
-        let output = piped_twice.capture()?;
+        let p1 = program("echo").args(&["11\n22\n33\n44\n55"]);
+        let p2 = program("sort").args(&["-r"]);
+        let p3 = program("head").args(&["-n", "3"]);
+        let output = {
+            let piped_twice = p1.pipe(p2).pipe(p3).into_prepared();
+            piped_twice.capture()?
+        };
         let expected = "55\n44\n33\n";
         assert_eq!(output.stdout(), expected);
         Ok(())
