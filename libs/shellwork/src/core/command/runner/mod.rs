@@ -1,6 +1,9 @@
 mod can_spawn;
 use can_spawn::CanSpawn;
 
+mod inherited;
+use inherited::InheritedRunner;
+
 use crate::error::Error::CommandFailed;
 use std::collections::HashMap;
 use std::ffi::OsStr;
@@ -86,8 +89,8 @@ pub struct Prepared;
 
 impl Runner<Prepared> {
     pub fn spawn(&self) -> crate::Result<()> {
-        let child = if let Some(next_runner) = &*self.next_runner {
-            next_runner.spawn_recursively(self.spawn_to_pipe()?)
+        let child = if let Some(next) = self.spawn_to_inherited()? {
+            next.spawn_recursively()
         } else {
             // todo: use logger
             println!("{:#?}", self.create_summary());
@@ -104,14 +107,14 @@ impl Runner<Prepared> {
         }
     }
 
-    /// Call `wait` and `spawn` recursively to the end of next_runner.
-    fn spawn_recursively(&self, previous: Child) -> crate::Result<Child> {
-        let mut pair = (self, previous);
-        while let Some(next_runner) = &*(pair.0).next_runner {
-            let child = pair.spawn_to_pipe()?;
-            pair = (next_runner, child);
-        }
-        pair.spawn_lastly()
+    fn spawn_to_inherited(&self) -> crate::Result<Option<InheritedRunner>> {
+        let spawn = |runner| {
+            self.spawn_to_pipe().map(|child| InheritedRunner {
+                runner,
+                previous: child,
+            })
+        };
+        (*self.next_runner).as_ref().map(spawn).transpose()
     }
 
     fn start_spawning<T1, T2>(&self, stdin: T1, stdout: T2) -> crate::Result<Child>
@@ -172,13 +175,14 @@ mod tests {
     fn it_works() -> crate::Result<()> {
         // du -ah . | sort -hr | head -n 10
 
-        program("du")
+        let x1 = program("du")
             .args(&["-ah", "."])
             .pipe(program("sort").args(&["-hr"]))
             .pipe(program("head").args(&["-n", "10"]))
             // .pipe(program("grep").args(&["foobarfoobar"]))
-            .into_prepared()
-            .spawn()?;
+            .into_prepared();
+        x1.spawn()?;
+        x1.spawn()?;
 
         /*
         let r1 = program("du").args(&["-ah", "."]);
