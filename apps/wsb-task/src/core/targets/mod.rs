@@ -7,6 +7,9 @@ pub use linux_arm_v7::LinuxArmV7;
 mod mac_x86;
 pub use mac_x86::MacX86;
 
+mod require_cc;
+pub use require_cc::RequireCC;
+
 pub trait BuildTarget {
     fn as_triple(&self) -> &str;
 }

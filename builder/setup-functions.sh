@@ -137,3 +137,11 @@ task_runner() {
     --package=wsb-task \
     "${@:2}"
 }
+
+test_shellwork() {
+  cargo test \
+    ${BUILD_MODE} \
+    --target=$1 \
+    --package=shellwork \
+    "${@:2}"
+}

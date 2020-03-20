@@ -1,6 +1,6 @@
-FROM rust:1.40
+FROM rust:1.42
 
-ARG rust_version="1.40.0"
+ARG rust_version="1.42.0"
 
 ENV WSB_WORKSPACE="/workspace"
 

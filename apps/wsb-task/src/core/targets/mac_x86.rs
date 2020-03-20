@@ -1,5 +1,6 @@
 use crate::core::targets::BuildTarget;
 
+#[derive(Clone)]
 pub struct MacX86;
 
 impl BuildTarget for MacX86 {

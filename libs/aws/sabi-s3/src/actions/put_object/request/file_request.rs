@@ -7,7 +7,6 @@ use sabi_core::auth::v4::chrono::now;
 use sabi_core::http::request::header::ContentType;
 use sabi_core::index::RegionCode;
 use sabi_core::io::stream::bytes_stream;
-use std::error::Error;
 use std::io::ErrorKind::NotFound;
 use tokio::fs::File;
 
@@ -24,7 +23,7 @@ impl FileRequest {
         File::open(&self.file_path).await.map_err(|e| match e {
             _ if e.kind() == NotFound => core::Error::FileNotFound {
                 path: self.file_path.to_string(),
-                description: e.description().to_string(),
+                description: e.to_string(),
             },
             _ => core::Error::StdIoError(e),
         })

@@ -1,5 +1,6 @@
 use crate::core::targets::BuildTarget;
 
+#[derive(Clone)]
 pub struct LinuxX86;
 
 impl BuildTarget for LinuxX86 {

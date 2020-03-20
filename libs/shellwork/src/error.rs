@@ -4,10 +4,10 @@ pub type Result<A> = std::result::Result<A, Error>;
 
 #[derive(Fail, Debug)]
 pub enum Error {
-    #[fail(display = "command failed > code: {:?}, runner: {:?}", code, runner)]
+    #[fail(display = "command failed > code: {:?}, summary: {:?}", code, summary)]
     CommandFailed {
         code: Option<i32>,
-        runner: RunnerSummary,
+        summary: RunnerSummary,
     },
     #[fail(display = "std::io::Error > {}", 0)]
     StdIoError(std::io::Error),

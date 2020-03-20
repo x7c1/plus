@@ -1,4 +1,4 @@
-use crate::commands::{build_apps, Action};
+use crate::commands::{build_pilot, Action};
 use crate::core::targets::BuildTarget;
 use crate::{TaskOutput, TaskResult};
 use clap::{App, ArgMatches, SubCommand};
@@ -14,11 +14,11 @@ struct Task;
 #[async_trait]
 impl ClapTask<TaskResult<TaskOutput>> for Task {
     fn name(&self) -> &str {
-        "build-apps"
+        "build-pilot-tests"
     }
 
     fn design(&self) -> App {
-        SubCommand::with_name(self.name()).about("Build wasabi applications.")
+        SubCommand::with_name(self.name()).about("Build E2E tests.")
     }
 
     async fn run<'a>(&'a self, matches: &'a ArgMatches<'a>) -> TaskResult<TaskOutput> {
@@ -30,9 +30,9 @@ impl ClapTask<TaskResult<TaskOutput>> for Task {
     }
 }
 
-fn to_params<T>(target: T, _matches: &ArgMatches) -> build_apps::Params<T>
+fn to_params<T>(target: T, _matches: &ArgMatches) -> build_pilot::Params<T>
 where
     T: BuildTarget,
 {
-    build_apps::Params::builder().target(target).build()
+    build_pilot::Params::builder().target(target).build()
 }

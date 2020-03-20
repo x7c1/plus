@@ -31,11 +31,9 @@ impl Outfile {
             let dir = self.directory();
             NamedTempFile::new_in(dir)?
         };
-        let write = stream.try_fold((0, file), |(acc, mut tmp), item: Bytes| {
-            async move {
-                let size = tmp.write(&item)?;
-                Ok((acc + size, tmp))
-            }
+        let write = stream.try_fold((0, file), |(acc, mut tmp), item: Bytes| async move {
+            let size = tmp.write(&item)?;
+            Ok((acc + size, tmp))
         });
         let (sum, file) = write.await?;
         file.persist(&self.0).map_err(std::io::Error::from)?;
