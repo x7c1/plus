@@ -9,7 +9,7 @@ use std::collections::HashMap;
 use std::ffi::OsStr;
 use std::fmt::Debug;
 use std::marker::PhantomData;
-use std::process::{Child, Command, Stdio};
+use std::process::{Child, Command, ExitStatus, Output, Stdio};
 
 #[derive(Debug)]
 pub struct Runner<T> {
@@ -90,7 +90,18 @@ pub struct Prepared;
 impl Runner<Prepared> {
     pub fn spawn(&self) -> crate::Result<()> {
         let mut child = self.spawn_to(Stdio::inherit())?;
-        let status = child.wait()?;
+        self.validate_status(&child.wait()?)?;
+        Ok(())
+    }
+
+    pub fn capture(&self) -> crate::Result<Output> {
+        let child = self.spawn_to(Stdio::piped())?;
+        let output = child.wait_with_output()?;
+        self.validate_status(&output.status)?;
+        Ok(output)
+    }
+
+    fn validate_status(&self, status: &ExitStatus) -> crate::Result<()> {
         if status.success() {
             Ok(())
         } else {
