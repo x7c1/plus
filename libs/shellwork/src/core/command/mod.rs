@@ -2,7 +2,7 @@ mod can_define;
 pub use can_define::CanDefine;
 
 mod runner;
-pub use runner::{program, Prepared, Runner, RunnerSummary, Unprepared};
+pub use runner::{program, Prepared, Runner, RunnerOutput, RunnerSummary, Unprepared};
 
 mod should_run;
 pub use should_run::ShouldRun;

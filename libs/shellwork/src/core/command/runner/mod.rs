@@ -4,12 +4,15 @@ use can_pipe::CanPipe;
 mod inherited;
 use inherited::InheritedRunner;
 
+mod output;
+pub use output::RunnerOutput;
+
 use crate::error::Error::CommandFailed;
 use std::collections::HashMap;
 use std::ffi::OsStr;
 use std::fmt::Debug;
 use std::marker::PhantomData;
-use std::process::{Child, Command, ExitStatus, Output, Stdio};
+use std::process::{Child, Command, ExitStatus, Stdio};
 
 #[derive(Debug)]
 pub struct Runner<T> {
@@ -94,11 +97,11 @@ impl Runner<Prepared> {
         Ok(())
     }
 
-    pub fn capture(&self) -> crate::Result<Output> {
+    pub fn capture(&self) -> crate::Result<RunnerOutput> {
         let child = self.spawn_to(Stdio::piped())?;
         let output = child.wait_with_output()?;
         self.validate_status(&output.status)?;
-        Ok(output)
+        Ok(RunnerOutput::new(output))
     }
 
     fn validate_status(&self, status: &ExitStatus) -> crate::Result<()> {
@@ -195,9 +198,8 @@ mod tests {
             .into_prepared();
 
         let output = piped_once.capture()?;
-        let actual = String::from_utf8_lossy(&output.stdout).to_string();
         let expected = "11\n22\n33\n";
-        assert_eq!(actual, expected);
+        assert_eq!(output.stdout(), expected);
 
         Ok(())
     }
@@ -211,9 +213,8 @@ mod tests {
             .into_prepared();
 
         let output = piped_twice.capture()?;
-        let actual = String::from_utf8_lossy(&output.stdout).to_string();
         let expected = "55\n44\n33\n";
-        assert_eq!(actual, expected);
+        assert_eq!(output.stdout(), expected);
 
         Ok(())
     }
