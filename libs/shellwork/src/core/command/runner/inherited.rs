@@ -1,7 +1,9 @@
 use crate::core::command::runner::can_pipe::CanPipe;
 use crate::core::command::{Prepared, Runner};
+use crate::error::Error::CommandFailed;
 use std::process::{Child, Stdio};
 
+#[derive(Debug)]
 pub struct InheritedRunner<'a> {
     pub previous: Child,
     pub runner: &'a Runner<Prepared>,
@@ -19,6 +21,18 @@ impl InheritedRunner<'_> {
         }
         inherited.spawn_lastly()
     }
+
+    fn wait_for_previous(&mut self) -> crate::Result<()> {
+        let status = self.previous.wait()?;
+        if status.success() {
+            Ok(())
+        } else {
+            Err(CommandFailed {
+                code: status.code(),
+                runner: self.runner.create_summary(),
+            })
+        }
+    }
 }
 
 impl CanPipe for InheritedRunner<'_> {
@@ -28,12 +42,10 @@ impl CanPipe for InheritedRunner<'_> {
                 .runner
                 .start_spawning(previous_output, Stdio::piped())?;
 
-            // todo: reject non-zero status
-            let _status = self.previous.wait()?;
+            self.wait_for_previous()?;
             Ok(current)
         } else {
-            // todo: reject non-zero status?
-            let _status = self.previous.wait()?;
+            self.wait_for_previous()?;
             self.runner.spawn_to_pipe()
         }
     }
@@ -44,12 +56,10 @@ impl CanPipe for InheritedRunner<'_> {
                 .runner
                 .start_spawning(previous_output, Stdio::inherit())?;
 
-            // todo: reject non-zero status?
-            let _status = self.previous.wait()?;
+            self.wait_for_previous()?;
             Ok(current)
         } else {
-            // todo: reject non-zero status?
-            let _status = self.previous.wait()?;
+            self.wait_for_previous()?;
             self.runner.spawn_lastly()
         }
     }
