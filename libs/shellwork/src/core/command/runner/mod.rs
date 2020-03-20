@@ -101,13 +101,13 @@ impl Runner<Prepared> {
         }
     }
 
-    fn spawn_to<T: Into<Stdio>>(&self, out: T) -> crate::Result<Child> {
+    fn spawn_to<T: Into<Stdio>>(&self, output: T) -> crate::Result<Child> {
         let child = if let Some(next) = self.spawn_to_inherit()? {
-            next.spawn_recursively(out)?
+            next.spawn_recursively(output)?
         } else {
             // todo: use logger
             println!("{:#?}", self.create_summary());
-            self.spawn_lastly(out)?
+            self.spawn_lastly(output)?
         };
         Ok(child)
     }

@@ -50,7 +50,7 @@ impl CanPipe for InheritedRunner<'_> {
         }
     }
 
-    fn spawn_lastly<T: Into<Stdio>>(mut self, out: T) -> crate::Result<Child> {
+    fn spawn_lastly<T: Into<Stdio>>(mut self, output: T) -> crate::Result<Child> {
         if let Some(previous_output) = self.previous.stdout.take() {
             let current = self
                 .runner
@@ -60,7 +60,7 @@ impl CanPipe for InheritedRunner<'_> {
             Ok(current)
         } else {
             self.wait_for_previous()?;
-            self.runner.spawn_lastly(out)
+            self.runner.spawn_lastly(output)
         }
     }
 }
