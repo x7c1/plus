@@ -89,14 +89,8 @@ pub struct Prepared;
 
 impl Runner<Prepared> {
     pub fn spawn(&self) -> crate::Result<()> {
-        let child = if let Some(next) = self.spawn_to_inherited()? {
-            next.spawn_recursively()
-        } else {
-            // todo: use logger
-            println!("{:#?}", self.create_summary());
-            self.spawn_lastly()
-        };
-        let status = child?.wait()?;
+        let mut child = self.spawn_to(Stdio::inherit())?;
+        let status = child.wait()?;
         if status.success() {
             Ok(())
         } else {
@@ -107,7 +101,18 @@ impl Runner<Prepared> {
         }
     }
 
-    fn spawn_to_inherited(&self) -> crate::Result<Option<InheritedRunner>> {
+    fn spawn_to<T: Into<Stdio>>(&self, out: T) -> crate::Result<Child> {
+        let child = if let Some(next) = self.spawn_to_inherit()? {
+            next.spawn_recursively(out)?
+        } else {
+            // todo: use logger
+            println!("{:#?}", self.create_summary());
+            self.spawn_lastly(out)?
+        };
+        Ok(child)
+    }
+
+    fn spawn_to_inherit(&self) -> crate::Result<Option<InheritedRunner>> {
         let spawn = |runner| {
             self.spawn_to_pipe().map(|child| InheritedRunner {
                 runner,
@@ -181,8 +186,12 @@ mod tests {
             .pipe(program("head").args(&["-n", "10"]))
             // .pipe(program("grep").args(&["foobarfoobar"]))
             .into_prepared();
+
         x1.spawn()?;
         x1.spawn()?;
+
+        let x2 = program("pwd").into_prepared();
+        x2.spawn()?;
 
         /*
         let r1 = program("du").args(&["-ah", "."]);

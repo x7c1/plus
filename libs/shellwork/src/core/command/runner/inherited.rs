@@ -11,7 +11,7 @@ pub struct InheritedRunner<'a> {
 
 impl InheritedRunner<'_> {
     /// Call `wait` and `spawn` recursively to the end of next_runner.
-    pub fn spawn_recursively(self) -> crate::Result<Child> {
+    pub fn spawn_recursively<T: Into<Stdio>>(self, out: T) -> crate::Result<Child> {
         let mut inherited = self;
         while let Some(next_runner) = &*(inherited.runner).next_runner {
             inherited = InheritedRunner {
@@ -19,7 +19,7 @@ impl InheritedRunner<'_> {
                 previous: inherited.spawn_to_pipe()?,
             };
         }
-        inherited.spawn_lastly()
+        inherited.spawn_lastly(out)
     }
 
     fn wait_for_previous(&mut self) -> crate::Result<()> {
@@ -50,7 +50,7 @@ impl CanPipe for InheritedRunner<'_> {
         }
     }
 
-    fn spawn_lastly(mut self) -> crate::Result<Child> {
+    fn spawn_lastly<T: Into<Stdio>>(mut self, out: T) -> crate::Result<Child> {
         if let Some(previous_output) = self.previous.stdout.take() {
             let current = self
                 .runner
@@ -60,7 +60,7 @@ impl CanPipe for InheritedRunner<'_> {
             Ok(current)
         } else {
             self.wait_for_previous()?;
-            self.runner.spawn_lastly()
+            self.runner.spawn_lastly(out)
         }
     }
 }
