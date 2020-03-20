@@ -1,12 +1,12 @@
 use crate::core::command::{Prepared, Runner};
 use std::process::{Child, Stdio};
 
-pub trait CanSpawn {
+pub trait CanPipe {
     fn spawn_to_pipe(self) -> crate::Result<Child>;
     fn spawn_lastly(self) -> crate::Result<Child>;
 }
 
-impl CanSpawn for &Runner<Prepared> {
+impl CanPipe for &Runner<Prepared> {
     fn spawn_to_pipe(self) -> crate::Result<Child> {
         self.start_spawning(Stdio::inherit(), Stdio::piped())
     }

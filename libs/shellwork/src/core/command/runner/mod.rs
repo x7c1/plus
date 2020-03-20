@@ -1,5 +1,5 @@
-mod can_spawn;
-use can_spawn::CanSpawn;
+mod can_pipe;
+use can_pipe::CanPipe;
 
 mod inherited;
 use inherited::InheritedRunner;

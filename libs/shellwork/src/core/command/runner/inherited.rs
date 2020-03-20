@@ -1,4 +1,4 @@
-use crate::core::command::runner::can_spawn::CanSpawn;
+use crate::core::command::runner::can_pipe::CanPipe;
 use crate::core::command::{Prepared, Runner};
 use std::process::{Child, Stdio};
 
@@ -21,7 +21,7 @@ impl InheritedRunner<'_> {
     }
 }
 
-impl CanSpawn for InheritedRunner<'_> {
+impl CanPipe for InheritedRunner<'_> {
     fn spawn_to_pipe(mut self) -> crate::Result<Child> {
         if let Some(previous_output) = self.previous.stdout.take() {
             let current = self
