@@ -29,7 +29,7 @@ impl InheritedRunner<'_> {
         } else {
             Err(CommandFailed {
                 code: status.code(),
-                runner: self.runner.create_summary(),
+                summary: self.runner.create_summary(),
             })
         }
     }
@@ -52,9 +52,7 @@ impl CanPipe for InheritedRunner<'_> {
 
     fn spawn_lastly<T: Into<Stdio>>(mut self, output: T) -> crate::Result<Child> {
         if let Some(previous_output) = self.previous.stdout.take() {
-            let current = self
-                .runner
-                .start_spawning(previous_output, Stdio::inherit())?;
+            let current = self.runner.start_spawning(previous_output, output)?;
 
             self.wait_for_previous()?;
             Ok(current)

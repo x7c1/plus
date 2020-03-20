@@ -14,7 +14,7 @@ cd "$PROJECT_ROOT" || exit 1
 main() {
   set -x
 
-  test_shellwork ${TARGET_X86} -- --nocapture
+  test_shellwork ${TARGET_X86} -- --nocapture --color always
 
   build_apps_for_linux_x86
 

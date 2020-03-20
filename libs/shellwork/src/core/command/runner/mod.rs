@@ -107,7 +107,7 @@ impl Runner<Prepared> {
         } else {
             Err(CommandFailed {
                 code: status.code(),
-                runner: self.create_summary(),
+                summary: self.create_summary(),
             })
         }
     }
@@ -188,30 +188,33 @@ mod tests {
     use crate::core::command::runner::program;
 
     #[test]
-    fn it_works() -> crate::Result<()> {
-        // du -ah . | sort -hr | head -n 10
-
-        let x1 = program("du")
-            .args(&["-ah", "."])
-            .pipe(program("sort").args(&["-hr"]))
-            .pipe(program("head").args(&["-n", "10"]))
-            // .pipe(program("grep").args(&["foobarfoobar"]))
+    fn it_can_pipe_once() -> crate::Result<()> {
+        let piped_once = program("echo")
+            .args(&["11\n22\n33\n44\n55"])
+            .pipe(program("head").args(&["-n", "3"]))
             .into_prepared();
 
-        x1.spawn()?;
-        x1.spawn()?;
+        let output = piped_once.capture()?;
+        let actual = String::from_utf8_lossy(&output.stdout).to_string();
+        let expected = "11\n22\n33\n";
+        assert_eq!(actual, expected);
 
-        let x2 = program("pwd").into_prepared();
-        x2.spawn()?;
+        Ok(())
+    }
 
-        /*
-        let r1 = program("du").args(&["-ah", "."]);
-        let r2 = program("sort").arg("-hr");
-        let r3 = program("head").args(&["-n", "5"]);
-        r1.pipe(r2).pipe(r3).into_prepared().spawn();
-        */
+    #[test]
+    fn it_can_pipe_twice() -> crate::Result<()> {
+        let piped_twice = program("echo")
+            .args(&["11\n22\n33\n44\n55"])
+            .pipe(program("sort").args(&["-r"]))
+            .pipe(program("head").args(&["-n", "3"]))
+            .into_prepared();
 
-        assert_eq!(2 + 2, 4);
+        let output = piped_twice.capture()?;
+        let actual = String::from_utf8_lossy(&output.stdout).to_string();
+        let expected = "55\n44\n33\n";
+        assert_eq!(actual, expected);
+
         Ok(())
     }
 }
