@@ -24,10 +24,12 @@ impl ClapTask<TaskResult<TaskOutput>> for Task {
 
     async fn run<'a>(&'a self, matches: &'a ArgMatches<'a>) -> TaskResult<TaskOutput> {
         try_foreach_targets!(|target| {
+            let to_params = to_params_for(OutputKind::Default);
             let (action, params) = Action::from(target.clone(), matches, to_params);
             action.spawn(&params)?;
 
-            let (action, params) = Action::from(target, matches, to_params_for_file_name);
+            let to_params = to_params_for(OutputKind::FileName);
+            let (action, params) = Action::from(target, matches, to_params);
             let _output = action.capture(&params);
             println!("output: {:?}", _output);
             _output
@@ -36,23 +38,16 @@ impl ClapTask<TaskResult<TaskOutput>> for Task {
     }
 }
 
-fn new_params<T>(target: T, _matches: &ArgMatches, format: OutputKind) -> build_pilot::Params<T>
+fn to_params_for<T>(kind: OutputKind) -> impl FnOnce(T, &ArgMatches) -> build_pilot::Params<T>
 where
     T: BuildTarget,
 {
-    build_pilot::Params::builder(format).target(target).build()
+    |target, matches| create_params(target, matches, kind)
 }
 
-fn to_params<T>(target: T, matches: &ArgMatches) -> build_pilot::Params<T>
+fn create_params<T>(target: T, _matches: &ArgMatches, kind: OutputKind) -> build_pilot::Params<T>
 where
     T: BuildTarget,
 {
-    new_params(target, matches, OutputKind::Default)
-}
-
-fn to_params_for_file_name<T>(target: T, matches: &ArgMatches) -> build_pilot::Params<T>
-where
-    T: BuildTarget,
-{
-    new_params(target, matches, OutputKind::FileName)
+    build_pilot::Params::builder(kind).target(target).build()
 }
