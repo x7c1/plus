@@ -1,16 +1,13 @@
-use crate::core::command::{CanDefine, RunnerOutput};
+use crate::core::command::{CanDefine, Prepared, Runner, RunnerOutput};
 
 pub trait MayRun: CanDefine {
     fn spawn(&self, params: &Self::Params) -> Result<(), Self::Err>
     where
         <Self as CanDefine>::Err: From<crate::Error>,
     {
-        if let Some(report) = self.unsupported() {
-            eprintln!("unsupported command > {:#?}", report);
-            return Ok(());
+        if let Some(runner) = self.prepare_runner(params)? {
+            runner.spawn()?;
         }
-        let runner = self.prepare(params)?;
-        runner.spawn()?;
         Ok(())
     }
 
@@ -18,13 +15,25 @@ pub trait MayRun: CanDefine {
     where
         <Self as CanDefine>::Err: From<crate::Error>,
     {
-        if let Some(report) = self.unsupported() {
+        let maybe = if let Some(runner) = self.prepare_runner(params)? {
+            Some(runner.capture()?)
+        } else {
+            None
+        };
+        Ok(maybe)
+    }
+
+    fn prepare_runner(&self, params: &Self::Params) -> Result<Option<Runner<Prepared>>, Self::Err>
+    where
+        <Self as CanDefine>::Err: From<crate::Error>,
+    {
+        let maybe = if let Some(report) = self.unsupported() {
             eprintln!("unsupported command > {:#?}", report);
-            return Ok(None);
-        }
-        let runner = self.prepare(params)?;
-        let output = runner.capture()?;
-        Ok(Some(output))
+            None
+        } else {
+            Some(self.prepare(params)?)
+        };
+        Ok(maybe)
     }
 
     fn unsupported(&self) -> Option<UnsupportedReport>;
