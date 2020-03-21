@@ -12,6 +12,8 @@ pub use require_cc::RequireCC;
 
 pub trait BuildTarget {
     fn as_triple(&self) -> &str;
+
+    fn as_abbr(&self) -> &str;
 }
 
 pub fn all() -> Vec<Box<dyn BuildTarget>> {

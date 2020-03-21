@@ -1,11 +1,13 @@
-mod cargo;
+pub mod artifacts;
 
+mod cargo;
 pub use cargo::build_apps;
 pub use cargo::build_pilot;
-use clap::ArgMatches;
-use std::marker::PhantomData;
 
 pub mod support;
+
+use clap::ArgMatches;
+use std::marker::PhantomData;
 
 pub struct Action<TARGET, PARAMS>(PhantomData<(TARGET, PARAMS)>);
 

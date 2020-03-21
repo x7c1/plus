@@ -30,9 +30,13 @@ impl ClapTask<TaskResult<TaskOutput>> for Task {
 
             let to_params = to_params_for(OutputKind::FileName);
             let (action, params) = Action::from(target, matches, to_params);
-            let _output = action.capture(&params);
-            println!("output: {:?}", _output);
-            _output
+            let _output = action.capture(&params)?;
+
+            println!(
+                "executable E2E test: {:?}",
+                _output.as_ref().map(|x| x.stdout())
+            );
+            TaskResult::Ok(_output)
         });
         Ok(TaskOutput::empty())
     }
@@ -51,3 +55,13 @@ where
 {
     build_pilot::Params::builder(kind).target(target).build()
 }
+
+/*
+fn params_to_copy<T>(target: T, _matches: &ArgMatches) -> cp::Params<T>
+where
+    T: BuildTarget,
+{
+    // build_pilot::Params::builder(kind).target(target).build()
+    unimplemented!()
+}
+*/
