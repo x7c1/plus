@@ -1,36 +1,37 @@
 use crate::core::targets::{BuildTarget, RequireCC};
-use failure::_core::marker::PhantomData;
 
-pub struct DefaultFormat;
-pub struct ShowFileName;
-
-pub struct Params<T: BuildTarget, FORMAT> {
+pub struct Params<T: BuildTarget> {
     pub target: T,
-    _format: PhantomData<FORMAT>,
+    output_format: OutputFormat,
 }
 
-impl<T: BuildTarget, F> Params<T, F> {
-    pub fn builder(_format: F) -> ParamsBuilder<T, F> {
+pub enum OutputFormat {
+    Default,
+    FileName,
+}
+
+impl<T: BuildTarget> Params<T> {
+    pub fn builder(_format: OutputFormat) -> ParamsBuilder<T> {
         ParamsBuilder {
             target: None,
-            format: PhantomData::<F>,
+            format: OutputFormat::Default,
         }
     }
 }
 
-impl<T, F> RequireCC for Params<T, F>
+impl<T> RequireCC for Params<T>
 where
     T: RequireCC + BuildTarget,
 {
     const CC: &'static str = T::CC;
 }
 
-pub struct ParamsBuilder<T: BuildTarget, F> {
+pub struct ParamsBuilder<T: BuildTarget> {
     target: Option<T>,
-    format: PhantomData<F>,
+    format: OutputFormat,
 }
 
-impl<T, F> ParamsBuilder<T, F>
+impl<T> ParamsBuilder<T>
 where
     T: BuildTarget,
 {
@@ -39,10 +40,10 @@ where
         self
     }
 
-    pub fn build(self) -> Params<T, F> {
+    pub fn build(self) -> Params<T> {
         Params {
             target: self.target.expect("target is required"),
-            _format: PhantomData::<F>,
+            output_format: self.format,
         }
     }
 }
