@@ -6,7 +6,7 @@ pub trait ShouldRun: CanDefine {
         <Self as CanDefine>::Err: From<crate::Error>,
     {
         let runner = self.prepare(params)?;
-        let _status = runner.spawn()?;
+        runner.spawn()?;
         Ok(())
     }
 

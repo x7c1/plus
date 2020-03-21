@@ -10,7 +10,7 @@ pub trait MayRun: CanDefine {
             return Ok(());
         }
         let runner = self.prepare(params)?;
-        let _status = runner.spawn()?;
+        runner.spawn()?;
         Ok(())
     }
 
