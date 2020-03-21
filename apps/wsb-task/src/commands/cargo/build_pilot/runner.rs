@@ -6,13 +6,13 @@ use crate::TaskResult;
 use shellwork::core::command;
 use shellwork::core::command::{program, Runner, Unprepared};
 
-fn base_runner<T>(params: &build_pilot::Params<T>) -> Runner<Unprepared>
+fn define<T>(params: &build_pilot::Params<T>) -> Runner<Unprepared>
 where
     T: BuildTarget,
 {
     // todo: move opt-level to params
     // todo: enable to add mode (--release)
-    let base = command::program("cargo")
+    let default = command::program("cargo")
         .arg("test")
         .args(&["--target", &params.target.as_triple()])
         .args(&["--package", "wsb-pilot"])
@@ -22,24 +22,26 @@ where
     // call via OutputKind::Default in advance to see compilation errors,
     // since OutputKind::FileName hides them by the --message-format option.
     match params.output_kind {
-        OutputKind::Default => base,
-        OutputKind::FileName => {
-            let jq = program("jq").args(&["-r", "select(.profile.test == true) | .filenames[]"]);
-            let grep = program("grep").arg("wsb_pilot_tests");
-            let tr = program("tr").args(&["-d", "\n"]);
-            base.args(&["--message-format", "json"])
-                .pipe(jq)
-                .pipe(grep)
-                .pipe(tr)
-        }
+        OutputKind::Default => default,
+        OutputKind::FileName => pipe_to_get_file_name(default),
     }
+}
+
+fn pipe_to_get_file_name(base: Runner<Unprepared>) -> Runner<Unprepared> {
+    let jq = program("jq").args(&["-r", "select(.profile.test == true) | .filenames[]"]);
+    let grep = program("grep").arg("wsb_pilot_tests");
+    let tr = program("tr").args(&["-d", "\n"]);
+    base.args(&["--message-format", "json"])
+        .pipe(jq)
+        .pipe(grep)
+        .pipe(tr)
 }
 
 mod linux_x86 {
     use super::*;
     impl Definable for build_pilot::Params<LinuxX86> {
         fn define(&self) -> TaskResult<Runner<Unprepared>> {
-            Ok(base_runner(self))
+            Ok(define(self))
         }
     }
     impl should::Run for build_pilot::Params<LinuxX86> {}
@@ -49,7 +51,7 @@ mod linux_arm_v7 {
     use super::*;
     impl Definable for build_pilot::Params<LinuxArmV7> {
         fn define(&self) -> TaskResult<Runner<Unprepared>> {
-            self.with_cc(base_runner)
+            self.with_cc(define)
         }
     }
     impl should::Run for build_pilot::Params<LinuxArmV7> {}
@@ -59,7 +61,7 @@ mod mac_x86 {
     use super::*;
     impl Definable for build_pilot::Params<MacX86> {
         fn define(&self) -> TaskResult<Runner<Unprepared>> {
-            self.with_cc(base_runner)
+            self.with_cc(define)
         }
     }
     impl mac::RunMaybe for build_pilot::Params<MacX86> {}
