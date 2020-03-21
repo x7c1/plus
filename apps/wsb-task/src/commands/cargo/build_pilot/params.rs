@@ -2,19 +2,19 @@ use crate::core::targets::{BuildTarget, RequireCC};
 
 pub struct Params<T: BuildTarget> {
     pub target: T,
-    output_format: OutputFormat,
+    output_kind: OutputKind,
 }
 
-pub enum OutputFormat {
+pub enum OutputKind {
     Default,
     FileName,
 }
 
 impl<T: BuildTarget> Params<T> {
-    pub fn builder(_format: OutputFormat) -> ParamsBuilder<T> {
+    pub fn builder(kind: OutputKind) -> ParamsBuilder<T> {
         ParamsBuilder {
             target: None,
-            format: OutputFormat::Default,
+            output_kind: kind,
         }
     }
 }
@@ -28,7 +28,7 @@ where
 
 pub struct ParamsBuilder<T: BuildTarget> {
     target: Option<T>,
-    format: OutputFormat,
+    output_kind: OutputKind,
 }
 
 impl<T> ParamsBuilder<T>
@@ -43,7 +43,7 @@ where
     pub fn build(self) -> Params<T> {
         Params {
             target: self.target.expect("target is required"),
-            output_format: self.format,
+            output_kind: self.output_kind,
         }
     }
 }

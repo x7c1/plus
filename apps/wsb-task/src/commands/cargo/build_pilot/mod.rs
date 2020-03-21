@@ -1,4 +1,4 @@
 mod runner;
 
 mod params;
-pub use params::{OutputFormat, Params};
+pub use params::{OutputKind, Params};

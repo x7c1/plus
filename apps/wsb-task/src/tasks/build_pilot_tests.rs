@@ -1,4 +1,4 @@
-use crate::commands::build_pilot::OutputFormat;
+use crate::commands::build_pilot::OutputKind;
 use crate::commands::{build_pilot, Action};
 use crate::core::targets::BuildTarget;
 use crate::{TaskOutput, TaskResult};
@@ -35,24 +35,23 @@ impl ClapTask<TaskResult<TaskOutput>> for Task {
     }
 }
 
-fn params_base<T>(target: T, _matches: &ArgMatches, format: OutputFormat) -> build_pilot::Params<T>
+fn new_params<T>(target: T, _matches: &ArgMatches, format: OutputKind) -> build_pilot::Params<T>
 where
     T: BuildTarget,
 {
     build_pilot::Params::builder(format).target(target).build()
 }
 
-fn to_params<T>(target: T, _matches: &ArgMatches) -> build_pilot::Params<T>
+fn to_params<T>(target: T, matches: &ArgMatches) -> build_pilot::Params<T>
 where
     T: BuildTarget,
 {
-    params_base(target, _matches, OutputFormat::Default)
+    new_params(target, matches, OutputKind::Default)
 }
 
-fn to_params_for_file_name<T>(target: T, _matches: &ArgMatches) -> build_pilot::Params<T>
+fn to_params_for_file_name<T>(target: T, matches: &ArgMatches) -> build_pilot::Params<T>
 where
     T: BuildTarget,
 {
-    //todo: add parameters
-    params_base(target, _matches, OutputFormat::FileName)
+    new_params(target, matches, OutputKind::FileName)
 }

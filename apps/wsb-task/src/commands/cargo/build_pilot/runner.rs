@@ -22,7 +22,6 @@ where
 
 mod linux_x86 {
     use super::*;
-
     impl Definable for build_pilot::Params<LinuxX86> {
         fn define(&self) -> TaskResult<Runner<Unprepared>> {
             Ok(base_runner(self))
@@ -33,7 +32,6 @@ mod linux_x86 {
 
 mod linux_arm_v7 {
     use super::*;
-
     impl Definable for build_pilot::Params<LinuxArmV7> {
         fn define(&self) -> TaskResult<Runner<Unprepared>> {
             self.with_cc(base_runner)
@@ -44,7 +42,6 @@ mod linux_arm_v7 {
 
 mod mac_x86 {
     use super::*;
-
     impl Definable for build_pilot::Params<MacX86> {
         fn define(&self) -> TaskResult<Runner<Unprepared>> {
             self.with_cc(base_runner)
