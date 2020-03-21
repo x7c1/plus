@@ -19,6 +19,8 @@ where
         .arg("--no-run")
         .env("RUSTFLAGS", "-C opt-level=0");
 
+    // call via OutputKind::Default in advance to see compilation errors,
+    // since OutputKind::FileName hides them by the --message-format option.
     match params.output_kind {
         OutputKind::Default => base,
         OutputKind::FileName => {
