@@ -93,18 +93,18 @@ pub struct Prepared;
 impl Runner<Prepared> {
     pub fn spawn(&self) -> crate::Result<()> {
         let mut child = self.spawn_to(Stdio::inherit())?;
-        self.validate_status(&child.wait()?)?;
+        self.validate_status(child.wait()?)?;
         Ok(())
     }
 
     pub fn capture(&self) -> crate::Result<RunnerOutput> {
         let child = self.spawn_to(Stdio::piped())?;
         let output = child.wait_with_output()?;
-        self.validate_status(&output.status)?;
+        self.validate_status(output.status)?;
         Ok(RunnerOutput::new(output))
     }
 
-    fn validate_status(&self, status: &ExitStatus) -> crate::Result<()> {
+    fn validate_status(&self, status: ExitStatus) -> crate::Result<()> {
         if status.success() {
             Ok(())
         } else {
