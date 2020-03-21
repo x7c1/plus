@@ -1,6 +1,7 @@
 use std::borrow::Cow;
 use std::process::Output;
 
+#[derive(Debug)]
 pub struct RunnerOutput {
     output: Output,
 }

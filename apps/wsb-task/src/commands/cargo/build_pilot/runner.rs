@@ -1,9 +1,10 @@
-use crate::commands::cargo::build_pilot;
+use crate::commands::build_pilot;
+use crate::commands::build_pilot::OutputKind;
 use crate::commands::support::{mac, should, CanInsertCC, Definable};
 use crate::core::targets::{BuildTarget, LinuxArmV7, LinuxX86, MacX86};
 use crate::TaskResult;
 use shellwork::core::command;
-use shellwork::core::command::{Runner, Unprepared};
+use shellwork::core::command::{program, Runner, Unprepared};
 
 fn base_runner<T>(params: &build_pilot::Params<T>) -> Runner<Unprepared>
 where
@@ -11,13 +12,25 @@ where
 {
     // todo: move opt-level to params
     // todo: enable to add mode (--release)
-    command::program("cargo")
+    let base = command::program("cargo")
         .arg("test")
-        .arg("--verbose")
         .args(&["--target", &params.target.as_triple()])
         .args(&["--package", "wsb-pilot"])
         .arg("--no-run")
-        .env("RUSTFLAGS", "-C opt-level=0")
+        .env("RUSTFLAGS", "-C opt-level=0");
+
+    match params.output_kind {
+        OutputKind::Default => base,
+        OutputKind::FileName => {
+            let jq = program("jq").args(&["-r", "select(.profile.test == true) | .filenames[]"]);
+            let grep = program("grep").arg("wsb_pilot_tests");
+            let tr = program("tr").args(&["-d", "\n"]);
+            base.args(&["--message-format", "json"])
+                .pipe(jq)
+                .pipe(grep)
+                .pipe(tr)
+        }
+    }
 }
 
 mod linux_x86 {

@@ -29,6 +29,7 @@ impl ClapTask<TaskResult<TaskOutput>> for Task {
 
             let (action, params) = Action::from(target, matches, to_params_for_file_name);
             let _output = action.capture(&params);
+            println!("output: {:?}", _output);
             _output
         });
         Ok(TaskOutput::empty())

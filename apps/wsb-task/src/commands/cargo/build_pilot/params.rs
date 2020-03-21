@@ -2,9 +2,10 @@ use crate::core::targets::{BuildTarget, RequireCC};
 
 pub struct Params<T: BuildTarget> {
     pub target: T,
-    output_kind: OutputKind,
+    pub output_kind: OutputKind,
 }
 
+#[derive(PartialEq)]
 pub enum OutputKind {
     Default,
     FileName,
