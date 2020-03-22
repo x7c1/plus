@@ -1,20 +1,34 @@
 use crate::commands::Action;
 use crate::core::targets::{LinuxArmV7, LinuxX86};
 use shellwork::core::command;
-use shellwork::core::command::CanDefine;
+use shellwork::core::command::{should, CanDefine, RunnerOutput};
 
 pub trait Run {}
 
-impl<A> command::ShouldRun for Action<LinuxX86, A>
+impl<A> command::Runnable for Action<LinuxX86, A>
 where
     A: Run,
-    Action<LinuxX86, A>: CanDefine,
+    Self: CanDefine,
+    <Self as CanDefine>::Err: From<shellwork::Error>,
 {
+    fn spawn(&self, params: &Self::Params) -> Result<(), Self::Err> {
+        should::spawn(self, params)
+    }
+    fn capture(&self, params: &Self::Params) -> Result<Option<RunnerOutput>, Self::Err> {
+        should::capture(self, params)
+    }
 }
 
-impl<A> command::ShouldRun for Action<LinuxArmV7, A>
+impl<A> command::Runnable for Action<LinuxArmV7, A>
 where
     A: Run,
-    Action<LinuxArmV7, A>: CanDefine,
+    Self: CanDefine,
+    <Self as CanDefine>::Err: From<shellwork::Error>,
 {
+    fn spawn(&self, params: &Self::Params) -> Result<(), Self::Err> {
+        should::spawn(self, params)
+    }
+    fn capture(&self, params: &Self::Params) -> Result<Option<RunnerOutput>, Self::Err> {
+        should::capture(self, params)
+    }
 }

@@ -3,7 +3,7 @@ use crate::core::targets::BuildTarget;
 use crate::{TaskOutput, TaskResult};
 use clap::{App, ArgMatches, SubCommand};
 use clap_task::ClapTask;
-use shellwork::core::command::{MayRun, ShouldRun};
+use shellwork::core::command::Runnable;
 
 pub fn define() -> Box<dyn ClapTask<TaskResult<TaskOutput>>> {
     Box::new(Task)
