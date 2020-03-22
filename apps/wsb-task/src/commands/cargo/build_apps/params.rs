@@ -1,5 +1,6 @@
 use crate::core::targets::{BuildTarget, RequireCC};
 
+#[derive(Debug)]
 pub struct Params<T: BuildTarget> {
     pub target: T,
 }

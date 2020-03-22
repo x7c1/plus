@@ -1,1 +1,1 @@
-mod copy_as_artifact;
+pub mod copy_as_artifact;

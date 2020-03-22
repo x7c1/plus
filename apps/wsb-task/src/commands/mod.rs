@@ -1,4 +1,5 @@
-pub mod artifacts;
+mod artifacts;
+pub use artifacts::copy_as_artifact;
 
 mod cargo;
 pub use cargo::build_apps;
@@ -18,5 +19,9 @@ impl<T, P> Action<T, P> {
     {
         let params = to_params(target, matches);
         (Action(PhantomData), params)
+    }
+
+    pub fn create(_target: &T, _params: &P) -> Action<T, P> {
+        Action(PhantomData)
     }
 }

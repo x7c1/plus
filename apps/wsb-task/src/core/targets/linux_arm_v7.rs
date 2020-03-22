@@ -1,6 +1,6 @@
 use crate::core::targets::BuildTarget;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct LinuxArmV7;
 
 impl BuildTarget for LinuxArmV7 {

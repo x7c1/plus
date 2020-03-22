@@ -1,10 +1,11 @@
-use crate::core::targets::{BuildTarget, RequireCC};
+use crate::core::targets::BuildTarget;
 use std::path::{Path, PathBuf};
 
+#[derive(Debug)]
 pub struct Params<T: BuildTarget> {
     pub target: T,
-    src: PathBuf,
-    dst: PathBuf,
+    pub src: PathBuf,
+    pub dst: PathBuf,
 }
 
 impl<T: BuildTarget> Params<T> {
@@ -15,10 +16,6 @@ impl<T: BuildTarget> Params<T> {
             dst: None,
         }
     }
-}
-
-impl<T: RequireCC + BuildTarget> RequireCC for Params<T> {
-    const CC: &'static str = T::CC;
 }
 
 pub struct ParamsBuilder<T: BuildTarget> {

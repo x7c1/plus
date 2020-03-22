@@ -10,7 +10,9 @@ pub use mac_x86::MacX86;
 mod require_cc;
 pub use require_cc::RequireCC;
 
-pub trait BuildTarget {
+use std::fmt::Debug;
+
+pub trait BuildTarget: Debug {
     fn as_triple(&self) -> &str;
 
     fn as_abbr(&self) -> &str;
