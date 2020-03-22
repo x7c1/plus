@@ -18,8 +18,6 @@ where
 
 mod linux_x86 {
     use super::*;
-    use crate::commands::support::should;
-
     impl Definable for copy_as_artifact::Params<LinuxX86> {
         fn define(&self) -> TaskResult<Runner<Unprepared>> {
             Ok(define(self))
@@ -30,7 +28,6 @@ mod linux_x86 {
 
 mod linux_arm_v7 {
     use super::*;
-
     impl Definable for copy_as_artifact::Params<LinuxArmV7> {
         fn define(&self) -> TaskResult<Runner<Unprepared>> {
             Ok(define(self))
@@ -41,7 +38,6 @@ mod linux_arm_v7 {
 
 mod mac_x86 {
     use super::*;
-
     impl Definable for copy_as_artifact::Params<MacX86> {
         fn define(&self) -> TaskResult<Runner<Unprepared>> {
             Ok(define(self))
