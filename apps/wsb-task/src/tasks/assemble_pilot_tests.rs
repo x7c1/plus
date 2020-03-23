@@ -16,7 +16,7 @@ struct Task;
 #[async_trait]
 impl ClapTask<TaskResult<TaskOutput>> for Task {
     fn name(&self) -> &str {
-        "build-pilot-tests"
+        "assemble-pilot-tests"
     }
 
     fn design(&self) -> App {
