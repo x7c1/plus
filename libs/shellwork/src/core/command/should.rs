@@ -1,7 +1,8 @@
 use crate::core::command::{CanDefine, RunnerOutput};
 
-pub fn spawn<A: CanDefine>(this: &A, params: &A::Params) -> Result<(), A::Err>
+pub fn spawn<A>(this: &A, params: &A::Params) -> Result<(), A::Err>
 where
+    A: CanDefine,
     A::Err: From<crate::Error>,
 {
     let runner = this.prepare(params)?;
@@ -9,8 +10,9 @@ where
     Ok(())
 }
 
-pub fn capture<A: CanDefine>(this: &A, params: &A::Params) -> Result<Option<RunnerOutput>, A::Err>
+pub fn capture<A>(this: &A, params: &A::Params) -> Result<Option<RunnerOutput>, A::Err>
 where
+    A: CanDefine,
     A::Err: From<crate::Error>,
 {
     let runner = this.prepare(params)?;

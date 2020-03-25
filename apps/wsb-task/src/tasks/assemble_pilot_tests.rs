@@ -25,22 +25,15 @@ impl ClapTask<TaskResult<TaskOutput>> for Task {
     }
 
     async fn run<'a>(&'a self, matches: &'a ArgMatches<'a>) -> TaskResult<TaskOutput> {
-        // let s = Hoge0::build(LinuxX86, matches);
-
         try_foreach_targets!(|target| {
-            // Hoge0::build(target.clone(), matches);
-
             // build and show compile error if exists.
-            let to_params = to_params_for(OutputKind::Default);
-            let (action, params) = Action::from(target.clone(), matches, to_params);
+            let params = params_to_build_pilot(target.clone(), matches, OutputKind::Default);
+            let action = Action::create(&target, &params);
             action.spawn(&params)?;
 
-            // Foooooo::build(target.clone(), matches)?;
-            // let output = Foooooo::build2(target.clone(), matches)?;
-
             // build and get filename of pilot-test.
-            let to_params = to_params_for(OutputKind::FileName);
-            let (action, params) = Action::from(target.clone(), matches, to_params);
+            let params = params_to_build_pilot(target.clone(), matches, OutputKind::FileName);
+            let action = Action::create(&target, &params);
             let output = action.capture(&params)?;
 
             // copy pilot-test file to artifact directory.
@@ -94,6 +87,17 @@ where
 }
 
 fn create_params<T>(target: T, _matches: &ArgMatches, kind: OutputKind) -> build_pilot::Params<T>
+where
+    T: BuildTarget,
+{
+    build_pilot::Params::builder(kind).target(target).build()
+}
+
+fn params_to_build_pilot<T>(
+    target: T,
+    _matches: &ArgMatches,
+    kind: OutputKind,
+) -> build_pilot::Params<T>
 where
     T: BuildTarget,
 {
