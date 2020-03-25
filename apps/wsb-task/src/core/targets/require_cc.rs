@@ -1,5 +1,6 @@
 use crate::core::targets::{LinuxArmV7, MacX86};
 
+// todo: deprecate
 pub trait RequireCC {
     const CC: &'static str;
 }

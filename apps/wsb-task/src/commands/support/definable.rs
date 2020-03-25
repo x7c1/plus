@@ -1,4 +1,4 @@
-use crate::commands::Action;
+use crate::commands::{Action, Action2};
 use crate::TaskResult;
 use shellwork::core::command;
 use shellwork::core::command::{Runner, Unprepared};
@@ -16,6 +16,20 @@ where
 
     fn define(&self, params: &Self::Params) -> Result<Runner<Unprepared>, Self::Err> {
         let runner = P::define(params)?;
+        Ok(runner)
+    }
+}
+
+pub trait Definable2 {
+    fn define(&self) -> TaskResult<Runner<Unprepared>>;
+}
+
+impl<A: Definable2> command::CanDefine for Action2<A> {
+    type Params = A;
+    type Err = crate::Error;
+
+    fn define(&self, params: &Self::Params) -> Result<Runner<Unprepared>, Self::Err> {
+        let runner = A::define(params)?;
         Ok(runner)
     }
 }

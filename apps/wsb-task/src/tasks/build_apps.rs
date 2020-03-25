@@ -1,9 +1,8 @@
-use crate::commands::{build_apps, Action};
-use crate::core::targets::BuildTarget;
+use crate::commands::{build_apps, Action2};
+use crate::core::targets::TargetArch;
 use crate::{TaskOutput, TaskResult};
 use clap::{App, ArgMatches, SubCommand};
 use clap_task::ClapTask;
-use shellwork::core::command::Runnable;
 
 pub fn define() -> Box<dyn ClapTask<TaskResult<TaskOutput>>> {
     Box::new(Task)
@@ -22,17 +21,22 @@ impl ClapTask<TaskResult<TaskOutput>> for Task {
     }
 
     async fn run<'a>(&'a self, matches: &'a ArgMatches<'a>) -> TaskResult<TaskOutput> {
-        try_foreach_targets!(|target| {
-            let (action, params) = Action::from(target, matches, to_params);
-            action.spawn(&params)
-        });
+        TargetArch::all().iter().try_for_each(|target| {
+            let params = to_params(target, matches)?;
+            build_apps(&params)
+        })?;
         Ok(TaskOutput::empty())
     }
 }
 
-fn to_params<T>(target: T, _matches: &ArgMatches) -> build_apps::Params<T>
-where
-    T: BuildTarget,
-{
-    build_apps::Params::builder().target(target).build()
+fn to_params<'a>(
+    target: &'a TargetArch,
+    _matches: &ArgMatches,
+) -> TaskResult<build_apps::Params<'a>> {
+    let params = build_apps::Params::builder().target(target).build();
+    Ok(params)
+}
+
+fn build_apps(params: &build_apps::Params) -> TaskResult<()> {
+    Action2::new().spawn(params)
 }
