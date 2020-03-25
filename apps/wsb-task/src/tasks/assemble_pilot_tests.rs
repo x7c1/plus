@@ -1,11 +1,10 @@
-use crate::commands::build_pilot::{OutputKind, Params};
-use crate::commands::support::Definable;
+use crate::commands::build_pilot::OutputKind;
 use crate::commands::{build_pilot, copy_as_artifact, Action};
-use crate::core::targets::{BuildTarget, LinuxArmV7, LinuxX86, MacX86};
+use crate::core::targets::BuildTarget;
 use crate::{TaskOutput, TaskResult};
 use clap::{App, ArgMatches, SubCommand};
 use clap_task::ClapTask;
-use shellwork::core::command::{CanDefine, Runnable, RunnerOutput};
+use shellwork::core::command::{Runnable, RunnerOutput};
 use std::path::Path;
 
 pub fn define() -> Box<dyn ClapTask<TaskResult<TaskOutput>>> {
@@ -45,52 +44,6 @@ impl ClapTask<TaskResult<TaskOutput>> for Task {
         });
         Ok(TaskOutput::empty())
     }
-}
-
-impl Foooooo for LinuxX86 {}
-impl Foooooo for LinuxArmV7 {}
-impl Foooooo for MacX86 {}
-
-trait Foooooo
-where
-    Self: BuildTarget,
-    Self: Clone,
-    Action<Self, build_pilot::Params<Self>>: Runnable,
-    <Action<Self, build_pilot::Params<Self>> as CanDefine>::Err: From<shellwork::Error>,
-    <Action<Self, build_pilot::Params<Self>> as CanDefine>::Params: From<build_pilot::Params<Self>>,
-    crate::Error: From<<Action<Self, build_pilot::Params<Self>> as CanDefine>::Err>,
-{
-    /// build and show compile error if exists.
-    fn build(target: Self, matches: &ArgMatches) -> TaskResult<()> {
-        let params = create_params(target.clone(), matches, OutputKind::Default);
-        let action = Action::create(&target, &params);
-        action.spawn(&params.into())?;
-        Ok(())
-    }
-
-    fn build2(target: Self, matches: &ArgMatches) -> TaskResult<Option<RunnerOutput>> {
-        // build and get filename of pilot-test.
-        // let to_params = to_params_for(OutputKind::FileName);
-        // let (action, params) = Action::from(target.clone(), matches, to_params);
-        let params = create_params(target.clone(), matches, OutputKind::FileName);
-        let action = Action::create(&target, &params);
-        let output = action.capture(&params.into())?;
-        Ok(output)
-    }
-}
-
-fn to_params_for<T>(kind: OutputKind) -> impl FnOnce(T, &ArgMatches) -> build_pilot::Params<T>
-where
-    T: BuildTarget,
-{
-    |target, matches| create_params(target, matches, kind)
-}
-
-fn create_params<T>(target: T, _matches: &ArgMatches, kind: OutputKind) -> build_pilot::Params<T>
-where
-    T: BuildTarget,
-{
-    build_pilot::Params::builder(kind).target(target).build()
 }
 
 fn params_to_build_pilot<T>(
