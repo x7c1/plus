@@ -7,11 +7,11 @@ pub use cargo::build_pilot;
 
 pub mod support;
 
-use crate::commands::support::Definable2;
+use crate::commands::support::{mac, Definable2};
 use crate::core::targets::{AsTargetArch, TargetArch};
 use crate::TaskResult;
 use clap::ArgMatches;
-use shellwork::core::command::should;
+use shellwork::core::command::{may_run, should};
 use std::marker::PhantomData;
 
 pub struct Action<TARGET, PARAMS>(PhantomData<(TARGET, PARAMS)>);
@@ -49,10 +49,10 @@ where
 
     pub fn spawn(&self, params: &P) -> TaskResult<()> {
         match params.as_target_arch() {
-            TargetArch::LinuxX86 => should::spawn(self, params),
-            TargetArch::LinuxArmV7 => should::spawn(self, params),
-            // todo: stop when unsupported
-            TargetArch::MacX86 => should::spawn(self, params),
-        }
+            TargetArch::LinuxX86 => should::spawn(self, params)?,
+            TargetArch::LinuxArmV7 => should::spawn(self, params)?,
+            TargetArch::MacX86 => may_run::spawn(&mac::RunMaybe2::new(self), params)?,
+        };
+        Ok(())
     }
 }

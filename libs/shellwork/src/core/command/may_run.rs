@@ -1,5 +1,6 @@
 use crate::core::command::{CanDefine, Prepared, Runner, RunnerOutput};
 
+// todo: move to impl MayRun
 pub fn spawn<A: MayRun>(this: &A, params: &A::Params) -> Result<(), A::Err>
 where
     A::Err: From<crate::Error>,
