@@ -1,8 +1,8 @@
-use crate::core::targets::{AsTargetArch, TargetArch};
+use crate::core::targets::{AsBuildTarget, BuildTarget};
 
 #[derive(Debug)]
 pub struct Params<'a> {
-    pub target: &'a TargetArch,
+    pub target: &'a BuildTarget,
     pub output_kind: OutputKind,
 }
 
@@ -21,19 +21,19 @@ impl<'a> Params<'a> {
     }
 }
 
-impl AsTargetArch for Params<'_> {
-    fn as_target_arch(&self) -> &TargetArch {
+impl AsBuildTarget for Params<'_> {
+    fn as_build_target(&self) -> &BuildTarget {
         self.target
     }
 }
 
 pub struct ParamsBuilder<'a> {
-    target: Option<&'a TargetArch>,
+    target: Option<&'a BuildTarget>,
     output_kind: OutputKind,
 }
 
 impl<'a> ParamsBuilder<'a> {
-    pub fn target(mut self, target: &'a TargetArch) -> Self {
+    pub fn target(mut self, target: &'a BuildTarget) -> Self {
         self.target = Some(target);
         self
     }

@@ -7,60 +7,43 @@ pub use cargo::build_pilot;
 
 pub mod support;
 
-use crate::commands::support::{mac, Definable2};
-use crate::core::targets::{AsTargetArch, TargetArch};
+use crate::commands::support::{mac, Definable};
+use crate::core::targets::{AsBuildTarget, BuildTarget};
 use crate::TaskResult;
-use clap::ArgMatches;
 use shellwork::core::command::{may_run, should, RunnerOutput};
 use std::marker::PhantomData;
 
-pub struct Action<TARGET, PARAMS>(PhantomData<(TARGET, PARAMS)>);
+pub struct Action<PARAMS>(PhantomData<PARAMS>);
 
-impl<T, P> Action<T, P> {
-    pub fn from<F>(target: T, matches: &ArgMatches, to_params: F) -> (Action<T, P>, P)
-    where
-        F: FnOnce(T, &ArgMatches) -> P,
-    {
-        let params = to_params(target, matches);
-        (Action(PhantomData), params)
-    }
-
-    pub fn create(_target: &T, _params: &P) -> Action<T, P> {
+impl<P> Default for Action<P> {
+    fn default() -> Self {
         Action(PhantomData)
     }
 }
 
-pub struct Action2<PARAMS>(PhantomData<PARAMS>);
-
-impl<P> Default for Action2<P> {
-    fn default() -> Self {
-        Action2(PhantomData)
-    }
-}
-
-impl<P> Action2<P>
+impl<P> Action<P>
 where
-    P: Definable2,
-    P: AsTargetArch,
+    P: Definable,
+    P: AsBuildTarget,
 {
-    pub fn new() -> Action2<P> {
-        Action2(PhantomData)
+    pub fn new() -> Action<P> {
+        Action(PhantomData)
     }
 
     pub fn spawn(&self, params: &P) -> TaskResult<()> {
-        match params.as_target_arch() {
-            TargetArch::LinuxX86 => should::spawn(self, params)?,
-            TargetArch::LinuxArmV7 => should::spawn(self, params)?,
-            TargetArch::MacX86 => may_run::spawn(&mac::RunMaybe2::new(self), params)?,
+        match params.as_build_target() {
+            BuildTarget::LinuxX86 => should::spawn(self, params)?,
+            BuildTarget::LinuxArmV7 => should::spawn(self, params)?,
+            BuildTarget::MacX86 => may_run::spawn(&mac::RunMaybe::new(self), params)?,
         };
         Ok(())
     }
 
     pub fn capture(&self, params: &P) -> TaskResult<Option<RunnerOutput>> {
-        let maybe = match params.as_target_arch() {
-            TargetArch::LinuxX86 => should::capture(self, params)?,
-            TargetArch::LinuxArmV7 => should::capture(self, params)?,
-            TargetArch::MacX86 => may_run::capture(&mac::RunMaybe2::new(self), params)?,
+        let maybe = match params.as_build_target() {
+            BuildTarget::LinuxX86 => should::capture(self, params)?,
+            BuildTarget::LinuxArmV7 => should::capture(self, params)?,
+            BuildTarget::MacX86 => may_run::capture(&mac::RunMaybe::new(self), params)?,
         };
         Ok(maybe)
     }

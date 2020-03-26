@@ -2,12 +2,12 @@ mod params;
 pub use params::Params;
 
 use crate::commands::build_apps;
-use crate::commands::support::{Definable2, InsertCC};
+use crate::commands::support::{Definable, InsertCC};
 use crate::TaskResult;
 use shellwork::core::command;
 use shellwork::core::command::{Runner, Unprepared};
 
-impl Definable2 for build_apps::Params<'_> {
+impl Definable for build_apps::Params<'_> {
     fn define(&self) -> TaskResult<Runner<Unprepared>> {
         // todo: move opt-level to params
         let runner = command::program("cargo")

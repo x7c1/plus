@@ -1,6 +1,6 @@
 use crate::commands::build_pilot::OutputKind;
-use crate::commands::{build_pilot, copy_as_artifact, Action2};
-use crate::core::targets::TargetArch;
+use crate::commands::{build_pilot, copy_as_artifact, Action};
+use crate::core::targets::BuildTarget;
 use crate::{TaskOutput, TaskResult};
 use clap::{App, ArgMatches, SubCommand};
 use clap_task::ClapTask;
@@ -24,7 +24,7 @@ impl ClapTask<TaskResult<TaskOutput>> for Task {
     }
 
     async fn run<'a>(&'a self, matches: &'a ArgMatches<'a>) -> TaskResult<TaskOutput> {
-        TargetArch::all().iter().try_for_each(|target| {
+        BuildTarget::all().iter().try_for_each(|target| {
             build_pilot(target, matches)?;
             let output = get_pilot_file_name(target, matches)?;
             copy_pilot_file(target, matches, output)?;
@@ -34,20 +34,20 @@ impl ClapTask<TaskResult<TaskOutput>> for Task {
     }
 }
 
-fn build_pilot(target: &TargetArch, _matches: &ArgMatches) -> TaskResult<()> {
+fn build_pilot(target: &BuildTarget, _matches: &ArgMatches) -> TaskResult<()> {
     let params = params_to_build_pilot(target, _matches, OutputKind::Default);
-    Action2::new().spawn(&params)
+    Action::new().spawn(&params)
 }
 
-fn get_pilot_file_name(target: &TargetArch, _matches: &ArgMatches) -> TaskResult<RunnerOutput> {
+fn get_pilot_file_name(target: &BuildTarget, _matches: &ArgMatches) -> TaskResult<RunnerOutput> {
     let params = params_to_build_pilot(target, _matches, OutputKind::FileName);
-    let maybe = Action2::new().capture(&params)?;
+    let maybe = Action::new().capture(&params)?;
     // todo: avoid unwrap
     Ok(maybe.unwrap())
 }
 
 fn params_to_build_pilot<'a>(
-    target: &'a TargetArch,
+    target: &'a BuildTarget,
     _matches: &ArgMatches,
     kind: OutputKind,
 ) -> build_pilot::Params<'a> {
@@ -55,15 +55,15 @@ fn params_to_build_pilot<'a>(
 }
 
 fn copy_pilot_file(
-    target: &TargetArch,
+    target: &BuildTarget,
     _matches: &ArgMatches,
     output: RunnerOutput,
 ) -> TaskResult<()> {
     let params = params_to_copy_pilot(target, output);
-    Action2::new().spawn(&params)
+    Action::new().spawn(&params)
 }
 
-fn params_to_copy_pilot(target: &TargetArch, output: RunnerOutput) -> copy_as_artifact::Params {
+fn params_to_copy_pilot(target: &BuildTarget, output: RunnerOutput) -> copy_as_artifact::Params {
     let src = output.stdout();
     copy_as_artifact::Params::builder(target)
         .src(Path::new(src.as_ref()))
