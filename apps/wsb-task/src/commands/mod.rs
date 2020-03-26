@@ -10,7 +10,7 @@ pub mod support;
 use crate::commands::support::{mac, Definable};
 use crate::core::targets::{AsBuildTarget, BuildTarget};
 use crate::TaskResult;
-use shellwork::core::command::{may_run, should, RunnerOutput};
+use shellwork::core::command::{should, MayRun, RunnerOutput};
 use std::marker::PhantomData;
 
 pub struct Action<PARAMS>(PhantomData<PARAMS>);
@@ -34,7 +34,7 @@ where
         match params.as_build_target() {
             BuildTarget::LinuxX86 => should::spawn(self, params)?,
             BuildTarget::LinuxArmV7 => should::spawn(self, params)?,
-            BuildTarget::MacX86 => may_run::spawn(&mac::RunMaybe::new(self), params)?,
+            BuildTarget::MacX86 => mac::RunMaybe::new(self).spawn(params)?,
         };
         Ok(())
     }
@@ -43,7 +43,7 @@ where
         let maybe = match params.as_build_target() {
             BuildTarget::LinuxX86 => should::capture(self, params)?,
             BuildTarget::LinuxArmV7 => should::capture(self, params)?,
-            BuildTarget::MacX86 => may_run::capture(&mac::RunMaybe::new(self), params)?,
+            BuildTarget::MacX86 => mac::RunMaybe::new(self).capture(params)?,
         };
         Ok(maybe)
     }

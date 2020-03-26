@@ -1,45 +1,41 @@
 use crate::core::command::{CanDefine, Prepared, Runner, RunnerOutput};
 
-// todo: move to impl MayRun
-pub fn spawn<A: MayRun>(this: &A, params: &A::Params) -> Result<(), A::Err>
-where
-    A::Err: From<crate::Error>,
-{
-    if let Some(runner) = prepare_runner(this, params)? {
-        runner.spawn()?;
-    }
-    Ok(())
-}
-
-pub fn capture<A: MayRun>(this: &A, params: &A::Params) -> Result<Option<RunnerOutput>, A::Err>
-where
-    A::Err: From<crate::Error>,
-{
-    let maybe = if let Some(runner) = prepare_runner(this, params)? {
-        Some(runner.capture()?)
-    } else {
-        None
-    };
-    Ok(maybe)
-}
-
-fn prepare_runner<A: MayRun>(
-    this: &A,
-    params: &A::Params,
-) -> Result<Option<Runner<Prepared>>, A::Err>
-where
-    A::Err: From<crate::Error>,
-{
-    let maybe = if let Some(report) = this.unsupported() {
-        eprintln!("unsupported command > {:#?}", report);
-        None
-    } else {
-        Some(this.prepare(params)?)
-    };
-    Ok(maybe)
-}
-
 pub trait MayRun: CanDefine {
+    fn spawn(&self, params: &Self::Params) -> Result<(), Self::Err>
+    where
+        Self::Err: From<crate::Error>,
+    {
+        if let Some(runner) = self.prepare_runner(params)? {
+            runner.spawn()?;
+        }
+        Ok(())
+    }
+
+    fn capture(&self, params: &Self::Params) -> Result<Option<RunnerOutput>, Self::Err>
+    where
+        Self::Err: From<crate::Error>,
+    {
+        let maybe = if let Some(runner) = self.prepare_runner(params)? {
+            Some(runner.capture()?)
+        } else {
+            None
+        };
+        Ok(maybe)
+    }
+
+    fn prepare_runner(&self, params: &Self::Params) -> Result<Option<Runner<Prepared>>, Self::Err>
+    where
+        Self::Err: From<crate::Error>,
+    {
+        let maybe = if let Some(report) = self.unsupported() {
+            eprintln!("unsupported command > {:#?}", report);
+            None
+        } else {
+            Some(self.prepare(params)?)
+        };
+        Ok(maybe)
+    }
+
     fn unsupported(&self) -> Option<UnsupportedReport>;
 }
 

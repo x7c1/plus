@@ -9,5 +9,5 @@ pub use runnable::Runnable;
 
 pub mod should;
 
-pub mod may_run;
+mod may_run;
 pub use may_run::{MayRun, UnsupportedReport};

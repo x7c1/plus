@@ -6,6 +6,7 @@ pub trait InsertCC {
 }
 
 impl InsertCC for Runner<Unprepared> {
+    // todo: remove target arg
     fn insert_cc(self, target: &BuildTarget) -> Self {
         let maybe = match target {
             BuildTarget::LinuxX86 => None,
