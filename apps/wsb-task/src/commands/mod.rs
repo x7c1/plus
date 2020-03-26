@@ -11,7 +11,7 @@ use crate::commands::support::{mac, Definable2};
 use crate::core::targets::{AsTargetArch, TargetArch};
 use crate::TaskResult;
 use clap::ArgMatches;
-use shellwork::core::command::{may_run, should};
+use shellwork::core::command::{may_run, should, RunnerOutput};
 use std::marker::PhantomData;
 
 pub struct Action<TARGET, PARAMS>(PhantomData<(TARGET, PARAMS)>);
@@ -54,5 +54,14 @@ where
             TargetArch::MacX86 => may_run::spawn(&mac::RunMaybe2::new(self), params)?,
         };
         Ok(())
+    }
+
+    pub fn capture(&self, params: &P) -> TaskResult<Option<RunnerOutput>> {
+        let maybe = match params.as_target_arch() {
+            TargetArch::LinuxX86 => should::capture(self, params)?,
+            TargetArch::LinuxArmV7 => should::capture(self, params)?,
+            TargetArch::MacX86 => may_run::capture(&mac::RunMaybe2::new(self), params)?,
+        };
+        Ok(maybe)
     }
 }

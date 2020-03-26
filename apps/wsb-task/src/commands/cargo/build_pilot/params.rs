@@ -1,8 +1,8 @@
-use crate::core::targets::{BuildTarget, RequireCC};
+use crate::core::targets::{AsTargetArch, TargetArch};
 
 #[derive(Debug)]
-pub struct Params<T: BuildTarget> {
-    pub target: T,
+pub struct Params<'a> {
+    pub target: &'a TargetArch,
     pub output_kind: OutputKind,
 }
 
@@ -12,8 +12,8 @@ pub enum OutputKind {
     FileName,
 }
 
-impl<T: BuildTarget> Params<T> {
-    pub fn builder(kind: OutputKind) -> ParamsBuilder<T> {
+impl<'a> Params<'a> {
+    pub fn builder(kind: OutputKind) -> ParamsBuilder<'a> {
         ParamsBuilder {
             target: None,
             output_kind: kind,
@@ -21,28 +21,24 @@ impl<T: BuildTarget> Params<T> {
     }
 }
 
-impl<T> RequireCC for Params<T>
-where
-    T: RequireCC + BuildTarget,
-{
-    const CC: &'static str = T::CC;
+impl AsTargetArch for Params<'_> {
+    fn as_target_arch(&self) -> &TargetArch {
+        self.target
+    }
 }
 
-pub struct ParamsBuilder<T: BuildTarget> {
-    target: Option<T>,
+pub struct ParamsBuilder<'a> {
+    target: Option<&'a TargetArch>,
     output_kind: OutputKind,
 }
 
-impl<T> ParamsBuilder<T>
-where
-    T: BuildTarget,
-{
-    pub fn target(mut self, target: T) -> Self {
+impl<'a> ParamsBuilder<'a> {
+    pub fn target(mut self, target: &'a TargetArch) -> Self {
         self.target = Some(target);
         self
     }
 
-    pub fn build(self) -> Params<T> {
+    pub fn build(self) -> Params<'a> {
         Params {
             target: self.target.expect("target is required"),
             output_kind: self.output_kind,

@@ -1,10 +1,10 @@
 use crate::commands::build_pilot::OutputKind;
-use crate::commands::{build_pilot, copy_as_artifact, Action};
-use crate::core::targets::BuildTarget;
+use crate::commands::{build_pilot, copy_as_artifact, Action, Action2};
+use crate::core::targets::TargetArch;
 use crate::{TaskOutput, TaskResult};
 use clap::{App, ArgMatches, SubCommand};
 use clap_task::ClapTask;
-use shellwork::core::command::{Runnable, RunnerOutput};
+use shellwork::core::command::RunnerOutput;
 use std::path::Path;
 
 pub fn define() -> Box<dyn ClapTask<TaskResult<TaskOutput>>> {
@@ -24,6 +24,14 @@ impl ClapTask<TaskResult<TaskOutput>> for Task {
     }
 
     async fn run<'a>(&'a self, matches: &'a ArgMatches<'a>) -> TaskResult<TaskOutput> {
+        TargetArch::all().iter().try_for_each(|target| {
+            build_pilot(target, matches)?;
+
+            let output = get_pilot_file_name(target, matches)?;
+            TaskResult::Ok(())
+        })?;
+
+        /*
         try_foreach_targets!(|target| {
             // build and show compile error if exists.
             let params = params_to_build_pilot(target.clone(), matches, OutputKind::Default);
@@ -36,28 +44,41 @@ impl ClapTask<TaskResult<TaskOutput>> for Task {
             let output = action.capture(&params)?;
 
             // copy pilot-test file to artifact directory.
+            *//*
             let params = params_to_copy_pilot(target.clone(), output);
             let action = Action::create(&target, &params);
             action.spawn(&params)?;
+            *//*
 
             TaskResult::Ok(())
         });
+        */
         Ok(TaskOutput::empty())
     }
 }
 
-fn params_to_build_pilot<T>(
-    target: T,
+fn build_pilot(target: &TargetArch, _matches: &ArgMatches) -> TaskResult<()> {
+    let params = params_to_build_pilot(target, _matches, OutputKind::Default);
+    Action2::new().spawn(&params)
+}
+
+fn get_pilot_file_name(target: &TargetArch, _matches: &ArgMatches) -> TaskResult<RunnerOutput> {
+    let params = params_to_build_pilot(target, _matches, OutputKind::FileName);
+    let maybe = Action2::new().capture(&params)?;
+    // todo: avoid unwrap
+    Ok(maybe.unwrap())
+}
+
+fn params_to_build_pilot<'a>(
+    target: &'a TargetArch,
     _matches: &ArgMatches,
     kind: OutputKind,
-) -> build_pilot::Params<T>
-where
-    T: BuildTarget,
-{
+) -> build_pilot::Params<'a> {
     build_pilot::Params::builder(kind).target(target).build()
 }
 
-fn params_to_copy_pilot<T>(target: T, output: Option<RunnerOutput>) -> copy_as_artifact::Params<T>
+/*
+fn params_to_copy_pilot(target: &TargetArch, output: Option<RunnerOutput>) -> copy_as_artifact::Params<T>
 where
     T: BuildTarget,
 {
@@ -69,3 +90,4 @@ where
         .dst(Path::new("wsb_pilot_tests"))
         .build()
 }
+*/
