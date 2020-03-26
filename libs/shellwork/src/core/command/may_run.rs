@@ -11,16 +11,16 @@ pub trait MayRun: CanDefine {
         Ok(())
     }
 
-    fn capture(&self, params: &Self::Params) -> Result<Option<RunnerOutput>, Self::Err>
+    fn capture(&self, params: &Self::Params) -> Result<RunnerOutput, Self::Err>
     where
         Self::Err: From<crate::Error>,
     {
-        let maybe = if let Some(runner) = self.prepare_runner(params)? {
-            Some(runner.capture()?)
+        let output = if let Some(runner) = self.prepare_runner(params)? {
+            runner.capture()?
         } else {
-            None
+            RunnerOutput::empty()
         };
-        Ok(maybe)
+        Ok(output)
     }
 
     fn prepare_runner(&self, params: &Self::Params) -> Result<Option<Runner<Prepared>>, Self::Err>

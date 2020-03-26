@@ -10,12 +10,12 @@ where
     Ok(())
 }
 
-pub fn capture<A>(this: &A, params: &A::Params) -> Result<Option<RunnerOutput>, A::Err>
+pub fn capture<A>(this: &A, params: &A::Params) -> Result<RunnerOutput, A::Err>
 where
     A: CanDefine,
     A::Err: From<crate::Error>,
 {
     let runner = this.prepare(params)?;
     let output = runner.capture()?;
-    Ok(Some(output))
+    Ok(output)
 }

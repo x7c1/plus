@@ -39,12 +39,12 @@ where
         Ok(())
     }
 
-    pub fn capture(&self, params: &P) -> TaskResult<Option<RunnerOutput>> {
-        let maybe = match params.as_build_target() {
+    pub fn capture(&self, params: &P) -> TaskResult<RunnerOutput> {
+        let output = match params.as_build_target() {
             BuildTarget::LinuxX86 => should::capture(self, params)?,
             BuildTarget::LinuxArmV7 => should::capture(self, params)?,
             BuildTarget::MacX86 => mac::RunMaybe::new(self).capture(params)?,
         };
-        Ok(maybe)
+        Ok(output)
     }
 }

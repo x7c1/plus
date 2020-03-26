@@ -41,9 +41,8 @@ fn build_pilot(target: &BuildTarget, _matches: &ArgMatches) -> TaskResult<()> {
 
 fn get_pilot_file_name(target: &BuildTarget, _matches: &ArgMatches) -> TaskResult<RunnerOutput> {
     let params = params_to_build_pilot(target, _matches, OutputKind::FileName);
-    let maybe = Action::new().capture(&params)?;
-    // todo: avoid unwrap
-    Ok(maybe.unwrap())
+    let output = Action::new().capture(&params)?;
+    Ok(output)
 }
 
 fn params_to_build_pilot<'a>(
