@@ -20,6 +20,7 @@ where
     }
 }
 
+// todo: rename
 pub trait Definable2 {
     fn define(&self) -> TaskResult<Runner<Unprepared>>;
 }

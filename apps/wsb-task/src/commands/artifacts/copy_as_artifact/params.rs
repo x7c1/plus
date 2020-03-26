@@ -1,15 +1,15 @@
-use crate::core::targets::BuildTarget;
+use crate::core::targets::{AsTargetArch, TargetArch};
 use std::path::{Path, PathBuf};
 
 #[derive(Debug)]
-pub struct Params<T: BuildTarget> {
-    pub target: T,
+pub struct Params<'a> {
+    pub target: &'a TargetArch,
     pub src: PathBuf,
     pub dst: PathBuf,
 }
 
-impl<T: BuildTarget> Params<T> {
-    pub fn builder(target: T) -> ParamsBuilder<T> {
+impl Params<'_> {
+    pub fn builder(target: &TargetArch) -> ParamsBuilder {
         ParamsBuilder {
             target,
             src: None,
@@ -18,16 +18,19 @@ impl<T: BuildTarget> Params<T> {
     }
 }
 
-pub struct ParamsBuilder<T: BuildTarget> {
-    target: T,
+impl AsTargetArch for Params<'_> {
+    fn as_target_arch(&self) -> &TargetArch {
+        self.target
+    }
+}
+
+pub struct ParamsBuilder<'a> {
+    target: &'a TargetArch,
     src: Option<PathBuf>,
     dst: Option<PathBuf>,
 }
 
-impl<T> ParamsBuilder<T>
-where
-    T: BuildTarget,
-{
+impl<'a> ParamsBuilder<'a> {
     pub fn src(mut self, path: &Path) -> Self {
         self.src = Some(path.to_path_buf());
         self
@@ -40,7 +43,7 @@ where
         self
     }
 
-    pub fn build(self) -> Params<T> {
+    pub fn build(self) -> Params<'a> {
         Params {
             target: self.target,
             src: self.src.expect("src is required"),

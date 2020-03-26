@@ -58,14 +58,3 @@ pub trait BuildTarget: Debug {
 pub fn all() -> Vec<Box<dyn BuildTarget>> {
     vec![Box::new(LinuxX86), Box::new(LinuxArmV7), Box::new(MacX86)]
 }
-
-macro_rules! try_foreach_targets {
-    (|$arg:ident| $x:expr) => {
-        #[allow(clippy::redundant_closure_call)]
-        {
-            (|$arg: crate::core::targets::LinuxX86| $x)(crate::core::targets::LinuxX86)?;
-            (|$arg: crate::core::targets::LinuxArmV7| $x)(crate::core::targets::LinuxArmV7)?;
-            (|$arg: crate::core::targets::MacX86| $x)(crate::core::targets::MacX86)?;
-        }
-    };
-}
