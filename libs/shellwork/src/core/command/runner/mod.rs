@@ -7,6 +7,7 @@ use inherited::InheritedRunner;
 mod output;
 pub use output::RunnerOutput;
 
+use crate::core::env::EnvEntry;
 use crate::error::Error::CommandFailed;
 use std::collections::HashMap;
 use std::ffi::OsStr;
@@ -66,6 +67,13 @@ where
             key.as_ref().to_string_lossy().to_string(),
             val.as_ref().to_string_lossy().to_string(),
         );
+        self
+    }
+
+    pub fn env_entry(mut self, entry: Option<EnvEntry>) -> Self {
+        if let Some(entry) = entry {
+            self.env_vars.insert(entry.key, entry.value);
+        }
         self
     }
 

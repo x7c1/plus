@@ -2,7 +2,7 @@ mod params;
 pub use params::{OutputKind, Params};
 
 use crate::commands::build_pilot;
-use crate::commands::support::{Definable, InsertCC};
+use crate::commands::support::{CCFindable, Definable};
 use crate::TaskResult;
 use shellwork::core::command;
 use shellwork::core::command::{program, Runner, Unprepared};
@@ -17,7 +17,7 @@ impl Definable for build_pilot::Params<'_> {
             .args(&["--package", "wsb-pilot"])
             .arg("--no-run")
             .env("RUSTFLAGS", "-C opt-level=0")
-            .insert_cc(&self.target);
+            .env_entry(self.cc());
 
         // call via OutputKind::Default in advance to see compilation errors,
         // since OutputKind::FileName hides them by the --message-format option.

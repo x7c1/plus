@@ -1,5 +1,5 @@
 mod cc;
-pub use cc::InsertCC;
+pub use cc::CCFindable;
 
 pub mod mac;
 

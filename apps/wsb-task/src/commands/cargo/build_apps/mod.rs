@@ -2,7 +2,7 @@ mod params;
 pub use params::Params;
 
 use crate::commands::build_apps;
-use crate::commands::support::{Definable, InsertCC};
+use crate::commands::support::{CCFindable, Definable};
 use crate::TaskResult;
 use shellwork::core::command;
 use shellwork::core::command::{Runner, Unprepared};
@@ -15,7 +15,7 @@ impl Definable for build_apps::Params<'_> {
             .args(&["--target", self.target.as_triple()])
             .args(&["--workspace", "--exclude=shellwork", "--exclude=wsb-task"])
             .env("RUSTFLAGS", "-C opt-level=0")
-            .insert_cc(&self.target);
+            .env_entry(self.cc());
 
         Ok(runner)
     }

@@ -1,3 +1,4 @@
+use crate::commands::support::CCFindable;
 use crate::core::targets::{AsBuildTarget, BuildTarget};
 
 #[derive(Debug)]
@@ -16,6 +17,8 @@ impl AsBuildTarget for Params<'_> {
         self.target
     }
 }
+
+impl CCFindable for Params<'_> {}
 
 pub struct ParamsBuilder<'a> {
     target: Option<&'a BuildTarget>,

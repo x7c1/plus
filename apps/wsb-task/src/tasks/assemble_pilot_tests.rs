@@ -34,13 +34,13 @@ impl ClapTask<TaskResult<TaskOutput>> for Task {
     }
 }
 
-fn build_pilot(target: &BuildTarget, _matches: &ArgMatches) -> TaskResult<()> {
-    let params = params_to_build_pilot(target, _matches, OutputKind::Default);
+fn build_pilot(target: &BuildTarget, matches: &ArgMatches) -> TaskResult<()> {
+    let params = params_to_build_pilot(target, matches, OutputKind::Default);
     Action::new().spawn(&params)
 }
 
-fn get_pilot_file_name(target: &BuildTarget, _matches: &ArgMatches) -> TaskResult<RunnerOutput> {
-    let params = params_to_build_pilot(target, _matches, OutputKind::FileName);
+fn get_pilot_file_name(target: &BuildTarget, matches: &ArgMatches) -> TaskResult<RunnerOutput> {
+    let params = params_to_build_pilot(target, matches, OutputKind::FileName);
     let output = Action::new().capture(&params)?;
     Ok(output)
 }

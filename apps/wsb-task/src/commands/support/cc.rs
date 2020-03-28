@@ -1,22 +1,16 @@
-use crate::core::targets::BuildTarget;
-use shellwork::core::command::{Runner, Unprepared};
+use crate::core::targets::{AsBuildTarget, BuildTarget};
+use shellwork::core::env::EnvEntry;
 
-pub trait InsertCC {
-    fn insert_cc(self, target: &BuildTarget) -> Self;
-}
-
-impl InsertCC for Runner<Unprepared> {
-    // todo: remove target arg
-    fn insert_cc(self, target: &BuildTarget) -> Self {
-        let maybe = match target {
+pub trait CCFindable: AsBuildTarget {
+    fn cc(&self) -> Option<EnvEntry> {
+        let maybe = match self.as_build_target() {
             BuildTarget::LinuxX86 => None,
             BuildTarget::LinuxArmV7 => Some("arm-linux-gnueabihf-gcc"),
             BuildTarget::MacX86 => Some("x86_64-apple-darwin19-clang"),
         };
-        if let Some(cc) = maybe {
-            self.env("CC", cc)
-        } else {
-            self
-        }
+        maybe.map(|target| EnvEntry {
+            key: "CC".to_string(),
+            value: target.to_string(),
+        })
     }
 }
