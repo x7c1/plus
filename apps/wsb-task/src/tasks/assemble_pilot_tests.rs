@@ -1,6 +1,7 @@
 use crate::commands::build_pilot::OutputKind;
-use crate::commands::{build_pilot, copy_as_artifact, Action, ActionOutput};
+use crate::commands::{build_pilot, copy_as_artifact};
 use crate::core::targets::BuildTarget;
+use crate::core::{Action, ActionOutput};
 use crate::{TaskOutput, TaskResult};
 use clap::{App, ArgMatches, SubCommand};
 use clap_task::ClapTask;

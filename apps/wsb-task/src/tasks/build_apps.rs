@@ -1,5 +1,6 @@
-use crate::commands::{build_apps, Action};
+use crate::commands::build_apps;
 use crate::core::targets::BuildTarget;
+use crate::core::Action;
 use crate::{TaskOutput, TaskResult};
 use clap::{App, ArgMatches, SubCommand};
 use clap_task::ClapTask;
