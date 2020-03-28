@@ -24,53 +24,57 @@ impl ClapTask<TaskResult<TaskOutput>> for Task {
     }
 
     async fn run<'a>(&'a self, matches: &'a ArgMatches<'a>) -> TaskResult<TaskOutput> {
-        BuildTarget::all().iter().try_for_each(|target| {
-            build_pilot(target, matches)?;
-            let output = get_pilot_file_name(target, matches)?;
-            copy_pilot_file(target, matches, output)?;
-            TaskResult::Ok(())
-        })?;
+        BuildTarget::all()
+            .iter()
+            .map(|target| TaskCommands { target, matches })
+            .try_for_each(|commands| commands.run())?;
+
         Ok(TaskOutput::empty())
     }
 }
 
-fn build_pilot(target: &BuildTarget, matches: &ArgMatches) -> TaskResult<()> {
-    let params = params_to_build_pilot(target, matches, OutputKind::Default);
-    Action::new().spawn(&params)
+struct TaskCommands<'a> {
+    target: &'a BuildTarget,
+    #[allow(dead_code)]
+    matches: &'a ArgMatches<'a>,
 }
 
-fn get_pilot_file_name<'a>(
-    target: &'a BuildTarget,
-    matches: &'a ArgMatches,
-) -> TaskResult<ActionOutput<build_pilot::Params<'a>>> {
-    let params = params_to_build_pilot(target, matches, OutputKind::FileName);
-    let output = Action::new().capture(&params)?;
-    Ok(output)
-}
+impl TaskCommands<'_> {
+    fn run(&self) -> TaskResult<()> {
+        self.build_pilot()?;
+        let output = self.get_pilot_file_name()?;
+        self.copy_pilot_file(output)
+    }
 
-fn params_to_build_pilot<'a>(
-    target: &'a BuildTarget,
-    _matches: &ArgMatches,
-    kind: OutputKind,
-) -> build_pilot::Params<'a> {
-    build_pilot::Params::builder(kind).target(target).build()
-}
+    fn build_pilot(&self) -> TaskResult<()> {
+        let params = self.params_to_build_pilot(OutputKind::Default);
+        Action::new().spawn(&params)
+    }
 
-fn copy_pilot_file<'a>(
-    target: &'a BuildTarget,
-    _matches: &'a ArgMatches,
-    output: ActionOutput<build_pilot::Params<'a>>,
-) -> TaskResult<()> {
-    let params = params_to_copy_pilot(target, output);
-    Action::new().spawn(&params)
-}
+    fn get_pilot_file_name(&self) -> TaskResult<ActionOutput<build_pilot::Params>> {
+        let params = self.params_to_build_pilot(OutputKind::FileName);
+        let output = Action::new().capture(&params)?;
+        Ok(output)
+    }
 
-fn params_to_copy_pilot<'a>(
-    target: &'a BuildTarget,
-    output: ActionOutput<build_pilot::Params<'a>>,
-) -> copy_as_artifact::Params<'a> {
-    copy_as_artifact::Params::builder(target)
-        .src(&output.pilot_file_path())
-        .dst(Path::new("wsb_pilot_tests"))
-        .build()
+    fn copy_pilot_file(&self, output: ActionOutput<build_pilot::Params>) -> TaskResult<()> {
+        let params = self.params_to_copy_pilot(output);
+        Action::new().spawn(&params)
+    }
+
+    fn params_to_build_pilot(&self, kind: OutputKind) -> build_pilot::Params {
+        build_pilot::Params::builder(kind)
+            .target(self.target)
+            .build()
+    }
+
+    fn params_to_copy_pilot(
+        &self,
+        output: ActionOutput<build_pilot::Params>,
+    ) -> copy_as_artifact::Params {
+        copy_as_artifact::Params::builder(self.target)
+            .src(&output.pilot_file_path())
+            .dst(Path::new("wsb_pilot_tests"))
+            .build()
+    }
 }
