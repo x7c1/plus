@@ -1,5 +1,7 @@
 use crate::commands::support::CCFindable;
+use crate::commands::ActionOutput;
 use crate::core::targets::{AsBuildTarget, BuildTarget};
+use std::path::PathBuf;
 
 #[derive(Debug)]
 pub struct Params<'a> {
@@ -46,5 +48,11 @@ impl<'a> ParamsBuilder<'a> {
             target: self.target.expect("target is required"),
             output_kind: self.output_kind,
         }
+    }
+}
+
+impl ActionOutput<Params<'_>> {
+    pub fn pilot_file_path(&self) -> PathBuf {
+        PathBuf::new().join(self.stdout().as_ref())
     }
 }

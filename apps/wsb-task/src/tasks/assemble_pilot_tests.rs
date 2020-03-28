@@ -1,10 +1,9 @@
 use crate::commands::build_pilot::OutputKind;
-use crate::commands::{build_pilot, copy_as_artifact, Action};
+use crate::commands::{build_pilot, copy_as_artifact, Action, ActionOutput};
 use crate::core::targets::BuildTarget;
 use crate::{TaskOutput, TaskResult};
 use clap::{App, ArgMatches, SubCommand};
 use clap_task::ClapTask;
-use shellwork::core::command::RunnerOutput;
 use std::path::Path;
 
 pub fn define() -> Box<dyn ClapTask<TaskResult<TaskOutput>>> {
@@ -39,7 +38,10 @@ fn build_pilot(target: &BuildTarget, matches: &ArgMatches) -> TaskResult<()> {
     Action::new().spawn(&params)
 }
 
-fn get_pilot_file_name(target: &BuildTarget, matches: &ArgMatches) -> TaskResult<RunnerOutput> {
+fn get_pilot_file_name<'a>(
+    target: &'a BuildTarget,
+    matches: &'a ArgMatches,
+) -> TaskResult<ActionOutput<build_pilot::Params<'a>>> {
     let params = params_to_build_pilot(target, matches, OutputKind::FileName);
     let output = Action::new().capture(&params)?;
     Ok(output)
@@ -53,19 +55,21 @@ fn params_to_build_pilot<'a>(
     build_pilot::Params::builder(kind).target(target).build()
 }
 
-fn copy_pilot_file(
-    target: &BuildTarget,
-    _matches: &ArgMatches,
-    output: RunnerOutput,
+fn copy_pilot_file<'a>(
+    target: &'a BuildTarget,
+    _matches: &'a ArgMatches,
+    output: ActionOutput<build_pilot::Params<'a>>,
 ) -> TaskResult<()> {
     let params = params_to_copy_pilot(target, output);
     Action::new().spawn(&params)
 }
 
-fn params_to_copy_pilot(target: &BuildTarget, output: RunnerOutput) -> copy_as_artifact::Params {
-    let src = output.stdout();
+fn params_to_copy_pilot<'a>(
+    target: &'a BuildTarget,
+    output: ActionOutput<build_pilot::Params<'a>>,
+) -> copy_as_artifact::Params<'a> {
     copy_as_artifact::Params::builder(target)
-        .src(Path::new(src.as_ref()))
+        .src(&output.pilot_file_path())
         .dst(Path::new("wsb_pilot_tests"))
         .build()
 }

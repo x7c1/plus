@@ -1,3 +1,6 @@
+mod action;
+pub use action::ActionOutput;
+
 mod artifacts;
 pub use artifacts::copy_as_artifact;
 
@@ -10,7 +13,7 @@ pub mod support;
 use crate::commands::support::{mac, Definable};
 use crate::core::targets::{AsBuildTarget, BuildTarget};
 use crate::TaskResult;
-use shellwork::core::command::{should, MayRun, RunnerOutput};
+use shellwork::core::command::{should, MayRun};
 use std::marker::PhantomData;
 
 pub struct Action<PARAMS>(PhantomData<PARAMS>);
@@ -39,12 +42,13 @@ where
         Ok(())
     }
 
-    pub fn capture(&self, params: &P) -> TaskResult<RunnerOutput> {
+    pub fn capture(&self, params: &P) -> TaskResult<ActionOutput<P>> {
         let output = match params.as_build_target() {
             BuildTarget::LinuxX86 => should::capture(self, params)?,
             BuildTarget::LinuxArmV7 => should::capture(self, params)?,
             BuildTarget::MacX86 => mac::RunMaybe::new(self).capture(params)?,
         };
-        Ok(output)
+        let reified = ActionOutput::new(output);
+        Ok(reified)
     }
 }
