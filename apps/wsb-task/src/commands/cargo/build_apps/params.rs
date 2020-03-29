@@ -1,33 +1,36 @@
-use crate::core::targets::{BuildTarget, RequireCC};
+use crate::commands::support::CCFindable;
+use crate::core::targets::{AsBuildTarget, BuildTarget};
 
-pub struct Params<T: BuildTarget> {
-    pub target: T,
+#[derive(Debug)]
+pub struct Params<'a> {
+    pub target: &'a BuildTarget,
 }
 
-impl<T: BuildTarget> Params<T> {
-    pub fn builder() -> ParamsBuilder<T> {
+impl<'a> Params<'a> {
+    pub fn builder() -> ParamsBuilder<'a> {
         ParamsBuilder { target: None }
     }
 }
 
-impl<T: RequireCC + BuildTarget> RequireCC for Params<T> {
-    const CC: &'static str = T::CC;
+impl AsBuildTarget for Params<'_> {
+    fn as_build_target(&self) -> &BuildTarget {
+        self.target
+    }
 }
 
-pub struct ParamsBuilder<T: BuildTarget> {
-    target: Option<T>,
+impl CCFindable for Params<'_> {}
+
+pub struct ParamsBuilder<'a> {
+    target: Option<&'a BuildTarget>,
 }
 
-impl<T> ParamsBuilder<T>
-where
-    T: BuildTarget,
-{
-    pub fn target(mut self, target: T) -> Self {
+impl<'a> ParamsBuilder<'a> {
+    pub fn target(mut self, target: &'a BuildTarget) -> Self {
         self.target = Some(target);
         self
     }
 
-    pub fn build(self) -> Params<T> {
+    pub fn build(self) -> Params<'a> {
         Params {
             target: self.target.expect("target is required"),
         }

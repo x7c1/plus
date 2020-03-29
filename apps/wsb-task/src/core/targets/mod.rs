@@ -1,30 +1,37 @@
-mod linux_x86;
-pub use linux_x86::LinuxX86;
+use std::fmt::Debug;
 
-mod linux_arm_v7;
-pub use linux_arm_v7::LinuxArmV7;
-
-mod mac_x86;
-pub use mac_x86::MacX86;
-
-mod require_cc;
-pub use require_cc::RequireCC;
-
-pub trait BuildTarget {
-    fn as_triple(&self) -> &str;
+#[derive(Debug)]
+pub enum BuildTarget {
+    LinuxX86,
+    LinuxArmV7,
+    MacX86,
 }
 
-pub fn all() -> Vec<Box<dyn BuildTarget>> {
-    vec![Box::new(LinuxX86), Box::new(LinuxArmV7), Box::new(MacX86)]
-}
+impl BuildTarget {
+    pub fn all() -> Vec<BuildTarget> {
+        vec![
+            BuildTarget::LinuxX86,
+            BuildTarget::LinuxArmV7,
+            BuildTarget::MacX86,
+        ]
+    }
 
-macro_rules! try_foreach_targets {
-    (|$arg:ident| $x:expr) => {
-        #[allow(clippy::redundant_closure_call)]
-        {
-            (|$arg: crate::core::targets::LinuxX86| $x)(crate::core::targets::LinuxX86)?;
-            (|$arg: crate::core::targets::LinuxArmV7| $x)(crate::core::targets::LinuxArmV7)?;
-            (|$arg: crate::core::targets::MacX86| $x)(crate::core::targets::MacX86)?;
+    pub fn as_triple(&self) -> &str {
+        match self {
+            BuildTarget::LinuxX86 => "x86_64-unknown-linux-musl",
+            BuildTarget::LinuxArmV7 => "armv7-unknown-linux-musleabihf",
+            BuildTarget::MacX86 => "x86_64-apple-darwin",
         }
-    };
+    }
+    pub fn as_abbr(&self) -> &str {
+        match self {
+            BuildTarget::LinuxX86 => "linux_x86",
+            BuildTarget::LinuxArmV7 => "linux_armv7",
+            BuildTarget::MacX86 => "macos_x86",
+        }
+    }
+}
+
+pub trait AsBuildTarget {
+    fn as_build_target(&self) -> &BuildTarget;
 }

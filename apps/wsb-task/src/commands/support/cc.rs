@@ -1,23 +1,16 @@
-use crate::core::targets::RequireCC;
-use crate::TaskResult;
-use shellwork::core::command::{Runner, Unprepared};
+use crate::core::targets::{AsBuildTarget, BuildTarget};
+use shellwork::core::env::EnvEntry;
 
-pub trait CanInsertCC {
-    fn with_cc<F>(&self, f: F) -> TaskResult<Runner<Unprepared>>
-    where
-        Self: Sized,
-        F: Fn(&Self) -> Runner<Unprepared>;
-}
-
-impl<A> CanInsertCC for A
-where
-    A: RequireCC,
-{
-    fn with_cc<F>(&self, f: F) -> TaskResult<Runner<Unprepared>>
-    where
-        F: Fn(&Self) -> Runner<Unprepared>,
-    {
-        let runner = f(self).env("CC", A::CC);
-        Ok(runner)
+pub trait CCFindable: AsBuildTarget {
+    fn cc(&self) -> Option<EnvEntry> {
+        let maybe = match self.as_build_target() {
+            BuildTarget::LinuxX86 => None,
+            BuildTarget::LinuxArmV7 => Some("arm-linux-gnueabihf-gcc"),
+            BuildTarget::MacX86 => Some("x86_64-apple-darwin19-clang"),
+        };
+        maybe.map(|target| EnvEntry {
+            key: "CC".to_string(),
+            value: target.to_string(),
+        })
     }
 }

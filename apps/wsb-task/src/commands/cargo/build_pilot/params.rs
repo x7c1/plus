@@ -1,35 +1,58 @@
-use crate::core::targets::{BuildTarget, RequireCC};
+use crate::commands::support::CCFindable;
+use crate::core::targets::{AsBuildTarget, BuildTarget};
+use crate::core::ActionOutput;
+use std::path::PathBuf;
 
-pub struct Params<T: BuildTarget> {
-    pub target: T,
+#[derive(Debug)]
+pub struct Params<'a> {
+    pub target: &'a BuildTarget,
+    pub output_kind: OutputKind,
 }
 
-impl<T: BuildTarget> Params<T> {
-    pub fn builder() -> ParamsBuilder<T> {
-        ParamsBuilder { target: None }
+#[derive(Debug, PartialEq)]
+pub enum OutputKind {
+    Default,
+    FileName,
+}
+
+impl<'a> Params<'a> {
+    pub fn builder(kind: OutputKind) -> ParamsBuilder<'a> {
+        ParamsBuilder {
+            target: None,
+            output_kind: kind,
+        }
     }
 }
 
-impl<T: RequireCC + BuildTarget> RequireCC for Params<T> {
-    const CC: &'static str = T::CC;
+impl AsBuildTarget for Params<'_> {
+    fn as_build_target(&self) -> &BuildTarget {
+        self.target
+    }
 }
 
-pub struct ParamsBuilder<T: BuildTarget> {
-    target: Option<T>,
+impl CCFindable for Params<'_> {}
+
+pub struct ParamsBuilder<'a> {
+    target: Option<&'a BuildTarget>,
+    output_kind: OutputKind,
 }
 
-impl<T> ParamsBuilder<T>
-where
-    T: BuildTarget,
-{
-    pub fn target(mut self, target: T) -> Self {
+impl<'a> ParamsBuilder<'a> {
+    pub fn target(mut self, target: &'a BuildTarget) -> Self {
         self.target = Some(target);
         self
     }
 
-    pub fn build(self) -> Params<T> {
+    pub fn build(self) -> Params<'a> {
         Params {
             target: self.target.expect("target is required"),
+            output_kind: self.output_kind,
         }
+    }
+}
+
+impl ActionOutput<Params<'_>> {
+    pub fn pilot_file_path(&self) -> PathBuf {
+        PathBuf::new().join(self.stdout().as_ref())
     }
 }

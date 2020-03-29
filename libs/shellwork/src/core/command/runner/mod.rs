@@ -7,6 +7,7 @@ use inherited::InheritedRunner;
 mod output;
 pub use output::RunnerOutput;
 
+use crate::core::env::EnvEntry;
 use crate::error::Error::CommandFailed;
 use std::collections::HashMap;
 use std::ffi::OsStr;
@@ -69,6 +70,13 @@ where
         self
     }
 
+    pub fn env_entry(mut self, entry: Option<EnvEntry>) -> Self {
+        if let Some(entry) = entry {
+            self.env_vars.insert(entry.key, entry.value);
+        }
+        self
+    }
+
     pub fn create_summary(&self) -> RunnerSummary {
         RunnerSummary {
             command: format!("{} {}", &self.program, &self.args.join(" ")),
@@ -93,18 +101,18 @@ pub struct Prepared;
 impl Runner<Prepared> {
     pub fn spawn(&self) -> crate::Result<()> {
         let mut child = self.spawn_to(Stdio::inherit())?;
-        self.validate_status(&child.wait()?)?;
+        self.validate_status(child.wait()?)?;
         Ok(())
     }
 
     pub fn capture(&self) -> crate::Result<RunnerOutput> {
         let child = self.spawn_to(Stdio::piped())?;
         let output = child.wait_with_output()?;
-        self.validate_status(&output.status)?;
+        self.validate_status(output.status)?;
         Ok(RunnerOutput::new(output))
     }
 
-    fn validate_status(&self, status: &ExitStatus) -> crate::Result<()> {
+    fn validate_status(&self, status: ExitStatus) -> crate::Result<()> {
         if status.success() {
             Ok(())
         } else {
