@@ -45,6 +45,13 @@ where
         xs
     }
 
+    pub fn push_arg<A: AsRef<OsStr>>(self, entry: Option<A>) -> Self {
+        match entry {
+            None => self,
+            Some(x) => self.arg(x),
+        }
+    }
+
     pub fn pipe(mut self, next: Runner<T>) -> Self {
         self.append_runner(next);
         self

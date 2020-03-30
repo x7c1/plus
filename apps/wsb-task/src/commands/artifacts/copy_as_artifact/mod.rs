@@ -9,7 +9,15 @@ use shellwork::core::command::{Runner, Unprepared};
 
 impl Definable for copy_as_artifact::Params<'_> {
     fn define(&self) -> TaskResult<Runner<Unprepared>> {
-        let runner = command::program("cp").args(&[&self.src, &self.dst]);
+        let recursive = if self.src.is_dir() {
+            Some("--recursive")
+        } else {
+            None
+        };
+        let runner = command::program("cp")
+            .push_arg(recursive)
+            .args(&[&self.src, &self.dst]);
+
         Ok(runner)
     }
 }
