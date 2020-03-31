@@ -14,16 +14,25 @@ cd "$PROJECT_ROOT" || exit 1
 main() {
   set -x
 
+  for_task_runner
+}
+
+for_task_runner() {
+  cargo_fmt
+  cargo_clippy
   test_shellwork ${TARGET_X86} -- --nocapture --color always
-
-  build_apps_for_linux_x86
-
   run_unit_tests_for_linux_x86
 
+  task_runner_for_linux_x86 build-apps
+  task_runner_for_linux_x86 assemble-pilot-tests
+  task_runner_for_linux_x86 copy-artifact-files
+}
+
+dev() {
+  build_apps_for_linux_x86
+  run_unit_tests_for_linux_x86
   cargo_fmt
-
   cargo_clippy
-
   run_specified_test
 }
 
