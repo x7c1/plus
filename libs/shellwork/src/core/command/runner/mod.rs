@@ -45,6 +45,13 @@ where
         xs
     }
 
+    pub fn push_arg<A: AsRef<OsStr>>(self, entry: Option<A>) -> Self {
+        match entry {
+            None => self,
+            Some(x) => self.arg(x),
+        }
+    }
+
     pub fn pipe(mut self, next: Runner<T>) -> Self {
         self.append_runner(next);
         self
@@ -124,11 +131,12 @@ impl Runner<Prepared> {
     }
 
     fn spawn_to<T: Into<Stdio>>(&self, output: T) -> crate::Result<Child> {
+        // todo: use logger
+        eprintln!("{:#?}", self.create_summary());
+
         let child = if let Some(next) = self.spawn_to_inherit()? {
             next.spawn_recursively(output)?
         } else {
-            // todo: use logger
-            println!("{:#?}", self.create_summary());
             self.spawn_lastly(output)?
         };
         Ok(child)

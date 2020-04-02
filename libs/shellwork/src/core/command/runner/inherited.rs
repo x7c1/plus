@@ -45,8 +45,16 @@ impl CanPipe for InheritedRunner<'_> {
             self.wait_for_previous()?;
             Ok(current)
         } else {
+            unimplemented!()
+            /*
+            // todo: what is correct procedure when stdout has not been captured?
+            // should it be handled as error?
+            Err(...)
+
+            // or ignore absent stdout and keep on running command?
             self.wait_for_previous()?;
             self.runner.spawn_to_pipe()
+            */
         }
     }
 
@@ -57,8 +65,12 @@ impl CanPipe for InheritedRunner<'_> {
             self.wait_for_previous()?;
             Ok(current)
         } else {
+            unimplemented!()
+            /*
+            // todo: see above todo in spawn_to_pipe.
             self.wait_for_previous()?;
             self.runner.spawn_lastly(output)
+            */
         }
     }
 }
