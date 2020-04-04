@@ -1,4 +1,5 @@
 mod artifacts;
+pub use artifacts::compress_artifact;
 pub use artifacts::copy_as_artifact;
 
 mod cargo;
