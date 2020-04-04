@@ -1,5 +1,5 @@
+use crate::commands::artifacts::artifacts_dir;
 use crate::core::targets::{AsBuildTarget, BuildTarget};
-use std::path::Path;
 
 #[derive(Debug)]
 pub struct Params<'a> {
@@ -26,8 +26,7 @@ pub struct ParamsBuilder<'a> {
 
 impl<'a> ParamsBuilder<'a> {
     pub fn build(self) -> Params<'a> {
-        // todo: avoid magic string
-        let dir = Path::new("dist");
+        let dir = artifacts_dir();
         let filename = format!("{}.tar.xz", self.target.as_abbr());
         let file_path = dir.join(filename);
 
