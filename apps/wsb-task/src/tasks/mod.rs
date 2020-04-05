@@ -8,7 +8,7 @@ pub mod assemble_pilot_tests;
 pub mod build_apps;
 
 #[macro_use]
-pub mod compress_artifacts;
+pub mod package_artifacts;
 
 #[macro_use]
 pub mod copy_artifact_files;
@@ -17,7 +17,7 @@ pub fn define_all() -> Vec<Box<dyn ClapTask<TaskResult<TaskOutput>>>> {
     vec![
         assemble_pilot_tests::define(),
         build_apps::define(),
-        compress_artifacts::define(),
+        package_artifacts::define(),
         copy_artifact_files::define(),
     ]
 }

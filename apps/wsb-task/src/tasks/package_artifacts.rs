@@ -1,4 +1,4 @@
-use crate::commands::compress_artifact;
+use crate::commands::package_artifact;
 use crate::core::targets::BuildTarget;
 use crate::core::Action;
 use crate::{TaskOutput, TaskResult};
@@ -14,11 +14,11 @@ struct Task;
 #[async_trait]
 impl ClapTask<TaskResult<TaskOutput>> for Task {
     fn name(&self) -> &str {
-        "compress-artifacts"
+        "package-artifacts"
     }
 
     fn design(&self) -> App {
-        SubCommand::with_name(self.name()).about("Compress artifact files.")
+        SubCommand::with_name(self.name()).about("Compress and archive artifacts.")
     }
 
     async fn run<'a>(&'a self, matches: &'a ArgMatches<'a>) -> TaskResult<TaskOutput> {
@@ -39,7 +39,7 @@ struct TaskCommands<'a> {
 
 impl TaskCommands<'_> {
     fn run(&self) -> TaskResult<()> {
-        let params = compress_artifact::Params::builder(self.target).build();
+        let params = package_artifact::Params::builder(self.target).build();
         Action::new().spawn(&params)
     }
 }
