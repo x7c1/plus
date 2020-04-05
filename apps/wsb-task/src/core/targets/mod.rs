@@ -23,6 +23,7 @@ impl BuildTarget {
             BuildTarget::MacX86 => "x86_64-apple-darwin",
         }
     }
+
     pub fn as_abbr(&self) -> &str {
         match self {
             BuildTarget::LinuxX86 => "linux_x86",

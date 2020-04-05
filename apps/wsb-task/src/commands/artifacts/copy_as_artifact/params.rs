@@ -1,3 +1,4 @@
+use crate::commands::artifacts::artifacts_dir;
 use crate::core::targets::{AsBuildTarget, BuildTarget};
 use std::path::{Path, PathBuf};
 
@@ -37,8 +38,7 @@ impl<'a> ParamsBuilder<'a> {
     }
 
     pub fn dst(mut self, path: &Path) -> Self {
-        // todo: avoid magic string
-        let dst = Path::new("dist").join(self.target.as_abbr()).join(path);
+        let dst = artifacts_dir().join(self.target.as_abbr()).join(path);
         self.dst = Some(dst);
         self
     }

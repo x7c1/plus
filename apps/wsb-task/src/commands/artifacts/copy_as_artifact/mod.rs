@@ -15,6 +15,7 @@ impl Definable for copy_as_artifact::Params<'_> {
             None
         };
         let runner = command::program("cp")
+            .arg("--no-target-directory")
             .push_arg(recursive)
             .args(&[&self.src, &self.dst]);
 
