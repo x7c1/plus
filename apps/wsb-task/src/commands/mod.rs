@@ -7,4 +7,5 @@ mod cargo;
 pub use cargo::build_apps;
 pub use cargo::build_pilot;
 
+pub mod strip;
 pub mod support;
