@@ -1,4 +1,5 @@
 use crate::core::targets::{AsBuildTarget, BuildTarget};
+use std::path::Path;
 
 #[derive(Debug)]
 pub struct Params<'a> {
@@ -27,8 +28,8 @@ pub struct ParamsBuilder<'a> {
 }
 
 impl<'a> ParamsBuilder<'a> {
-    pub fn file_path<A: Into<String>>(mut self, path: A) -> Self {
-        self.file_path = Some(path.into());
+    pub fn file_path<A: AsRef<Path>>(mut self, path: A) -> Self {
+        self.file_path = Some(path.as_ref().to_string_lossy().to_string());
         self
     }
     pub fn build(self) -> Params<'a> {
