@@ -1,4 +1,4 @@
-use crate::commands::copy_as_artifact;
+use crate::commands::{app_names, copy_as_artifact};
 use crate::core::targets::BuildTarget;
 use crate::core::Action;
 use crate::{TaskOutput, TaskResult};
@@ -65,8 +65,7 @@ impl TaskCommands<'_> {
     }
 
     fn copy_release_apps(&self) -> TaskResult<()> {
-        let app_names = vec!["s3api"];
-        for name in app_names.iter() {
+        for name in app_names().iter() {
             let params = self.to_app_params(name);
             Action::new().spawn(&params)?;
         }
