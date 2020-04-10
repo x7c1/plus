@@ -18,7 +18,7 @@ impl ClapTask<TaskResult<TaskOutput>> for Task {
     }
 
     fn design(&self) -> App {
-        SubCommand::with_name(self.name()).about("Strip executable files.")
+        SubCommand::with_name(self.name()).about("Strip executable artifacts.")
     }
 
     async fn run<'a>(&'a self, matches: &'a ArgMatches<'a>) -> TaskResult<TaskOutput> {
