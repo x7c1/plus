@@ -39,11 +39,13 @@ struct TaskCommands<'a> {
 
 impl TaskCommands<'_> {
     fn run(&self) -> TaskResult<()> {
-        for name in executable_names().iter() {
-            let path = artifacts_dir().join(self.target.as_abbr()).join(name);
-            let params = strip::Params::builder(self.target).file_path(path).build();
-            Action::new().spawn(&params)?;
-        }
-        Ok(())
+        executable_names()
+            .iter()
+            .try_for_each(|name| self.strip(name))
+    }
+    fn strip(&self, file_name: &str) -> TaskResult<()> {
+        let path = artifacts_dir().join(self.target.as_abbr()).join(file_name);
+        let params = strip::Params::builder(self.target).file_path(path).build();
+        Action::new().spawn(&params)
     }
 }
