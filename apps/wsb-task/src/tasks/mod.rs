@@ -14,6 +14,9 @@ pub mod copy_artifact_files;
 pub mod package_artifacts;
 
 #[macro_use]
+pub mod show_sizes;
+
+#[macro_use]
 pub mod strip_executables;
 
 pub fn define_all() -> Vec<Box<dyn ClapTask<TaskResult<TaskOutput>>>> {
@@ -22,6 +25,7 @@ pub fn define_all() -> Vec<Box<dyn ClapTask<TaskResult<TaskOutput>>>> {
         build_apps::define(),
         copy_artifact_files::define(),
         package_artifacts::define(),
+        show_sizes::define(),
         strip_executables::define(),
     ]
 }
