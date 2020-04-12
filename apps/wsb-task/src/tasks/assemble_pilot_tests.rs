@@ -20,7 +20,7 @@ impl ClapTask<TaskResult<TaskOutput>> for Task {
     }
 
     fn design(&self) -> App {
-        SubCommand::with_name(self.name()).about("Build E2E tests.")
+        SubCommand::with_name(self.name()).about("Build and copy E2E tests.")
     }
 
     async fn run<'a>(&'a self, matches: &'a ArgMatches<'a>) -> TaskResult<TaskOutput> {

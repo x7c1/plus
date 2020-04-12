@@ -26,6 +26,9 @@ for_task_runner() {
   task_runner_for_linux_x86 build-apps
   task_runner_for_linux_x86 assemble-pilot-tests
   task_runner_for_linux_x86 copy-artifact-files
+  task_runner_for_linux_x86 package-artifacts
+  task_runner_for_linux_x86 strip-executables
+  task_runner_for_linux_x86 help
 }
 
 dev() {

@@ -11,7 +11,8 @@ RUN set -x && \
     jq \
     musl-tools \
     clang \
-    cmake
+    cmake \
+    tree
 
 RUN set -x && \
   rustup target add --toolchain ${rust_version} armv7-unknown-linux-musleabihf && \
