@@ -36,7 +36,7 @@ impl ClapTask<TaskResult<TaskOutput>> for Task {
             .target(matches.single("target").as_required()?)
             .build();
 
-        self.prepare(&params)?.spawn()?;
+        self.run(&params)?;
         Ok(TaskOutput::empty())
     }
 }
