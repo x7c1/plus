@@ -1,6 +1,8 @@
+use crate::error::Error::UnknownBuildTarget;
 use std::fmt::Debug;
+use std::str::FromStr;
 
-#[derive(Debug)]
+#[derive(Clone, Copy, Debug)]
 pub enum BuildTarget {
     LinuxX86,
     LinuxArmV7,
