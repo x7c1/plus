@@ -27,7 +27,7 @@ impl ClapTask<TaskResult<TaskOutput>> for Task {
                     .long("target")
                     .required(true)
                     .takes_value(true)
-                    .help("Build target."),
+                    .help("Build for the target label."),
             )
     }
 
@@ -36,7 +36,7 @@ impl ClapTask<TaskResult<TaskOutput>> for Task {
             .target(matches.single("target").as_required()?)
             .build();
 
-        Task::prepare(&params)?.spawn()?;
+        self.prepare(&params)?.spawn()?;
         Ok(TaskOutput::empty())
     }
 }

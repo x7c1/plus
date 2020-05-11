@@ -7,7 +7,11 @@ use shellwork::core::command::{no_op, Prepared, Runner, Unprepared};
 pub struct Task;
 
 impl Task {
-    pub fn define(params: &Params) -> TaskResult<Runner<Unprepared>> {
+    pub fn prepare(&self, params: &Params) -> TaskResult<Runner<Prepared>> {
+        self.runner(params)?.prepare(no_op)
+    }
+
+    fn runner(&self, params: &Params) -> TaskResult<Runner<Unprepared>> {
         // todo: move opt-level to params
         let runner = command::program("cargo")
             .arg("build")
@@ -17,9 +21,5 @@ impl Task {
             .env_entry(params.cc());
 
         Ok(runner)
-    }
-
-    pub fn prepare(params: &Params) -> TaskResult<Runner<Prepared>> {
-        Self::define(params)?.prepare(no_op)
     }
 }
