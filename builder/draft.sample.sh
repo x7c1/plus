@@ -19,6 +19,7 @@ main() {
 
 for_task_runner() {
   task_runner_for_linux_x86 build-apps --target=linux_x86
+  task_runner_for_linux_x86 assemble-pilot-tests --target=linux_x86
 }
 
 for_task_runner0() {
