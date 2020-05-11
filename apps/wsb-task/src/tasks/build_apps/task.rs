@@ -20,6 +20,6 @@ impl Task {
     }
 
     pub fn prepare(params: &Params) -> TaskResult<Runner<Prepared>> {
-        Self::define(params)?.prepare(no_check)
+        Self::define(params)?.prepare(no_op)
     }
 }
