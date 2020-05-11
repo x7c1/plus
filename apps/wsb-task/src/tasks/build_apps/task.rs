@@ -2,7 +2,7 @@ use crate::commands::support::CCFindable;
 use crate::tasks::build_apps::Params;
 use crate::TaskResult;
 use shellwork::core::command;
-use shellwork::core::command::{no_check, Prepared, Runner, Unprepared};
+use shellwork::core::command::{no_op, Prepared, Runner, Unprepared};
 
 pub struct Task;
 

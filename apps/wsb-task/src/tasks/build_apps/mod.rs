@@ -1,15 +1,17 @@
-use crate::commands::build_apps;
-use crate::core::targets::BuildTarget;
-use crate::core::Action;
+mod params;
+pub use params::Params;
+
+mod task;
+pub use task::Task;
+
 use crate::{TaskOutput, TaskResult};
-use clap::{App, ArgMatches, SubCommand};
+use clap::{App, Arg, ArgMatches, SubCommand};
+use clap_extractor::Matcher;
 use clap_task::ClapTask;
 
-pub fn define() -> Box<dyn ClapTask<TaskResult<TaskOutput>>> {
+pub fn clap() -> Box<dyn ClapTask<TaskResult<TaskOutput>>> {
     Box::new(Task)
 }
-
-struct Task;
 
 #[async_trait]
 impl ClapTask<TaskResult<TaskOutput>> for Task {
@@ -18,26 +20,23 @@ impl ClapTask<TaskResult<TaskOutput>> for Task {
     }
 
     fn design(&self) -> App {
-        SubCommand::with_name(self.name()).about("Build wasabi applications.")
+        SubCommand::with_name(self.name())
+            .about("Build wasabi applications.")
+            .arg(
+                Arg::with_name("target")
+                    .long("target")
+                    .required(true)
+                    .takes_value(true)
+                    .help("Build target."),
+            )
     }
 
     async fn run<'a>(&'a self, matches: &'a ArgMatches<'a>) -> TaskResult<TaskOutput> {
-        BuildTarget::all().iter().try_for_each(|target| {
-            let params = to_params(target, matches)?;
-            build_apps(&params)
-        })?;
+        let params = Params::builder()
+            .target(matches.single("target").as_required()?)
+            .build();
+
+        Task::prepare(&params)?.spawn()?;
         Ok(TaskOutput::empty())
     }
-}
-
-fn to_params<'a>(
-    target: &'a BuildTarget,
-    _matches: &ArgMatches,
-) -> TaskResult<build_apps::Params<'a>> {
-    let params = build_apps::Params::builder().target(target).build();
-    Ok(params)
-}
-
-fn build_apps(params: &build_apps::Params) -> TaskResult<()> {
-    Action::new().spawn(params)
 }
