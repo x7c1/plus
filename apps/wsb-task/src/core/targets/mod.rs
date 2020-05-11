@@ -35,6 +35,18 @@ impl BuildTarget {
     }
 }
 
+impl FromStr for BuildTarget {
+    type Err = crate::Error;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        BuildTarget::all()
+            .iter()
+            .find(|target| target.as_abbr() == s)
+            .ok_or_else(|| UnknownBuildTarget(s.to_string()))
+            .map(|target| *target)
+    }
+}
+
 pub trait AsBuildTarget {
     fn as_build_target(&self) -> &BuildTarget;
 }
