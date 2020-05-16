@@ -8,7 +8,7 @@ use std::path::Path;
 pub struct Task;
 
 impl Task {
-    pub fn run<P: AsBuildTarget>(&self, params: &P) -> TaskResult<()> {
+    pub fn start<P: AsBuildTarget>(&self, params: &P) -> TaskResult<()> {
         let commands = TaskCommands {
             target: &params.as_build_target(),
         };

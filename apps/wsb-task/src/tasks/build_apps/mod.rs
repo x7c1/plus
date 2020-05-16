@@ -25,7 +25,7 @@ impl ClapTask<TaskResult<TaskOutput>> for Task {
 
     async fn run<'a>(&'a self, matches: &'a ArgMatches<'a>) -> TaskResult<TaskOutput> {
         let params = shared::Params::from_matches(matches)?;
-        self.run(&params)?;
+        self.start(&params)?;
         Ok(TaskOutput::empty())
     }
 }

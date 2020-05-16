@@ -6,7 +6,7 @@ use shellwork::core::command::{no_op, Prepared, Runner, Unprepared};
 pub struct Task;
 
 impl Task {
-    pub fn run<P: CCFindable>(&self, params: &P) -> TaskResult<()> {
+    pub fn start<P: CCFindable>(&self, params: &P) -> TaskResult<()> {
         self.prepare(params)?.spawn()?;
         Ok(())
     }
