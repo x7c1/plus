@@ -1,17 +1,16 @@
 use crate::commands::build_pilot::OutputKind;
 use crate::commands::{build_pilot, copy_as_artifact};
-use crate::core::targets::BuildTarget;
+use crate::core::targets::{AsBuildTarget, BuildTarget};
 use crate::core::{Action, ActionOutput};
-use crate::tasks::assemble_pilot_tests::Params;
 use crate::TaskResult;
 use std::path::Path;
 
 pub struct Task;
 
 impl Task {
-    pub fn run(&self, params: &Params) -> TaskResult<()> {
+    pub fn run<P: AsBuildTarget>(&self, params: &P) -> TaskResult<()> {
         let commands = TaskCommands {
-            target: &params.target,
+            target: &params.as_build_target(),
         };
         commands.run()
     }

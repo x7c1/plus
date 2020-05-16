@@ -1,12 +1,9 @@
-mod params;
-pub use params::Params;
-
 mod task;
 pub use task::Task;
 
+use crate::tasks::SharedParams;
 use crate::{TaskOutput, TaskResult};
 use clap::{App, Arg, ArgMatches, SubCommand};
-use clap_extractor::Matcher;
 use clap_task::ClapTask;
 
 pub fn clap() -> Box<dyn ClapTask<TaskResult<TaskOutput>>> {
@@ -32,10 +29,7 @@ impl ClapTask<TaskResult<TaskOutput>> for Task {
     }
 
     async fn run<'a>(&'a self, matches: &'a ArgMatches<'a>) -> TaskResult<TaskOutput> {
-        let params = Params::builder()
-            .target(matches.single("target").as_required()?)
-            .build();
-
+        let params = SharedParams::from_matches(matches)?;
         self.run(&params)?;
         Ok(TaskOutput::empty())
     }

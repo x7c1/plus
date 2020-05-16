@@ -19,6 +19,9 @@ pub mod show_sizes;
 #[macro_use]
 pub mod strip_executables;
 
+mod params;
+pub use params::SharedParams;
+
 pub fn define_all() -> Vec<Box<dyn ClapTask<TaskResult<TaskOutput>>>> {
     vec![
         assemble_pilot_tests::clap(),
