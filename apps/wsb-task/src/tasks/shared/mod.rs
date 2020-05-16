@@ -1,10 +1,9 @@
-pub mod target;
+pub mod build_target;
 
 use crate::commands::support::CCFindable;
 use crate::core::targets::{AsBuildTarget, BuildTarget};
 use crate::TaskResult;
 use clap::ArgMatches;
-use clap_extractor::Matcher;
 
 #[derive(Debug)]
 pub struct SharedParams {
@@ -14,7 +13,7 @@ pub struct SharedParams {
 impl SharedParams {
     pub fn from_matches<'a>(matches: &'a ArgMatches<'a>) -> TaskResult<Self> {
         let params = SharedParams::builder()
-            .target(matches.single("target").as_required()?)
+            .target(build_target::from(matches)?)
             .build();
 
         Ok(params)
