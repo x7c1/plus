@@ -1,41 +1,22 @@
 use crate::commands::{app_names, copy_as_artifact};
-use crate::core::targets::BuildTarget;
+use crate::core::targets::{AsBuildTarget, BuildTarget};
 use crate::core::Action;
-use crate::{TaskOutput, TaskResult};
-use clap::{App, ArgMatches, SubCommand};
-use clap_task::ClapTask;
+use crate::TaskResult;
 use std::path::Path;
 
-pub fn define() -> Box<dyn ClapTask<TaskResult<TaskOutput>>> {
-    Box::new(Task)
-}
+pub struct Task;
 
-struct Task;
-
-#[async_trait]
-impl ClapTask<TaskResult<TaskOutput>> for Task {
-    fn name(&self) -> &str {
-        "copy-artifact-files"
-    }
-
-    fn design(&self) -> App {
-        SubCommand::with_name(self.name()).about("Copy files to artifact directory.")
-    }
-
-    async fn run<'a>(&'a self, matches: &'a ArgMatches<'a>) -> TaskResult<TaskOutput> {
-        BuildTarget::all()
-            .iter()
-            .map(|target| TaskCommands { target, matches })
-            .try_for_each(|commands| commands.run())?;
-
-        Ok(TaskOutput::empty())
+impl Task {
+    pub fn start<P: AsBuildTarget>(&self, params: &P) -> TaskResult<()> {
+        let commands = TaskCommands {
+            target: &params.as_build_target(),
+        };
+        commands.run()
     }
 }
 
 struct TaskCommands<'a> {
     target: &'a BuildTarget,
-    #[allow(dead_code)]
-    matches: &'a ArgMatches<'a>,
 }
 
 impl TaskCommands<'_> {
