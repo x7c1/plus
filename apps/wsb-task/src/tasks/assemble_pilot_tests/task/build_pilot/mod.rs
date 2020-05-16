@@ -1,13 +1,12 @@
 mod params;
 pub use params::{OutputKind, Params};
 
-use crate::commands::build_pilot;
 use crate::commands::support::{CCFindable, Definable};
 use crate::TaskResult;
 use shellwork::core::command;
 use shellwork::core::command::{program, Runner, Unprepared};
 
-impl Definable for build_pilot::Params<'_> {
+impl Definable for Params<'_> {
     fn define(&self) -> TaskResult<Runner<Unprepared>> {
         // todo: move opt-level to params
         // todo: enable to add mode (--release)

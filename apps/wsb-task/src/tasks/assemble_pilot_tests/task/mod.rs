@@ -1,5 +1,7 @@
-use crate::commands::build_pilot::OutputKind;
-use crate::commands::{build_pilot, copy_as_artifact};
+mod build_pilot;
+use build_pilot::OutputKind;
+
+use crate::commands::copy_as_artifact;
 use crate::core::targets::{AsBuildTarget, BuildTarget};
 use crate::core::{Action, ActionOutput};
 use crate::TaskResult;
