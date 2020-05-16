@@ -7,6 +7,7 @@ pub struct Task;
 
 impl Task {
     pub fn start<P: CCFindable>(&self, params: &P) -> TaskResult<()> {
+        // todo: ignore unsupported target like macOS
         self.prepare(params)?.spawn()?;
         Ok(())
     }

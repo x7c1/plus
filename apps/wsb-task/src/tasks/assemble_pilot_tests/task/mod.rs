@@ -14,6 +14,7 @@ impl Task {
         let commands = TaskCommands {
             target: &params.as_build_target(),
         };
+        // todo: ignore unsupported target like macOS
         commands.run()
     }
 }

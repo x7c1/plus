@@ -7,7 +7,7 @@ use crate::{TaskOutput, TaskResult};
 use clap::{App, ArgMatches, SubCommand};
 use clap_task::ClapTask;
 
-pub fn define() -> Box<dyn ClapTask<TaskResult<TaskOutput>>> {
+pub fn clap() -> Box<dyn ClapTask<TaskResult<TaskOutput>>> {
     Box::new(Task)
 }
 
