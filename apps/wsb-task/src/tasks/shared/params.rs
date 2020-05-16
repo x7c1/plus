@@ -5,13 +5,13 @@ use crate::TaskResult;
 use clap::ArgMatches;
 
 #[derive(Debug)]
-pub struct SharedParams {
+pub struct Params {
     pub target: BuildTarget,
 }
 
-impl SharedParams {
+impl Params {
     pub fn from_matches<'a>(matches: &'a ArgMatches<'a>) -> TaskResult<Self> {
-        let params = SharedParams::builder()
+        let params = Params::builder()
             .target(build_target::from(matches)?)
             .build();
 
@@ -22,13 +22,13 @@ impl SharedParams {
     }
 }
 
-impl AsBuildTarget for SharedParams {
+impl AsBuildTarget for Params {
     fn as_build_target(&self) -> &BuildTarget {
         &self.target
     }
 }
 
-impl CCFindable for SharedParams {}
+impl CCFindable for Params {}
 
 pub struct ParamsBuilder {
     target: Option<BuildTarget>,
@@ -40,8 +40,8 @@ impl<'a> ParamsBuilder {
         self
     }
 
-    pub fn build(self) -> SharedParams {
-        SharedParams {
+    pub fn build(self) -> Params {
+        Params {
             target: self.target.expect("target is required"),
         }
     }

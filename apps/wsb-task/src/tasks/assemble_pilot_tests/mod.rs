@@ -1,8 +1,8 @@
 mod task;
 pub use task::Task;
 
+use crate::tasks::shared;
 use crate::tasks::shared::build_target;
-use crate::tasks::SharedParams;
 use crate::{TaskOutput, TaskResult};
 use clap::{App, ArgMatches, SubCommand};
 use clap_task::ClapTask;
@@ -24,7 +24,7 @@ impl ClapTask<TaskResult<TaskOutput>> for Task {
     }
 
     async fn run<'a>(&'a self, matches: &'a ArgMatches<'a>) -> TaskResult<TaskOutput> {
-        let params = SharedParams::from_matches(matches)?;
+        let params = shared::Params::from_matches(matches)?;
         self.run(&params)?;
         Ok(TaskOutput::empty())
     }

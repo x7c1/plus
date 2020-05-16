@@ -20,7 +20,6 @@ pub mod show_sizes;
 pub mod strip_executables;
 
 pub mod shared;
-pub use shared::SharedParams;
 
 pub fn define_all() -> Vec<Box<dyn ClapTask<TaskResult<TaskOutput>>>> {
     vec![

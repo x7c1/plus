@@ -1,4 +1,4 @@
 pub mod build_target;
 
 mod params;
-pub use params::SharedParams;
+pub use params::Params;
