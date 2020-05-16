@@ -1,6 +1,5 @@
 use std::path::Path;
 
-pub mod artifact_size;
 pub mod copy_as_artifact;
 
 pub fn artifacts_dir() -> &'static Path {

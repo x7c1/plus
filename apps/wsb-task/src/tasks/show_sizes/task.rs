@@ -1,15 +1,22 @@
-mod params;
-pub use params::Params;
-
-use crate::commands::support::Definable;
-use crate::commands::{artifact_size, artifacts_dir};
+use crate::commands::artifacts_dir;
 use crate::TaskResult;
 use shellwork::core::command;
-use shellwork::core::command::{Runner, Unprepared};
+use shellwork::core::command::{no_op, Prepared, Runner, Unprepared};
 
-impl Definable for artifact_size::Params {
-    fn define(&self) -> TaskResult<Runner<Unprepared>> {
-        let runner = command::program("tree")
+pub struct Task;
+
+impl Task {
+    pub fn start(&self) -> TaskResult<()> {
+        self.prepare()?.spawn()?;
+        Ok(())
+    }
+
+    fn prepare(&self) -> TaskResult<Runner<Prepared>> {
+        self.runner().prepare(no_op)
+    }
+
+    fn runner(&self) -> Runner<Unprepared> {
+        command::program("tree")
             // specify max tree depth to descend
             .args(&["-L", "2"])
             // use ANSI line graphics hack when printing indentation lines
@@ -20,8 +27,6 @@ impl Definable for artifact_size::Params {
             .arg("--du")
             // print human readable file size in SI units (powers of 1000)
             .arg("--si")
-            .arg(artifacts_dir());
-
-        Ok(runner)
+            .arg(artifacts_dir())
     }
 }

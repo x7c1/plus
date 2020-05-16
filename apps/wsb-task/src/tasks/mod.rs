@@ -27,7 +27,7 @@ pub fn define_all() -> Vec<Box<dyn ClapTask<TaskResult<TaskOutput>>>> {
         build_apps::clap(),
         copy_artifact_files::clap(),
         package_artifacts::clap(),
-        show_sizes::define(),
+        show_sizes::clap(),
         strip_executables::define(),
     ]
 }
