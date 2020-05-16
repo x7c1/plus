@@ -1,9 +1,9 @@
 mod task;
 pub use task::Task;
 
-use crate::tasks::SharedParams;
+use crate::tasks::{shared, SharedParams};
 use crate::{TaskOutput, TaskResult};
-use clap::{App, Arg, ArgMatches, SubCommand};
+use clap::{App, ArgMatches, SubCommand};
 use clap_task::ClapTask;
 
 pub fn clap() -> Box<dyn ClapTask<TaskResult<TaskOutput>>> {
@@ -19,13 +19,7 @@ impl ClapTask<TaskResult<TaskOutput>> for Task {
     fn design(&self) -> App {
         SubCommand::with_name(self.name())
             .about("Build wasabi applications.")
-            .arg(
-                Arg::with_name("target")
-                    .long("target")
-                    .required(true)
-                    .takes_value(true)
-                    .help("Build for the target label."),
-            )
+            .arg(shared::target::arg())
     }
 
     async fn run<'a>(&'a self, matches: &'a ArgMatches<'a>) -> TaskResult<TaskOutput> {

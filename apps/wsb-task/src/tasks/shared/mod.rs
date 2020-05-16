@@ -1,3 +1,5 @@
+pub mod target;
+
 use crate::commands::support::CCFindable;
 use crate::core::targets::{AsBuildTarget, BuildTarget};
 use crate::TaskResult;
