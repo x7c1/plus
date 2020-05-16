@@ -2,7 +2,6 @@ use std::path::Path;
 
 pub mod artifact_size;
 pub mod copy_as_artifact;
-pub mod package_artifact;
 
 pub fn artifacts_dir() -> &'static Path {
     Path::new("dist")
