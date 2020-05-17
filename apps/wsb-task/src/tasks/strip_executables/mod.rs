@@ -7,19 +7,19 @@ use crate::{TaskOutput, TaskResult};
 use clap::{App, ArgMatches, SubCommand};
 use clap_task::ClapTask;
 
-pub fn clap() -> Box<dyn ClapTask<TaskResult<TaskOutput>>> {
+pub fn define() -> Box<dyn ClapTask<TaskResult<TaskOutput>>> {
     Box::new(Task)
 }
 
 #[async_trait]
 impl ClapTask<TaskResult<TaskOutput>> for Task {
     fn name(&self) -> &str {
-        "copy-artifact-files"
+        "strip-executables"
     }
 
     fn design(&self) -> App {
         SubCommand::with_name(self.name())
-            .about("Copy files to artifact directory.")
+            .about("Strip executable artifacts.")
             .arg(build_target::arg())
     }
 
