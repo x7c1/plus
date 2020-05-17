@@ -27,6 +27,8 @@ impl Task {
             .arg("--du")
             // print human readable file size in SI units (powers of 1000)
             .arg("--si")
+            // list directories before files
+            .arg("--dirsfirst")
             .arg(artifacts_dir())
     }
 }
