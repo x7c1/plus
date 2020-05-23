@@ -9,17 +9,17 @@ pub struct Task;
 impl Task {
     pub fn start<P: AsBuildTarget>(&self, params: &P) -> TaskResult<()> {
         let commands = TaskCommands {
-            target: &params.as_build_target(),
+            target: *params.as_build_target(),
         };
         commands.run()
     }
 }
 
-struct TaskCommands<'a> {
-    target: &'a BuildTarget,
+struct TaskCommands {
+    target: BuildTarget,
 }
 
-impl TaskCommands<'_> {
+impl TaskCommands {
     fn run(&self) -> TaskResult<()> {
         self.copy_workspace()?;
         self.copy_test_runner()?;

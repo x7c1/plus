@@ -3,14 +3,14 @@ use crate::core::targets::{AsBuildTarget, BuildTarget};
 use std::path::{Path, PathBuf};
 
 #[derive(Debug)]
-pub struct Params<'a> {
-    pub target: &'a BuildTarget,
+pub struct Params {
+    pub target: BuildTarget,
     pub src: PathBuf,
     pub dst: PathBuf,
 }
 
-impl Params<'_> {
-    pub fn builder(target: &BuildTarget) -> ParamsBuilder {
+impl Params {
+    pub fn builder(target: BuildTarget) -> ParamsBuilder {
         ParamsBuilder {
             target,
             src: None,
@@ -19,19 +19,19 @@ impl Params<'_> {
     }
 }
 
-impl AsBuildTarget for Params<'_> {
+impl AsBuildTarget for Params {
     fn as_build_target(&self) -> &BuildTarget {
-        self.target
+        &self.target
     }
 }
 
-pub struct ParamsBuilder<'a> {
-    target: &'a BuildTarget,
+pub struct ParamsBuilder {
+    target: BuildTarget,
     src: Option<PathBuf>,
     dst: Option<PathBuf>,
 }
 
-impl<'a> ParamsBuilder<'a> {
+impl ParamsBuilder {
     pub fn src(mut self, path: &Path) -> Self {
         self.src = Some(path.to_path_buf());
         self
@@ -43,7 +43,7 @@ impl<'a> ParamsBuilder<'a> {
         self
     }
 
-    pub fn build(self) -> Params<'a> {
+    pub fn build(self) -> Params {
         Params {
             target: self.target,
             src: self.src.expect("src is required"),

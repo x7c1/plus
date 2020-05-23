@@ -7,7 +7,7 @@ use crate::TaskResult;
 use shellwork::core::command;
 use shellwork::core::command::{Runner, Unprepared};
 
-impl Definable for copy_as_artifact::Params<'_> {
+impl Definable for copy_as_artifact::Params {
     fn define(&self) -> TaskResult<Runner<Unprepared>> {
         let recursive = if self.src.is_dir() {
             Some("--recursive")

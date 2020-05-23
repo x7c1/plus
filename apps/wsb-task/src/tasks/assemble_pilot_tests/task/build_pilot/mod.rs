@@ -6,7 +6,7 @@ use crate::TaskResult;
 use shellwork::core::command;
 use shellwork::core::command::{program, Runner, Unprepared};
 
-impl Definable for Params<'_> {
+impl Definable for Params {
     fn define(&self) -> TaskResult<Runner<Unprepared>> {
         // todo: move opt-level to params
         // todo: enable to add mode (--release)

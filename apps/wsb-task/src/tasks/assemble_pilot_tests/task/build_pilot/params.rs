@@ -4,8 +4,8 @@ use crate::core::ActionOutput;
 use std::path::PathBuf;
 
 #[derive(Debug)]
-pub struct Params<'a> {
-    pub target: &'a BuildTarget,
+pub struct Params {
+    pub target: BuildTarget,
     pub output_kind: OutputKind,
 }
 
@@ -15,8 +15,8 @@ pub enum OutputKind {
     FileName,
 }
 
-impl<'a> Params<'a> {
-    pub fn builder(kind: OutputKind) -> ParamsBuilder<'a> {
+impl Params {
+    pub fn builder(kind: OutputKind) -> ParamsBuilder {
         ParamsBuilder {
             target: None,
             output_kind: kind,
@@ -24,26 +24,26 @@ impl<'a> Params<'a> {
     }
 }
 
-impl AsBuildTarget for Params<'_> {
+impl AsBuildTarget for Params {
     fn as_build_target(&self) -> &BuildTarget {
-        self.target
+        &self.target
     }
 }
 
-impl CCFindable for Params<'_> {}
+impl CCFindable for Params {}
 
-pub struct ParamsBuilder<'a> {
-    target: Option<&'a BuildTarget>,
+pub struct ParamsBuilder {
+    target: Option<BuildTarget>,
     output_kind: OutputKind,
 }
 
-impl<'a> ParamsBuilder<'a> {
-    pub fn target(mut self, target: &'a BuildTarget) -> Self {
+impl ParamsBuilder {
+    pub fn target(mut self, target: BuildTarget) -> Self {
         self.target = Some(target);
         self
     }
 
-    pub fn build(self) -> Params<'a> {
+    pub fn build(self) -> Params {
         Params {
             target: self.target.expect("target is required"),
             output_kind: self.output_kind,
@@ -51,7 +51,7 @@ impl<'a> ParamsBuilder<'a> {
     }
 }
 
-impl ActionOutput<Params<'_>> {
+impl ActionOutput<Params> {
     pub fn pilot_file_path(&self) -> PathBuf {
         PathBuf::new().join(self.stdout().as_ref())
     }
