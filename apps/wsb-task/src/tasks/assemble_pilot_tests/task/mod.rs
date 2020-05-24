@@ -3,7 +3,7 @@ use build_pilot::OutputKind;
 
 use crate::commands::copy_as_artifact;
 use crate::core::targets::{AsBuildTarget, BuildTarget};
-use crate::core::{Action, ActionOutput};
+use crate::core::ActionOutput;
 use crate::TaskResult;
 use shellwork::core::command::no_op;
 use std::path::Path;
@@ -47,7 +47,9 @@ impl TaskCommands {
 
     fn copy_pilot_file(&self, output: ActionOutput<build_pilot::Params>) -> TaskResult<()> {
         let params = self.params_to_copy_pilot(output);
-        Action::new().spawn(&params)
+        let runner = copy_as_artifact::create_runner(&params);
+        runner.prepare(no_op::<crate::Error>)?.spawn()?;
+        Ok(())
     }
 
     fn params_to_build_pilot(&self, kind: OutputKind) -> build_pilot::Params {
