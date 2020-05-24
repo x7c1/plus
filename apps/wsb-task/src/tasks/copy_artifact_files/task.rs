@@ -1,7 +1,7 @@
 use crate::commands::{app_names, copy_as_artifact};
 use crate::core::targets::{AsBuildTarget, BuildTarget};
-use crate::core::Action;
 use crate::TaskResult;
+use shellwork::core::command::no_op;
 use std::path::Path;
 
 pub struct Task;
@@ -33,7 +33,7 @@ impl TaskCommands {
             .dst(Path::new("wsb-pilot-workspace"))
             .build();
 
-        Action::new().spawn(&params)
+        self.spawn(&params)
     }
 
     fn copy_test_runner(&self) -> TaskResult<()> {
@@ -42,13 +42,13 @@ impl TaskCommands {
             .dst(Path::new("run_pilot_tests.sh"))
             .build();
 
-        Action::new().spawn(&params)
+        self.spawn(&params)
     }
 
     fn copy_release_apps(&self) -> TaskResult<()> {
         for name in app_names().iter() {
             let params = self.to_app_params(name);
-            Action::new().spawn(&params)?;
+            self.spawn(&params)?;
         }
         Ok(())
     }
@@ -63,5 +63,11 @@ impl TaskCommands {
             )
             .dst(Path::new(name))
             .build()
+    }
+
+    fn spawn(&self, params: &copy_as_artifact::Params) -> TaskResult<()> {
+        let runner = copy_as_artifact::create_runner(params);
+        runner.prepare(no_op::<crate::Error>)?.spawn()?;
+        Ok(())
     }
 }
