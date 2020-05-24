@@ -5,6 +5,7 @@ use crate::commands::copy_as_artifact;
 use crate::core::targets::{AsBuildTarget, BuildTarget};
 use crate::core::{Action, ActionOutput};
 use crate::TaskResult;
+use shellwork::core::command::no_op;
 use std::path::Path;
 
 pub struct Task;
@@ -32,13 +33,16 @@ impl TaskCommands {
 
     fn build_pilot(&self) -> TaskResult<()> {
         let params = self.params_to_build_pilot(OutputKind::Default);
-        Action::new().spawn(&params)
+        let runner = build_pilot::create_runner(&params);
+        runner.prepare(no_op::<crate::Error>)?.spawn()?;
+        Ok(())
     }
 
     fn get_pilot_file_name(&self) -> TaskResult<ActionOutput<build_pilot::Params>> {
         let params = self.params_to_build_pilot(OutputKind::FileName);
-        let output = Action::new().capture(&params)?;
-        Ok(output)
+        let runner = build_pilot::create_runner(&params);
+        let output = runner.prepare(no_op::<crate::Error>)?.capture()?;
+        Ok(ActionOutput::new(output))
     }
 
     fn copy_pilot_file(&self, output: ActionOutput<build_pilot::Params>) -> TaskResult<()> {

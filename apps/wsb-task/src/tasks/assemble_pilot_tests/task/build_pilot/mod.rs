@@ -1,30 +1,26 @@
 mod params;
 pub use params::{OutputKind, Params};
 
-use crate::commands::support::{CCFindable, Definable};
-use crate::TaskResult;
+use crate::commands::support::CCFindable;
 use shellwork::core::command;
 use shellwork::core::command::{program, Runner, Unprepared};
 
-impl Definable for Params {
-    fn define(&self) -> TaskResult<Runner<Unprepared>> {
-        // todo: move opt-level to params
-        // todo: enable to add mode (--release)
-        let default = command::program("cargo")
-            .arg("test")
-            .args(&["--target", self.target.as_triple()])
-            .args(&["--package", "wsb-pilot"])
-            .arg("--no-run")
-            .env("RUSTFLAGS", "-C opt-level=0")
-            .env_entry(self.cc());
+pub fn create_runner(params: &Params) -> Runner<Unprepared> {
+    // todo: move opt-level to params
+    // todo: enable to add mode (--release)
+    let default = command::program("cargo")
+        .arg("test")
+        .args(&["--target", params.target.as_triple()])
+        .args(&["--package", "wsb-pilot"])
+        .arg("--no-run")
+        .env("RUSTFLAGS", "-C opt-level=0")
+        .env_entry(params.cc());
 
-        // call via OutputKind::Default in advance to see compilation errors,
-        // since OutputKind::FileName hides them by the --message-format option.
-        let runner = match self.output_kind {
-            OutputKind::Default => default,
-            OutputKind::FileName => pipe_to_get_file_name(default),
-        };
-        Ok(runner)
+    // call via OutputKind::Default in advance to see compilation errors,
+    // since OutputKind::FileName hides them by the --message-format option.
+    match params.output_kind {
+        OutputKind::Default => default,
+        OutputKind::FileName => pipe_to_get_file_name(default),
     }
 }
 
