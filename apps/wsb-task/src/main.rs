@@ -7,8 +7,6 @@ extern crate clap;
 #[macro_use]
 extern crate failure;
 
-pub mod commands;
-
 #[macro_use]
 pub mod core;
 

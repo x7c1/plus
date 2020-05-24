@@ -1,6 +1,6 @@
-use crate::commands::copy_as_artifact;
 use crate::core::env::app_names;
 use crate::core::targets::{AsBuildTarget, BuildTarget};
+use crate::tasks::shared::commands::copy_as_artifact;
 use crate::TaskResult;
 use shellwork::core::command::no_op;
 use std::path::Path;

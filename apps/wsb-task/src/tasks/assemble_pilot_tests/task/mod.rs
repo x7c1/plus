@@ -1,9 +1,9 @@
 mod build_pilot;
 use build_pilot::OutputKind;
 
-use crate::commands::copy_as_artifact;
 use crate::core::targets::{AsBuildTarget, BuildTarget};
 use crate::core::ActionOutput;
+use crate::tasks::shared::commands::copy_as_artifact;
 use crate::TaskResult;
 use shellwork::core::command::{no_op, Runner, Unprepared};
 use std::path::Path;
