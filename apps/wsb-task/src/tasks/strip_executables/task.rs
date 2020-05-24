@@ -1,4 +1,4 @@
-use crate::commands::{artifacts_dir, executable_names};
+use crate::core::env::{artifacts_dir, executable_names};
 use crate::core::targets::{AsBuildTarget, BuildTarget};
 use crate::TaskResult;
 use shellwork::core::command;

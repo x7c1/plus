@@ -1,4 +1,5 @@
-use crate::commands::{app_names, copy_as_artifact};
+use crate::commands::copy_as_artifact;
+use crate::core::env::app_names;
 use crate::core::targets::{AsBuildTarget, BuildTarget};
 use crate::TaskResult;
 use shellwork::core::command::no_op;

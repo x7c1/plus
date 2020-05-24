@@ -1,4 +1,4 @@
-use crate::commands::artifacts_dir;
+use crate::core::env::artifacts_dir;
 use crate::TaskResult;
 use shellwork::core::command;
 use shellwork::core::command::{no_op, Prepared, Runner, Unprepared};
