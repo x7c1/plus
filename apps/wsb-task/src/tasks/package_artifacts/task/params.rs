@@ -1,4 +1,4 @@
-use crate::commands::artifacts_dir;
+use crate::core::env::artifacts_dir;
 use crate::core::targets::{AsBuildTarget, BuildTarget};
 
 #[derive(Debug)]

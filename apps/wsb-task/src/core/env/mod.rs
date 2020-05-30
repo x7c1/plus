@@ -1,7 +1,5 @@
 use std::path::Path;
 
-pub mod copy_as_artifact;
-
 pub fn artifacts_dir() -> &'static Path {
     Path::new("dist")
 }
