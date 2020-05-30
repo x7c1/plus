@@ -1,14 +1,13 @@
-use crate::commands::artifact_size;
-use crate::commands::support::Definable;
+mod task;
+use task::Task;
+
 use crate::{TaskOutput, TaskResult};
 use clap::{App, ArgMatches, SubCommand};
 use clap_task::ClapTask;
 
-pub fn define() -> Box<dyn ClapTask<TaskResult<TaskOutput>>> {
+pub fn clap() -> Box<dyn ClapTask<TaskResult<TaskOutput>>> {
     Box::new(Task)
 }
-
-struct Task;
 
 #[async_trait]
 impl ClapTask<TaskResult<TaskOutput>> for Task {
@@ -21,8 +20,7 @@ impl ClapTask<TaskResult<TaskOutput>> for Task {
     }
 
     async fn run<'a>(&'a self, _matches: &'a ArgMatches<'a>) -> TaskResult<TaskOutput> {
-        let params = artifact_size::Params {};
-        params.define()?.prepare(|_| TaskResult::Ok(()))?.spawn()?;
+        self.start()?;
         Ok(TaskOutput::empty())
     }
 }

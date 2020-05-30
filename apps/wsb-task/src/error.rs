@@ -21,6 +21,9 @@ pub enum Error {
 
     #[fail(display = "string::FromUtf8Error > {}", 0)]
     StringFromUtf8Error(string::FromUtf8Error),
+
+    #[fail(display = "unknown target > {}", 0)]
+    UnknownBuildTarget(String),
 }
 
 impl From<clap_task::Error> for Error {

@@ -196,6 +196,10 @@ impl Runner<Unprepared> {
     }
 }
 
+pub fn no_op<E>(_: &Runner<Unprepared>) -> Result<(), E> {
+    Ok(())
+}
+
 #[derive(Debug)]
 pub struct RunnerSummary {
     command: String,

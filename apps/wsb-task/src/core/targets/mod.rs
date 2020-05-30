@@ -1,6 +1,8 @@
+use crate::error::Error::UnknownBuildTarget;
 use std::fmt::Debug;
+use std::str::FromStr;
 
-#[derive(Debug)]
+#[derive(Clone, Copy, Debug)]
 pub enum BuildTarget {
     LinuxX86,
     LinuxArmV7,
@@ -30,6 +32,18 @@ impl BuildTarget {
             BuildTarget::LinuxArmV7 => "linux_armv7",
             BuildTarget::MacX86 => "macos_x86",
         }
+    }
+}
+
+impl FromStr for BuildTarget {
+    type Err = crate::Error;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        BuildTarget::all()
+            .iter()
+            .find(|target| target.as_abbr() == s)
+            .ok_or_else(|| UnknownBuildTarget(s.to_string()))
+            .map(|target| *target)
     }
 }
 

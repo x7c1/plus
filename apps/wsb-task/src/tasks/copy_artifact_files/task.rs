@@ -1,44 +1,25 @@
 use crate::commands::{app_names, copy_as_artifact};
-use crate::core::targets::BuildTarget;
-use crate::core::Action;
-use crate::{TaskOutput, TaskResult};
-use clap::{App, ArgMatches, SubCommand};
-use clap_task::ClapTask;
+use crate::core::targets::{AsBuildTarget, BuildTarget};
+use crate::TaskResult;
+use shellwork::core::command::no_op;
 use std::path::Path;
 
-pub fn define() -> Box<dyn ClapTask<TaskResult<TaskOutput>>> {
-    Box::new(Task)
-}
+pub struct Task;
 
-struct Task;
-
-#[async_trait]
-impl ClapTask<TaskResult<TaskOutput>> for Task {
-    fn name(&self) -> &str {
-        "copy-artifact-files"
-    }
-
-    fn design(&self) -> App {
-        SubCommand::with_name(self.name()).about("Copy files to artifact directory.")
-    }
-
-    async fn run<'a>(&'a self, matches: &'a ArgMatches<'a>) -> TaskResult<TaskOutput> {
-        BuildTarget::all()
-            .iter()
-            .map(|target| TaskCommands { target, matches })
-            .try_for_each(|commands| commands.run())?;
-
-        Ok(TaskOutput::empty())
+impl Task {
+    pub fn start<P: AsBuildTarget>(&self, params: &P) -> TaskResult<()> {
+        let commands = TaskCommands {
+            target: *params.as_build_target(),
+        };
+        commands.run()
     }
 }
 
-struct TaskCommands<'a> {
-    target: &'a BuildTarget,
-    #[allow(dead_code)]
-    matches: &'a ArgMatches<'a>,
+struct TaskCommands {
+    target: BuildTarget,
 }
 
-impl TaskCommands<'_> {
+impl TaskCommands {
     fn run(&self) -> TaskResult<()> {
         self.copy_workspace()?;
         self.copy_test_runner()?;
@@ -52,7 +33,7 @@ impl TaskCommands<'_> {
             .dst(Path::new("wsb-pilot-workspace"))
             .build();
 
-        Action::new().spawn(&params)
+        self.spawn(&params)
     }
 
     fn copy_test_runner(&self) -> TaskResult<()> {
@@ -61,13 +42,13 @@ impl TaskCommands<'_> {
             .dst(Path::new("run_pilot_tests.sh"))
             .build();
 
-        Action::new().spawn(&params)
+        self.spawn(&params)
     }
 
     fn copy_release_apps(&self) -> TaskResult<()> {
         for name in app_names().iter() {
             let params = self.to_app_params(name);
-            Action::new().spawn(&params)?;
+            self.spawn(&params)?;
         }
         Ok(())
     }
@@ -82,5 +63,11 @@ impl TaskCommands<'_> {
             )
             .dst(Path::new(name))
             .build()
+    }
+
+    fn spawn(&self, params: &copy_as_artifact::Params) -> TaskResult<()> {
+        let runner = copy_as_artifact::create_runner(params);
+        runner.prepare(no_op::<crate::Error>)?.spawn()?;
+        Ok(())
     }
 }

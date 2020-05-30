@@ -19,13 +19,15 @@ pub mod show_sizes;
 #[macro_use]
 pub mod strip_executables;
 
+pub mod shared;
+
 pub fn define_all() -> Vec<Box<dyn ClapTask<TaskResult<TaskOutput>>>> {
     vec![
-        assemble_pilot_tests::define(),
-        build_apps::define(),
-        copy_artifact_files::define(),
-        package_artifacts::define(),
-        show_sizes::define(),
-        strip_executables::define(),
+        assemble_pilot_tests::clap(),
+        build_apps::clap(),
+        copy_artifact_files::clap(),
+        package_artifacts::clap(),
+        show_sizes::clap(),
+        strip_executables::clap(),
     ]
 }
