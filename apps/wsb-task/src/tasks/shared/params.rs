@@ -1,24 +1,30 @@
-use crate::core::support::CCFindable;
+use crate::core::build_mode::{AsBuildMode, BuildMode};
+use crate::core::support::{CCFindable, HasBuildMode};
 use crate::core::targets::{AsBuildTarget, BuildTarget};
-use crate::tasks::shared::build_target;
+use crate::tasks::shared::{build_mode, build_target};
 use crate::TaskResult;
 use clap::ArgMatches;
 
 #[derive(Debug)]
 pub struct Params {
-    pub target: BuildTarget,
+    target: BuildTarget,
+    build_mode: BuildMode,
 }
 
 impl Params {
     pub fn from_matches<'a>(matches: &'a ArgMatches<'a>) -> TaskResult<Self> {
         let params = Params::builder()
             .target(build_target::from(matches)?)
+            .build_mode(build_mode::from(matches)?)
             .build();
 
         Ok(params)
     }
     pub fn builder() -> ParamsBuilder {
-        ParamsBuilder { target: None }
+        ParamsBuilder {
+            target: None,
+            build_mode: BuildMode::Debug,
+        }
     }
 }
 
@@ -27,11 +33,18 @@ impl AsBuildTarget for Params {
         &self.target
     }
 }
-
 impl CCFindable for Params {}
+
+impl AsBuildMode for Params {
+    fn as_build_mode(&self) -> &BuildMode {
+        &self.build_mode
+    }
+}
+impl HasBuildMode for Params {}
 
 pub struct ParamsBuilder {
     target: Option<BuildTarget>,
+    build_mode: BuildMode,
 }
 
 impl<'a> ParamsBuilder {
@@ -40,9 +53,15 @@ impl<'a> ParamsBuilder {
         self
     }
 
+    pub fn build_mode(mut self, build_mode: BuildMode) -> Self {
+        self.build_mode = build_mode;
+        self
+    }
+
     pub fn build(self) -> Params {
         Params {
             target: self.target.expect("target is required"),
+            build_mode: self.build_mode,
         }
     }
 }
