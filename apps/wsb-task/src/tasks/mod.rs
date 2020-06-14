@@ -1,4 +1,4 @@
-use crate::{TaskOutput, TaskResult};
+use crate::TaskResult;
 use clap_task::ClapTask;
 
 #[macro_use]
@@ -21,7 +21,7 @@ pub mod strip_executables;
 
 pub mod shared;
 
-pub fn define_all() -> Vec<Box<dyn ClapTask<TaskResult<TaskOutput>>>> {
+pub fn define_all() -> Vec<Box<dyn ClapTask<TaskResult<()>>>> {
     vec![
         assemble_pilot_tests::clap(),
         build_apps::clap(),
