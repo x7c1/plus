@@ -1,6 +1,7 @@
 mod build_pilot;
 use build_pilot::OutputKind;
 
+use crate::core::build_mode::{AsBuildMode, BuildMode};
 use crate::core::targets::{AsBuildTarget, BuildTarget};
 use crate::core::ActionOutput;
 use crate::tasks::shared::commands::copy_as_artifact;
@@ -11,7 +12,11 @@ use std::path::Path;
 pub struct Task;
 
 impl Task {
-    pub fn start<P: AsBuildTarget>(&self, params: &P) -> TaskResult<()> {
+    pub fn start<P>(&self, params: &P) -> TaskResult<()>
+    where
+        P: AsBuildTarget,
+        P: AsBuildMode,
+    {
         let commands = TaskCommands::new(params);
         // todo: ignore unsupported target like macOS
         commands.run()
@@ -23,10 +28,15 @@ struct TaskCommands {
 }
 
 impl TaskCommands {
-    pub fn new<P: AsBuildTarget>(params: &P) -> TaskCommands {
+    pub fn new<P>(params: &P) -> TaskCommands
+    where
+        P: AsBuildTarget,
+        P: AsBuildMode,
+    {
         TaskCommands {
             runners: CommandRunners {
                 target: *params.as_build_target(),
+                build_mode: *params.as_build_mode(),
             },
         }
     }
@@ -68,6 +78,7 @@ impl TaskCommands {
 
 struct CommandRunners {
     target: BuildTarget,
+    build_mode: BuildMode,
 }
 
 impl CommandRunners {
@@ -92,6 +103,7 @@ impl CommandRunners {
     fn params_to_build_pilot(&self, kind: OutputKind) -> build_pilot::Params {
         build_pilot::Params::builder(kind)
             .target(self.target)
+            .build_mode(self.build_mode)
             .build()
     }
 
