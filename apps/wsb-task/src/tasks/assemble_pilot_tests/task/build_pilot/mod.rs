@@ -10,6 +10,7 @@ pub fn create_runner(params: &Params) -> Runner<Unprepared> {
     // todo: enable to add mode (--release)
     let default = command::program("cargo")
         .arg("test")
+        .push_arg(params.build_mode())
         .args(&["--target", params.target.as_triple()])
         .args(&["--package", "wsb-pilot"])
         .arg("--no-run")
