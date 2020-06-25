@@ -6,8 +6,6 @@ use shellwork::core::command;
 use shellwork::core::command::{program, Runner, Unprepared};
 
 pub fn create_runner(params: &Params) -> Runner<Unprepared> {
-    // todo: move opt-level to params
-    // todo: enable to add mode (--release)
     let default = command::program("cargo")
         .arg("test")
         .push_arg(params.build_mode())
