@@ -1,6 +1,3 @@
-mod can_pipe;
-use can_pipe::CanPipe;
-
 mod inherited;
 use inherited::InheritedRunner;
 
@@ -134,7 +131,7 @@ impl Runner<Prepared> {
         // todo: use logger
         eprintln!("{:#?}", self.create_summary());
 
-        let child = if let Some(next) = self.spawn_to_inherit()? {
+        let child = if let Some(mut next) = self.spawn_to_inherit()? {
             next.spawn_recursively(output)?
         } else {
             self.spawn_lastly(output)?
@@ -147,6 +144,7 @@ impl Runner<Prepared> {
             self.spawn_to_pipe().map(|child| InheritedRunner {
                 runner,
                 previous: child,
+                previous_summary: self.create_summary(),
             })
         };
         (*self.next_runner).as_ref().map(spawn).transpose()
@@ -165,6 +163,14 @@ impl Runner<Prepared> {
             .spawn()?;
 
         Ok(child)
+    }
+
+    fn spawn_to_pipe(&self) -> crate::Result<Child> {
+        self.start_spawning(Stdio::inherit(), Stdio::piped())
+    }
+
+    fn spawn_lastly<T: Into<Stdio>>(&self, output: T) -> crate::Result<Child> {
+        self.start_spawning(Stdio::inherit(), output)
     }
 }
 

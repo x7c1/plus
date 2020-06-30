@@ -1,22 +1,24 @@
-use crate::core::command::runner::can_pipe::CanPipe;
-use crate::core::command::{Prepared, Runner};
+use crate::core::command::{Prepared, Runner, RunnerSummary};
 use crate::error::Error::CommandFailed;
 use std::process::{Child, Stdio};
 
 #[derive(Debug)]
 pub struct InheritedRunner<'a> {
     pub previous: Child,
+    pub previous_summary: RunnerSummary,
     pub runner: &'a Runner<Prepared>,
 }
 
 impl InheritedRunner<'_> {
     /// Call `wait` and `spawn` recursively to the end of next_runner.
-    pub fn spawn_recursively<T: Into<Stdio>>(self, out: T) -> crate::Result<Child> {
-        let mut inherited = self;
+    pub fn spawn_recursively<T: Into<Stdio>>(&mut self, out: T) -> crate::Result<Child> {
+        let inherited = self;
         while let Some(next_runner) = &*(inherited.runner).next_runner {
-            inherited = InheritedRunner {
+            let (previous, previous_summary) = inherited.spawn_to_pipe()?;
+            *inherited = InheritedRunner {
+                previous,
+                previous_summary,
                 runner: next_runner,
-                previous: inherited.spawn_to_pipe()?,
             };
         }
         inherited.spawn_lastly(out)
@@ -33,21 +35,19 @@ impl InheritedRunner<'_> {
             })
         }
     }
-}
 
-impl CanPipe for InheritedRunner<'_> {
-    fn spawn_to_pipe(mut self) -> crate::Result<Child> {
+    fn spawn_to_pipe(&mut self) -> crate::Result<(Child, RunnerSummary)> {
         if let Some(previous_output) = self.previous.stdout.take() {
             let current = self
                 .runner
                 .start_spawning(previous_output, Stdio::piped())?;
 
             self.wait_for_previous()?;
-            Ok(current)
+            Ok((current, self.runner.create_summary()))
         } else {
             unimplemented!()
             /*
-            // todo: what is correct procedure when stdout has not been captured?
+            // fixme: what is correct procedure when stdout has not been captured?
             // should it be handled as error?
             Err(...)
 
@@ -58,7 +58,7 @@ impl CanPipe for InheritedRunner<'_> {
         }
     }
 
-    fn spawn_lastly<T: Into<Stdio>>(mut self, output: T) -> crate::Result<Child> {
+    fn spawn_lastly<T: Into<Stdio>>(&mut self, output: T) -> crate::Result<Child> {
         if let Some(previous_output) = self.previous.stdout.take() {
             let current = self.runner.start_spawning(previous_output, output)?;
 
@@ -67,7 +67,7 @@ impl CanPipe for InheritedRunner<'_> {
         } else {
             unimplemented!()
             /*
-            // todo: see above todo in spawn_to_pipe.
+            // fixme: see above todo in spawn_to_pipe.
             self.wait_for_previous()?;
             self.runner.spawn_lastly(output)
             */
