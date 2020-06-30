@@ -11,11 +11,11 @@ pub struct InheritedRunner<'a> {
 
 impl InheritedRunner<'_> {
     /// Call `wait` and `spawn` recursively to the end of next_runner.
-    pub fn spawn_recursively<T: Into<Stdio>>(&mut self, out: T) -> crate::Result<Child> {
-        let inherited = self;
+    pub fn spawn_recursively<T: Into<Stdio>>(self, out: T) -> crate::Result<Child> {
+        let mut inherited = self;
         while let Some(next_runner) = &*(inherited.runner).next_runner {
             let (previous, previous_summary) = inherited.spawn_to_pipe()?;
-            *inherited = InheritedRunner {
+            inherited = InheritedRunner {
                 previous,
                 previous_summary,
                 runner: next_runner,
@@ -36,7 +36,7 @@ impl InheritedRunner<'_> {
         }
     }
 
-    fn spawn_to_pipe(&mut self) -> crate::Result<(Child, RunnerSummary)> {
+    fn spawn_to_pipe(mut self) -> crate::Result<(Child, RunnerSummary)> {
         if let Some(previous_output) = self.previous.stdout.take() {
             let current = self
                 .runner
@@ -58,7 +58,7 @@ impl InheritedRunner<'_> {
         }
     }
 
-    fn spawn_lastly<T: Into<Stdio>>(&mut self, output: T) -> crate::Result<Child> {
+    fn spawn_lastly<T: Into<Stdio>>(mut self, output: T) -> crate::Result<Child> {
         if let Some(previous_output) = self.previous.stdout.take() {
             let current = self.runner.start_spawning(previous_output, output)?;
 

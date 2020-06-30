@@ -131,7 +131,7 @@ impl Runner<Prepared> {
         // todo: use logger
         eprintln!("{:#?}", self.create_summary());
 
-        let child = if let Some(mut next) = self.spawn_to_inherit()? {
+        let child = if let Some(next) = self.spawn_to_inherit()? {
             next.spawn_recursively(output)?
         } else {
             self.spawn_lastly(output)?
