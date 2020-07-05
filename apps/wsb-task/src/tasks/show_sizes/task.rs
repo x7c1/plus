@@ -1,8 +1,8 @@
 use crate::core::env::artifacts_dir;
+use crate::core::support::confirm_program;
 use crate::TaskResult;
 use shellwork::core::command;
 use shellwork::core::command::{Prepared, Runner, Unprepared};
-use crate::core::support::confirm_program;
 
 pub struct Task;
 
