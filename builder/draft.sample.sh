@@ -41,7 +41,7 @@ dev() {
   run_unit_tests_for_linux_x86
   cargo_fmt
   cargo_clippy
-  run_specified_test
+  run_specified_tests
 }
 
 s3api() {
@@ -62,12 +62,20 @@ run_get() {
     test.README.md
 }
 
-run_specified_test() {
+run_specified_tests() {
   cargo test \
     ${BUILD_MODE} \
     --target="${TARGET_X86}" \
     --workspace --exclude=wsb-pilot \
     -- --nocapture auth::v4::calculator
+}
+
+run_package_specified_tests() {
+  cargo test \
+    ${BUILD_MODE} \
+    --target="${TARGET_X86}" \
+    --package wsb-task \
+    -- --nocapture core
 }
 
 main
