@@ -1,4 +1,5 @@
 use crate::core::targets::{AsBuildTarget, BuildTarget};
+use crate::TaskResult;
 use shellwork::core::env::EnvEntry;
 
 pub trait CCRequired: AsBuildTarget {
@@ -13,4 +14,10 @@ pub trait CCRequired: AsBuildTarget {
             value: target.to_string(),
         })
     }
+}
+
+pub fn confirm_cc<P: CCRequired>(params: &P) -> TaskResult<()> {
+    // todo:
+    println!("params:{:#?}", params.cc());
+    Ok(())
 }

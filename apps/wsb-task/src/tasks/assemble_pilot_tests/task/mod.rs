@@ -2,7 +2,7 @@ mod build_pilot;
 use build_pilot::OutputKind;
 
 use crate::core::build_mode::AsBuildMode;
-use crate::core::support::CCRequired;
+use crate::core::support::confirm_cc;
 use crate::core::targets::AsBuildTarget;
 use crate::core::ActionOutput;
 use crate::tasks::shared::commands::copy_as_artifact;
@@ -59,12 +59,6 @@ impl BuildPilot {
         let params = &self.params;
         self.runner.prepare(|_| confirm_cc(params))
     }
-}
-
-fn confirm_cc<P: CCRequired>(params: &P) -> TaskResult<()> {
-    // todo:
-    println!("params:{:#?}", params.cc());
-    Ok(())
 }
 
 struct CopyFile {

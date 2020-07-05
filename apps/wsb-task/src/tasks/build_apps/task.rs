@@ -1,7 +1,7 @@
-use crate::core::support::{CCRequired, HasBuildMode};
+use crate::core::support::{confirm_cc, CCRequired, HasBuildMode};
 use crate::TaskResult;
 use shellwork::core::command;
-use shellwork::core::command::{no_op, Prepared, Runner, Unprepared};
+use shellwork::core::command::{Prepared, Runner, Unprepared};
 
 pub struct Task;
 
@@ -11,7 +11,6 @@ impl Task {
         P: CCRequired,
         P: HasBuildMode,
     {
-        // todo: ignore unsupported target like macOS
         self.prepare(params)?.spawn()?;
         Ok(())
     }
@@ -21,7 +20,7 @@ impl Task {
         P: CCRequired,
         P: HasBuildMode,
     {
-        self.runner(params).prepare(no_op)
+        self.runner(params).prepare(|_| confirm_cc(params))
     }
 
     fn runner<P>(&self, params: &P) -> Runner<Unprepared>
