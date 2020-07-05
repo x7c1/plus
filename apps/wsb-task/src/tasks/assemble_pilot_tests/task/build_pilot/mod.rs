@@ -1,7 +1,7 @@
 mod params;
 pub use params::{OutputKind, Params};
 
-use crate::core::support::{CCFindable, HasBuildMode};
+use crate::core::support::{CCRequired, HasBuildMode};
 use shellwork::core::command;
 use shellwork::core::command::{program, Runner, Unprepared};
 

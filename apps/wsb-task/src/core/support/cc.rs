@@ -1,7 +1,7 @@
 use crate::core::targets::{AsBuildTarget, BuildTarget};
 use shellwork::core::env::EnvEntry;
 
-pub trait CCFindable: AsBuildTarget {
+pub trait CCRequired: AsBuildTarget {
     fn cc(&self) -> Option<EnvEntry> {
         let maybe = match self.as_build_target() {
             BuildTarget::LinuxX86 => None,

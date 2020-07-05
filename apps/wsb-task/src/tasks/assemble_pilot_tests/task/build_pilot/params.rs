@@ -1,5 +1,5 @@
 use crate::core::build_mode::{AsBuildMode, BuildMode};
-use crate::core::support::{CCFindable, HasBuildMode};
+use crate::core::support::{CCRequired, HasBuildMode};
 use crate::core::targets::{AsBuildTarget, BuildTarget};
 use crate::core::ActionOutput;
 use std::path::PathBuf;
@@ -33,7 +33,7 @@ impl AsBuildTarget for Params {
     }
 }
 
-impl CCFindable for Params {}
+impl CCRequired for Params {}
 
 impl AsBuildMode for Params {
     fn as_build_mode(&self) -> &BuildMode {

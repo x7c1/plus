@@ -1,4 +1,4 @@
-use crate::core::support::{CCFindable, HasBuildMode};
+use crate::core::support::{CCRequired, HasBuildMode};
 use crate::TaskResult;
 use shellwork::core::command;
 use shellwork::core::command::{no_op, Prepared, Runner, Unprepared};
@@ -8,7 +8,7 @@ pub struct Task;
 impl Task {
     pub fn start<P>(&self, params: &P) -> TaskResult<()>
     where
-        P: CCFindable,
+        P: CCRequired,
         P: HasBuildMode,
     {
         // todo: ignore unsupported target like macOS
@@ -18,7 +18,7 @@ impl Task {
 
     fn prepare<P>(&self, params: &P) -> TaskResult<Runner<Prepared>>
     where
-        P: CCFindable,
+        P: CCRequired,
         P: HasBuildMode,
     {
         self.runner(params).prepare(no_op)
@@ -26,7 +26,7 @@ impl Task {
 
     fn runner<P>(&self, params: &P) -> Runner<Unprepared>
     where
-        P: CCFindable,
+        P: CCRequired,
         P: HasBuildMode,
     {
         command::program("cargo")

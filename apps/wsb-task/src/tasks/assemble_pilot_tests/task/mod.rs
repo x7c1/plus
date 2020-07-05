@@ -2,7 +2,7 @@ mod build_pilot;
 use build_pilot::OutputKind;
 
 use crate::core::build_mode::AsBuildMode;
-use crate::core::support::CCFindable;
+use crate::core::support::CCRequired;
 use crate::core::targets::AsBuildTarget;
 use crate::core::ActionOutput;
 use crate::tasks::shared::commands::copy_as_artifact;
@@ -61,7 +61,7 @@ impl BuildPilot {
     }
 }
 
-fn confirm_cc<P: CCFindable>(params: &P) -> TaskResult<()> {
+fn confirm_cc<P: CCRequired>(params: &P) -> TaskResult<()> {
     // todo:
     println!("params:{:#?}", params.cc());
     Ok(())
