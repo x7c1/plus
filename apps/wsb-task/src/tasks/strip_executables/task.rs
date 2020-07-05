@@ -1,8 +1,9 @@
 use crate::core::env::{artifacts_dir, executable_names};
+use crate::core::support::confirm_program;
 use crate::core::targets::{AsBuildTarget, BuildTarget};
 use crate::TaskResult;
 use shellwork::core::command;
-use shellwork::core::command::{no_op, Runner, Unprepared};
+use shellwork::core::command::{Runner, Unprepared};
 use std::path::{Path, PathBuf};
 
 pub struct Task;
@@ -16,9 +17,7 @@ impl Task {
             .map(|path| to_runner(params, path));
 
         for runner in runners {
-            let prepared = runner.prepare(no_op::<crate::Error>);
-
-            // todo: ignore unsupported target like macOS
+            let prepared = runner.prepare(confirm_program);
             prepared?.spawn()?;
         }
         Ok(())

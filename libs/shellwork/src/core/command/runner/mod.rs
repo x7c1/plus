@@ -14,7 +14,7 @@ use std::process::{Child, Command, ExitStatus, Stdio};
 
 #[derive(Debug)]
 pub struct Runner<T> {
-    program: String,
+    pub program: String,
     args: Vec<String>,
     env_vars: HashMap<String, String>,
     next_runner: Box<Option<Runner<T>>>,
