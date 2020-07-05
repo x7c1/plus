@@ -1,7 +1,8 @@
 use crate::core::env::artifacts_dir;
 use crate::TaskResult;
 use shellwork::core::command;
-use shellwork::core::command::{no_op, Prepared, Runner, Unprepared};
+use shellwork::core::command::{Prepared, Runner, Unprepared};
+use crate::core::support::confirm_program;
 
 pub struct Task;
 
@@ -12,7 +13,7 @@ impl Task {
     }
 
     fn prepare(&self) -> TaskResult<Runner<Prepared>> {
-        self.runner().prepare(no_op)
+        self.runner().prepare(confirm_program)
     }
 
     fn runner(&self) -> Runner<Unprepared> {
