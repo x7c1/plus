@@ -60,7 +60,7 @@ impl ParamsBuilder {
     pub fn build(self) -> Params {
         Params {
             target: self.target.expect("target is required"),
-            build_mode: BuildMode::Debug,
+            build_mode: self.build_mode,
             output_kind: self.output_kind,
         }
     }

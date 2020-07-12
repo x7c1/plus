@@ -1,7 +1,7 @@
 mod params;
 use params::Params;
 
-use crate::core::support::confirm_program;
+use crate::core::support::program_exists;
 use crate::core::targets::AsBuildTarget;
 use crate::TaskResult;
 use shellwork::core::command;
@@ -17,7 +17,7 @@ impl Task {
 
     fn prepare<P: AsBuildTarget>(&self, params: &P) -> TaskResult<Runner<Prepared>> {
         let params = Params::builder(params.as_build_target()).build();
-        self.runner(&params).prepare(confirm_program)
+        self.runner(&params).prepare(program_exists)
     }
 
     fn runner(&self, params: &Params) -> Runner<Unprepared> {

@@ -1,5 +1,5 @@
 use crate::core::env::{artifacts_dir, executable_names};
-use crate::core::support::confirm_program;
+use crate::core::support::program_exists;
 use crate::core::targets::{AsBuildTarget, BuildTarget};
 use crate::TaskResult;
 use shellwork::core::command;
@@ -17,7 +17,7 @@ impl Task {
             .map(|path| to_runner(params, path));
 
         for runner in runners {
-            let prepared = runner.prepare(confirm_program);
+            let prepared = runner.prepare(program_exists);
             prepared?.spawn()?;
         }
         Ok(())

@@ -1,5 +1,5 @@
 use crate::core::env::artifacts_dir;
-use crate::core::support::confirm_program;
+use crate::core::support::program_exists;
 use crate::TaskResult;
 use shellwork::core::command;
 use shellwork::core::command::{Prepared, Runner, Unprepared};
@@ -13,7 +13,7 @@ impl Task {
     }
 
     fn prepare(&self) -> TaskResult<Runner<Prepared>> {
-        self.runner().prepare(confirm_program)
+        self.runner().prepare(program_exists)
     }
 
     fn runner(&self) -> Runner<Unprepared> {
