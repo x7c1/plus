@@ -14,7 +14,7 @@ use std::process::{Child, Command, ExitStatus, Stdio};
 
 #[derive(Debug)]
 pub struct Runner<T> {
-    pub program: String,
+    program: String,
     args: Vec<String>,
     env_vars: HashMap<String, String>,
     next_runner: Box<Option<Runner<T>>>,
@@ -25,6 +25,10 @@ impl<T> Runner<T>
 where
     T: Debug,
 {
+    pub fn get_program(&self) -> &str {
+        &self.program
+    }
+
     pub fn arg<A: AsRef<OsStr>>(mut self, arg: A) -> Self {
         self.args.push(arg.as_ref().to_string_lossy().to_string());
         self

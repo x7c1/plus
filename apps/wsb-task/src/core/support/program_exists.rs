@@ -4,7 +4,7 @@ use shellwork::core::command::{no_op, Runner, Unprepared};
 
 pub fn program_exists(runner: &Runner<Unprepared>) -> TaskResult<()> {
     // https://stackoverflow.com/a/39983421
-    let line = format!("command -v {}", runner.program);
+    let line = format!("command -v {}", runner.get_program());
     let runner = command::program("sh")
         .args(&["-c", &line])
         .prepare(no_op::<crate::Error>)?;
