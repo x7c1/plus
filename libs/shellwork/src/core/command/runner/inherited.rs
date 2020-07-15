@@ -1,5 +1,5 @@
 use crate::core::command::{Prepared, Runner, RunnerSummary};
-use crate::error::Error::CommandFailed;
+use crate::error::Error::{CommandFailed, EmptyStdOut};
 use std::process::{Child, Stdio};
 
 #[derive(Debug)]
@@ -45,16 +45,9 @@ impl InheritedRunner<'_> {
             self.wait_for_previous()?;
             Ok((current, self.runner.create_summary()))
         } else {
-            unimplemented!()
-            /*
-            // fixme: what is correct procedure when stdout has not been captured?
-            // should it be handled as error?
-            Err(...)
-
-            // or ignore absent stdout and keep on running command?
-            self.wait_for_previous()?;
-            self.runner.spawn_to_pipe()
-            */
+            Err(EmptyStdOut {
+                summary: self.previous_summary,
+            })
         }
     }
 
@@ -65,12 +58,9 @@ impl InheritedRunner<'_> {
             self.wait_for_previous()?;
             Ok(current)
         } else {
-            unimplemented!()
-            /*
-            // fixme: see above todo in spawn_to_pipe.
-            self.wait_for_previous()?;
-            self.runner.spawn_lastly(output)
-            */
+            Err(EmptyStdOut {
+                summary: self.previous_summary,
+            })
         }
     }
 }

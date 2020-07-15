@@ -9,6 +9,9 @@ pub enum Error {
         code: Option<i32>,
         summary: RunnerSummary,
     },
+    #[fail(display = "empty stdout")]
+    EmptyStdOut { summary: RunnerSummary },
+
     #[fail(display = "std::io::Error > {}", 0)]
     StdIoError(std::io::Error),
 }
