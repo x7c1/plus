@@ -1,8 +1,11 @@
+mod has_program;
+pub use has_program::HasProgram;
+
 use crate::TaskResult;
 use shellwork::core::command;
-use shellwork::core::command::{no_op, Runner, Unprepared};
+use shellwork::core::command::no_op;
 
-pub fn program_exists(runner: &Runner<Unprepared>) -> TaskResult<()> {
+pub fn program_exists<A: HasProgram>(runner: &A) -> TaskResult<()> {
     // https://stackoverflow.com/a/39983421
     let line = format!("command -v {}", runner.get_program());
     let runner = command::program("sh")

@@ -1,3 +1,4 @@
+use crate::core::support::program_exists;
 use crate::core::targets::{AsBuildTarget, BuildTarget};
 use crate::TaskResult;
 use shellwork::core::env::EnvEntry;
@@ -17,7 +18,9 @@ pub trait CCRequired: AsBuildTarget {
 }
 
 pub fn confirm_cc<P: CCRequired>(params: &P) -> TaskResult<()> {
-    // todo:
-    println!("params:{:#?}", params.cc());
-    Ok(())
+    if let Some(EnvEntry { value, .. }) = params.cc() {
+        program_exists(&value)
+    } else {
+        Ok(())
+    }
 }
