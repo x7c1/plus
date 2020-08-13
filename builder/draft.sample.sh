@@ -20,19 +20,14 @@ main() {
 for_task_runner() {
   task_runner_for_linux_x86 build-apps --target=linux_x86
   task_runner_for_linux_x86 assemble-pilot-tests --target=linux_x86
-}
+  task_runner_for_linux_x86 copy-artifact-files --target=linux_x86
+  task_runner_for_linux_x86 package-artifacts --target=linux_x86
+  ls -lh dist
 
-for_task_runner0() {
-  cargo_fmt
-  cargo_clippy
-  test_shellwork ${TARGET_X86} -- --nocapture --color always
-  run_unit_tests_for_linux_x86
+  task_runner_for_linux_x86 strip-executables --target=linux_x86
+  task_runner_for_linux_x86 package-artifacts --target=linux_x86
+  ls -lh dist
 
-  task_runner_for_linux_x86 build-apps
-  task_runner_for_linux_x86 assemble-pilot-tests
-  task_runner_for_linux_x86 copy-artifact-files
-  task_runner_for_linux_x86 package-artifacts
-  task_runner_for_linux_x86 strip-executables
   task_runner_for_linux_x86 help
 }
 
