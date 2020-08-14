@@ -1,19 +1,18 @@
 mod params;
 pub use params::{OutputKind, Params};
 
-use crate::core::support::CCFindable;
+use crate::core::support::{CCRequired, HasBuildMode};
 use shellwork::core::command;
 use shellwork::core::command::{program, Runner, Unprepared};
 
 pub fn create_runner(params: &Params) -> Runner<Unprepared> {
-    // todo: move opt-level to params
-    // todo: enable to add mode (--release)
     let default = command::program("cargo")
         .arg("test")
+        .push_arg(params.build_mode())
         .args(&["--target", params.target.as_triple()])
         .args(&["--package", "wsb-pilot"])
         .arg("--no-run")
-        .env("RUSTFLAGS", "-C opt-level=0")
+        .env("RUSTFLAGS", params.opt_level())
         .env_entry(params.cc());
 
     // call via OutputKind::Default in advance to see compilation errors,

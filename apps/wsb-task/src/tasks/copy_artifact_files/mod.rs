@@ -3,16 +3,16 @@ use task::Task;
 
 use crate::tasks::shared;
 use crate::tasks::shared::build_target;
-use crate::{TaskOutput, TaskResult};
+use crate::TaskResult;
 use clap::{App, ArgMatches, SubCommand};
 use clap_task::ClapTask;
 
-pub fn clap() -> Box<dyn ClapTask<TaskResult<TaskOutput>>> {
+pub fn clap() -> Box<dyn ClapTask<TaskResult<()>>> {
     Box::new(Task)
 }
 
 #[async_trait]
-impl ClapTask<TaskResult<TaskOutput>> for Task {
+impl ClapTask<TaskResult<()>> for Task {
     fn name(&self) -> &str {
         "copy-artifact-files"
     }
@@ -23,9 +23,8 @@ impl ClapTask<TaskResult<TaskOutput>> for Task {
             .arg(build_target::arg())
     }
 
-    async fn run<'a>(&'a self, matches: &'a ArgMatches<'a>) -> TaskResult<TaskOutput> {
+    async fn run<'a>(&'a self, matches: &'a ArgMatches<'a>) -> TaskResult<()> {
         let params = shared::Params::from_matches(matches)?;
-        self.start(&params)?;
-        Ok(TaskOutput::empty())
+        self.start(&params)
     }
 }

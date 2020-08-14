@@ -1,16 +1,16 @@
 mod task;
 use task::Task;
 
-use crate::{TaskOutput, TaskResult};
+use crate::TaskResult;
 use clap::{App, ArgMatches, SubCommand};
 use clap_task::ClapTask;
 
-pub fn clap() -> Box<dyn ClapTask<TaskResult<TaskOutput>>> {
+pub fn clap() -> Box<dyn ClapTask<TaskResult<()>>> {
     Box::new(Task)
 }
 
 #[async_trait]
-impl ClapTask<TaskResult<TaskOutput>> for Task {
+impl ClapTask<TaskResult<()>> for Task {
     fn name(&self) -> &str {
         "show-sizes"
     }
@@ -19,8 +19,7 @@ impl ClapTask<TaskResult<TaskOutput>> for Task {
         SubCommand::with_name(self.name()).about("Show artifact sizes.")
     }
 
-    async fn run<'a>(&'a self, _matches: &'a ArgMatches<'a>) -> TaskResult<TaskOutput> {
-        self.start()?;
-        Ok(TaskOutput::empty())
+    async fn run<'a>(&'a self, _matches: &'a ArgMatches<'a>) -> TaskResult<()> {
+        self.start()
     }
 }

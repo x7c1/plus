@@ -14,9 +14,6 @@ mod error;
 pub use error::Error;
 pub use error::Result as TaskResult;
 
-mod output;
-pub use output::TaskOutput;
-
 mod tasks;
 
 use clap::App;
@@ -26,8 +23,8 @@ use std::process::exit;
 #[tokio::main]
 async fn main() {
     match run().await {
-        Ok(output) => {
-            println!("{}", output.as_str());
+        Ok(_) => {
+            println!("[done]");
         }
         Err(e) => {
             eprintln!("wsb-task failed: {:#?}", e);
@@ -36,7 +33,7 @@ async fn main() {
     }
 }
 
-async fn run() -> TaskResult<TaskOutput> {
+async fn run() -> TaskResult<()> {
     let tasks = tasks::define_all();
     init()
         .subcommands(tasks.to_apps())

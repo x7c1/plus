@@ -1,6 +1,3 @@
-mod can_pipe;
-use can_pipe::CanPipe;
-
 mod inherited;
 use inherited::InheritedRunner;
 
@@ -28,6 +25,10 @@ impl<T> Runner<T>
 where
     T: Debug,
 {
+    pub fn get_program(&self) -> &str {
+        &self.program
+    }
+
     pub fn arg<A: AsRef<OsStr>>(mut self, arg: A) -> Self {
         self.args.push(arg.as_ref().to_string_lossy().to_string());
         self
@@ -147,6 +148,7 @@ impl Runner<Prepared> {
             self.spawn_to_pipe().map(|child| InheritedRunner {
                 runner,
                 previous: child,
+                previous_summary: self.create_summary(),
             })
         };
         (*self.next_runner).as_ref().map(spawn).transpose()
@@ -165,6 +167,14 @@ impl Runner<Prepared> {
             .spawn()?;
 
         Ok(child)
+    }
+
+    fn spawn_to_pipe(&self) -> crate::Result<Child> {
+        self.start_spawning(Stdio::inherit(), Stdio::piped())
+    }
+
+    fn spawn_lastly<T: Into<Stdio>>(&self, output: T) -> crate::Result<Child> {
+        self.start_spawning(Stdio::inherit(), output)
     }
 }
 

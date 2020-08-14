@@ -1,7 +1,9 @@
+use crate::core::support::program_exists;
 use crate::core::targets::{AsBuildTarget, BuildTarget};
+use crate::TaskResult;
 use shellwork::core::env::EnvEntry;
 
-pub trait CCFindable: AsBuildTarget {
+pub trait CCRequired: AsBuildTarget {
     fn cc(&self) -> Option<EnvEntry> {
         let maybe = match self.as_build_target() {
             BuildTarget::LinuxX86 => None,
@@ -12,5 +14,13 @@ pub trait CCFindable: AsBuildTarget {
             key: "CC".to_string(),
             value: target.to_string(),
         })
+    }
+}
+
+pub fn confirm_cc<P: CCRequired>(params: &P) -> TaskResult<()> {
+    if let Some(EnvEntry { value, .. }) = params.cc() {
+        program_exists(&value)
+    } else {
+        Ok(())
     }
 }
