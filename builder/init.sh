@@ -26,9 +26,9 @@ setup_rust() {
 
   rustup toolchain install ${PLUS_RUST_VERSION}-x86_64-unknown-linux-gnu
 
-  "$workspace"/init.linux_x86.sh
-  "$workspace"/init.linux_armv7.sh
-  "$workspace"/init.macos_x86.sh
+#  "$workspace"/init.linux_x86.sh
+#  "$workspace"/init.linux_armv7.sh
+#  "$workspace"/init.macos_x86.sh
 
 #  rustup target add --toolchain ${PLUS_RUST_VERSION} x86_64-unknown-linux-musl
 #  rustup target add --toolchain ${PLUS_RUST_VERSION} armv7-unknown-linux-musleabihf
