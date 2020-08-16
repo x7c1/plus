@@ -36,6 +36,7 @@ setup_rust() {
 
   rustup component add rustfmt --toolchain ${PLUS_RUST_VERSION}-x86_64-unknown-linux-gnu
   rustup component add clippy --toolchain ${PLUS_RUST_VERSION}-x86_64-unknown-linux-gnu
+  rustup override set ${PLUS_RUST_VERSION}
 }
 
 setup_other_repositories() {
