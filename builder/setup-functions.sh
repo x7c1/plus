@@ -9,8 +9,8 @@ set -u
 get_arch_labels() {
   labels=(
     "linux_x86"
-    "linux_armv7"
-    "macos_x86"
+#    "linux_armv7"
+#    "macos_x86"
   )
   echo ${labels[@]}
 }

@@ -47,6 +47,14 @@ jobs:
             target
           key: ${{ runner.os }}-cargo-musl-${{ hashFiles('**/Cargo.lock') }}
 
+      - run: |
+          sudo ./builder/apt-get.sh
+      - run: |
+          ./builder/init.linux_x86.sh
+        env:
+          WSB_WORKSPACE: ${{ github.workspace }}
+          PLUS_PROJECT_ROOT: ${{ github.workspace }}
+
       - name: Assemble artifacts
         run: |
           ./builder/assemble.sh

@@ -2,7 +2,8 @@
 
 set -xue
 
-rust_version="1.42.0"
+PLUS_RUST_VERSION="1.42.0"
+export PLUS_RUST_VERSION
 
 # todo: rename WSB
 workspace="$WSB_WORKSPACE"
@@ -23,13 +24,18 @@ setup_rust() {
 #    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 #  fi
 
-  rustup toolchain install ${rust_version}-x86_64-unknown-linux-gnu
-  rustup target add --toolchain ${rust_version} x86_64-unknown-linux-musl
-  rustup target add --toolchain ${rust_version} armv7-unknown-linux-musleabihf
-  rustup target add --toolchain ${rust_version} x86_64-apple-darwin
+  rustup toolchain install ${PLUS_RUST_VERSION}-x86_64-unknown-linux-gnu
 
-  rustup component add rustfmt --toolchain ${rust_version}-x86_64-unknown-linux-gnu
-  rustup component add clippy --toolchain ${rust_version}-x86_64-unknown-linux-gnu
+  "$workspace"/init.linux_x86.sh
+  "$workspace"/init.linux_armv7.sh
+  "$workspace"/init.macos_x86.sh
+
+#  rustup target add --toolchain ${PLUS_RUST_VERSION} x86_64-unknown-linux-musl
+#  rustup target add --toolchain ${PLUS_RUST_VERSION} armv7-unknown-linux-musleabihf
+#  rustup target add --toolchain ${PLUS_RUST_VERSION} x86_64-apple-darwin
+
+  rustup component add rustfmt --toolchain ${PLUS_RUST_VERSION}-x86_64-unknown-linux-gnu
+  rustup component add clippy --toolchain ${PLUS_RUST_VERSION}-x86_64-unknown-linux-gnu
 }
 
 setup_other_repositories() {
