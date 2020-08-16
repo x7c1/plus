@@ -16,8 +16,8 @@ BUILD_MODE=$(get_build_mode "$@")
 
 # defined for this project
 export BUILD_MODE
-export PROJECT_ROOT="/plus"
-export ARTIFACTS_DIR="${PROJECT_ROOT}/dist"
+#export PROJECT_ROOT="/plus"
+export ARTIFACTS_DIR="${PLUS_PROJECT_ROOT}/dist"
 
 export OSX_SDK="MacOSX10.15.sdk.tar.bz2"
 export OSX_SDK_CC="x86_64-apple-darwin19-clang"
@@ -35,7 +35,7 @@ export RUSTFLAGS="-C opt-level=$OPT_LEVEL"
 
 setup_artifacts_directory
 
-cd ${PROJECT_ROOT}
+cd ${PLUS_PROJECT_ROOT}
 . ./builder/build-osxcross.sh
 
 if is_osx_sdk_installed; then

@@ -17,6 +17,7 @@ run_container() {
       --name "${CONTAINER_NAME}" \
       --tty \
       --workdir "${MOUNT_DIR}" \
+      --env PLUS_PROJECT_ROOT="${MOUNT_DIR}" \
       "${IMAGE_NAME}" \
       sh "${MOUNT_DIR}"/builder/main.gen.sh
 }
