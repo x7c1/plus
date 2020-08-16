@@ -7,18 +7,18 @@ set -e
 set -u
 
 current_container() {
-  docker inspect --format '{{.Created}}' ${CONTAINER_NAME}
+  docker inspect --format '{{.Created}}' "${CONTAINER_NAME}"
 }
 
 run_container() {
   docker run \
       --privileged \
-      --volume "$(pwd)":${MOUNT_DIR} \
-      --name ${CONTAINER_NAME} \
+      --volume "$(pwd)":"${MOUNT_DIR}" \
+      --name "${CONTAINER_NAME}" \
       --tty \
-      --workdir ${MOUNT_DIR} \
-      ${IMAGE_NAME} \
-      sh ${MOUNT_DIR}/builder/main.gen.sh
+      --workdir "${MOUNT_DIR}" \
+      "${IMAGE_NAME}" \
+      sh "${MOUNT_DIR}"/builder/main.gen.sh
 }
 
 restart_container() {

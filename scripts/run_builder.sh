@@ -4,7 +4,7 @@
 
 MOUNT_DIR=/plus
 
-write_main "${MOUNT_DIR}/builder/$(echo $@)"
+write_main "${MOUNT_DIR}/builder/${*}"
 
 if [[ "$(current_container)" ]]; then
   restart_container
