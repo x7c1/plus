@@ -20,7 +20,11 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+#          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-cargo-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
       - run: |
           sudo ./builder/apt-get.sh
       - run: |
@@ -46,8 +50,10 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             target
-          key: ${{ runner.os }}-cargo-musl-${{ hashFiles('**/Cargo.lock') }}
-
+#          key: ${{ runner.os }}-cargo-musl-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-cargo-musl-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-musl-
       - run: |
           sudo ./builder/apt-get.sh
       - run: |
