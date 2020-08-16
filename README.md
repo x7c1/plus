@@ -1,4 +1,4 @@
-# wasabi
+# Plus
 
 S3 Client for Rust
 
