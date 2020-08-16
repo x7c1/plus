@@ -29,6 +29,8 @@ jobs:
           WSB_WORKSPACE: ${{ github.workspace }}
       - run: |
           ./builder/cargo-test.sh --debug --opt-level=0
+        env:
+          WSB_WORKSPACE: ${{ github.workspace }}
 
   target-linux-x86:
     needs: cargo-test
@@ -46,3 +48,5 @@ jobs:
       - name: Assemble artifacts
         run: |
           ./builder/assemble.sh
+        env:
+          WSB_WORKSPACE: ${{ github.workspace }}
