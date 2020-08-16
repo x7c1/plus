@@ -2,7 +2,7 @@
 
 . ./scripts/setup_env.sh
 
-MOUNT_DIR=/wasabi
+MOUNT_DIR=/plus
 
 write_main "${MOUNT_DIR}/builder/$(echo $@)"
 

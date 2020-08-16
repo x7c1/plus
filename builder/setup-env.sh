@@ -16,7 +16,7 @@ BUILD_MODE=$(get_build_mode "$@")
 
 # defined for this project
 export BUILD_MODE
-export PROJECT_ROOT="/wasabi"
+export PROJECT_ROOT="/plus"
 export ARTIFACTS_DIR="${PROJECT_ROOT}/dist"
 
 export OSX_SDK="MacOSX10.15.sdk.tar.bz2"
