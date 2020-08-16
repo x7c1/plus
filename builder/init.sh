@@ -17,15 +17,17 @@ main() {
 }
 
 setup_rust() {
-  if command -v rustc; then
-    echo "rust already installed."
-  else
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-  fi
+#  if command -v rustc; then
+#    echo "rust already installed."
+#  else
+#    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+#  fi
 
-  rustup target add --toolchain ${rust_version} armv7-unknown-linux-musleabihf
+  rustup target add --toolchain ${rust_version} x86_64-unknown-linux-gnu
   rustup target add --toolchain ${rust_version} x86_64-unknown-linux-musl
+  rustup target add --toolchain ${rust_version} armv7-unknown-linux-musleabihf
   rustup target add --toolchain ${rust_version} x86_64-apple-darwin
+
   rustup component add rustfmt --toolchain ${rust_version}-x86_64-unknown-linux-gnu
   rustup component add clippy --toolchain ${rust_version}-x86_64-unknown-linux-gnu
 }
