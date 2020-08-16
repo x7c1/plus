@@ -87,7 +87,7 @@ build_pilot_and_output_json() {
 }
 
 copy_release_apps() {
-  target_dir=${PROJECT_ROOT}/target/$1/release
+  target_dir=${PLUS_PROJECT_ROOT}/target/$1/release
   for name in $(get_artifact_names); do
     app=${target_dir}/${name}
     if [[ -f ${app} ]]; then

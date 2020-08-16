@@ -8,7 +8,7 @@
 
 . ./builder/setup-env.sh
 
-cd "$PROJECT_ROOT" || exit 1
+cd "$PLUS_PROJECT_ROOT" || exit 1
 . ./builder/lib.linux_x86.sh
 
 main() {
@@ -40,7 +40,7 @@ dev() {
 }
 
 s3api() {
-  "$PROJECT_ROOT"/target/x86_64-unknown-linux-musl/debug/s3api $@
+  "$PLUS_PROJECT_ROOT"/target/x86_64-unknown-linux-musl/debug/s3api $@
 }
 
 run_put() {

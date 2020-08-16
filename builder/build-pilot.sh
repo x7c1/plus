@@ -2,7 +2,7 @@
 
 . ./builder/setup-env.sh
 . ./builder/lib.linux_x86.sh
-cd "$PROJECT_ROOT" || exit 1
+cd "$PLUS_PROJECT_ROOT" || exit 1
 
 main() {
   pilot_output_path=$(get_pilot_output_path $@)
@@ -11,8 +11,8 @@ main() {
   set -x
 
   build_e2e_tests_for_linux_x86 \
-    | sed s/^\\${PROJECT_ROOT}/\\./ \
-    > ${PROJECT_ROOT}/scripts/${pilot_output_path}
+    | sed s/^\\${PLUS_PROJECT_ROOT}/\\./ \
+    > ${PLUS_PROJECT_ROOT}/scripts/${pilot_output_path}
 }
 
 get_pilot_output_path() {
