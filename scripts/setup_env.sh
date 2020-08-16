@@ -31,4 +31,5 @@ write_main() {
   echo -e "\n$1" >> ${path}
 }
 
-export CONTAINER_NAME=wasabi_builder_cacher
+export IMAGE_NAME="plus_builder"
+export CONTAINER_NAME="${IMAGE_NAME}_cacher"
