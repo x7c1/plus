@@ -23,7 +23,7 @@ setup_rust() {
 #    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 #  fi
 
-  rustup target add --toolchain ${rust_version} x86_64-unknown-linux-gnu
+  rustup toolchain install ${rust_version}-x86_64-unknown-linux-gnu
   rustup target add --toolchain ${rust_version} x86_64-unknown-linux-musl
   rustup target add --toolchain ${rust_version} armv7-unknown-linux-musleabihf
   rustup target add --toolchain ${rust_version} x86_64-apple-darwin
