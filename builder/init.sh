@@ -8,24 +8,12 @@ rust_version="1.42.0"
 workspace="$WSB_WORKSPACE"
 
 main() {
-  setup_apt
   setup_rust
 
   cd "$workspace"
   setup_other_repositories
 
   echo "done!"
-}
-
-setup_apt() {
-  sudo apt-get update
-  sudo apt-get install -y \
-    gcc-arm-linux-gnueabihf \
-    jq \
-    musl-tools \
-    clang \
-    cmake \
-    tree
 }
 
 setup_rust() {

@@ -22,6 +22,8 @@ jobs:
             target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
       - run: |
+          sudo ./builder/apt-get.sh
+      - run: |
           ./builder/init.sh
         env:
           WSB_WORKSPACE: $GITHUB_WORKSPACE
