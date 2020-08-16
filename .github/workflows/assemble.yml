@@ -25,6 +25,7 @@ jobs:
           sudo ./builder/apt-get.sh
       - run: |
           ./builder/init.sh
+          ./builder/init.linux_x86.sh
         env:
           WSB_WORKSPACE: ${{ github.workspace }}
           PLUS_PROJECT_ROOT: ${{ github.workspace }}
