@@ -8,6 +8,12 @@ impl BuildMode {
     pub fn all() -> Vec<BuildMode> {
         vec![BuildMode::Debug, BuildMode::Release]
     }
+    pub fn as_str(&self) -> &str {
+        match self {
+            BuildMode::Debug => "debug",
+            BuildMode::Release => "release",
+        }
+    }
 }
 
 pub trait AsBuildMode {

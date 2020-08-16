@@ -1,4 +1,6 @@
+use crate::core::build_mode::BuildMode;
 use crate::core::env::app_names;
+use crate::core::support::HasBuildMode;
 use crate::core::targets::{AsBuildTarget, BuildTarget};
 use crate::tasks::shared::commands::copy_as_artifact;
 use crate::TaskResult;
@@ -8,9 +10,14 @@ use std::path::Path;
 pub struct Task;
 
 impl Task {
-    pub fn start<P: AsBuildTarget>(&self, params: &P) -> TaskResult<()> {
+    pub fn start<P>(&self, params: &P) -> TaskResult<()>
+    where
+        P: AsBuildTarget,
+        P: HasBuildMode,
+    {
         let commands = TaskCommands {
             target: *params.as_build_target(),
+            build_mode: *params.as_build_mode(),
         };
         commands.run()
     }
@@ -18,6 +25,7 @@ impl Task {
 
 struct TaskCommands {
     target: BuildTarget,
+    build_mode: BuildMode,
 }
 
 impl TaskCommands {
@@ -59,7 +67,7 @@ impl TaskCommands {
             .src(
                 &Path::new("target")
                     .join(self.target.as_triple())
-                    .join("release")
+                    .join(self.build_mode.as_str())
                     .join(name),
             )
             .dst(Path::new(name))
