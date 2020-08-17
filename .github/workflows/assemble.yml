@@ -25,15 +25,17 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-cargo-
 
+      - name: Run apt-get
+        run: |
+          sudo ./builder/init/apt-get.sh
       - run: |
-          sudo ./builder/apt-get.sh
-      - run: |
-          ./builder/init.sh
-          ./builder/init.linux_x86.sh
+#          ./builder/init.sh
+          ./builder/init/init.linux_x86.sh
         env:
           WSB_WORKSPACE: ${{ github.workspace }}
           PLUS_PROJECT_ROOT: ${{ github.workspace }}
-      - run: |
+      - name: Run cargo test
+        run: |
           ./builder/cargo-test.sh --debug --opt-level=0
         env:
           WSB_WORKSPACE: ${{ github.workspace }}
@@ -54,11 +56,12 @@ jobs:
           key: ${{ runner.os }}-cargo-musl-${{ github.run_id }}
           restore-keys: |
             ${{ runner.os }}-cargo-musl-
+      - name: Run apt-get
+        run: |
+          sudo ./builder/init/apt-get.sh
       - run: |
-          sudo ./builder/apt-get.sh
-      - run: |
-          ./builder/init.sh
-          ./builder/init.linux_x86.sh
+#          ./builder/init.sh
+          ./builder/init/init.linux_x86.sh
         env:
           WSB_WORKSPACE: ${{ github.workspace }}
           PLUS_PROJECT_ROOT: ${{ github.workspace }}

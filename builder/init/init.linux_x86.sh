@@ -2,8 +2,9 @@
 
 set -xue
 
-# todo: share this value with init.sh and Dockerfile
-PLUS_RUST_VERSION="1.42.0"
+#PLUS_RUST_VERSION="1.42.0"
+
+. ./builder/init/env.sh
 
 main() {
 #  rustup toolchain install "${PLUS_RUST_VERSION}"-x86_64-unknown-linux-gnu
