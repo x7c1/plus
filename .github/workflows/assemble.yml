@@ -29,7 +29,6 @@ jobs:
         run: |
           sudo ./builder/init/apt-get.sh
       - run: |
-#          ./builder/init.sh
           ./builder/init/init.linux_x86.sh
         env:
           WSB_WORKSPACE: ${{ github.workspace }}
@@ -60,7 +59,6 @@ jobs:
         run: |
           sudo ./builder/init/apt-get.sh
       - run: |
-#          ./builder/init.sh
           ./builder/init/init.linux_x86.sh
         env:
           WSB_WORKSPACE: ${{ github.workspace }}
