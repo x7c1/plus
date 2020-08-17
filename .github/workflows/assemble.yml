@@ -20,7 +20,6 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             target
-#          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
           key: ${{ runner.os }}-cargo-${{ github.run_id }}
           restore-keys: |
             ${{ runner.os }}-cargo-
@@ -35,6 +34,7 @@ jobs:
           PLUS_PROJECT_ROOT: ${{ github.workspace }}
       - name: Run cargo test
         run: |
+          ./builder/cargo-fmt.sh --all-check
           ./builder/cargo-test.sh --debug --opt-level=0
         env:
           WSB_WORKSPACE: ${{ github.workspace }}
@@ -51,7 +51,6 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             target
-#          key: ${{ runner.os }}-cargo-musl-${{ hashFiles('**/Cargo.lock') }}
           key: ${{ runner.os }}-cargo-musl-${{ github.run_id }}
           restore-keys: |
             ${{ runner.os }}-cargo-musl-
