@@ -33,10 +33,20 @@ jobs:
         env:
           WSB_WORKSPACE: ${{ github.workspace }}
           PLUS_PROJECT_ROOT: ${{ github.workspace }}
-      - name: Run cargo test
+      - name: Run cargo fmt
         run: |
           ./builder/cargo-fmt.sh --all-check
+        env:
+          WSB_WORKSPACE: ${{ github.workspace }}
+          PLUS_PROJECT_ROOT: ${{ github.workspace }}
+      - name: Run cargo clippy
+        run: |
           ./builder/cargo-clippy.sh --debug --opt-level=0
+        env:
+          WSB_WORKSPACE: ${{ github.workspace }}
+          PLUS_PROJECT_ROOT: ${{ github.workspace }}
+      - name: Run cargo test
+        run: |
           ./builder/cargo-test.sh --debug --opt-level=0
         env:
           WSB_WORKSPACE: ${{ github.workspace }}
