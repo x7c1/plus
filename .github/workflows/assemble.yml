@@ -70,3 +70,33 @@ jobs:
         env:
           WSB_WORKSPACE: ${{ github.workspace }}
           PLUS_PROJECT_ROOT: ${{ github.workspace }}
+
+  target-linux-armv7:
+    needs: cargo-test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-musl-armv7-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-musl-armv7-
+      - name: Run apt-get
+        run: |
+          sudo ./builder/init/apt-get.sh
+      - run: |
+          ./builder/init/init.linux_armv7.sh
+        env:
+          WSB_WORKSPACE: ${{ github.workspace }}
+          PLUS_PROJECT_ROOT: ${{ github.workspace }}
+
+#      - name: Assemble artifacts
+#        run: |
+#          ./builder/assemble.sh
+#        env:
+#          WSB_WORKSPACE: ${{ github.workspace }}
+#          PLUS_PROJECT_ROOT: ${{ github.workspace }}
