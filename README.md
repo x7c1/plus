@@ -42,3 +42,17 @@ $ bash --version
 GNU bash, version 5.0.11(1)-release (x86_64-apple-darwin19.0.0)
 Copyright (C) 2019 Free Software Foundation, Inc.
 ```
+
+## Run `act`
+
+To run test:
+
+```
+$ act --reuse --job cargo-test -P ubuntu-latest=nektos/act-environments-ubuntu:18.04
+```
+
+To run all jobs:
+
+```
+$ act --reuse -P ubuntu-latest=nektos/act-environments-ubuntu:18.04
+```
