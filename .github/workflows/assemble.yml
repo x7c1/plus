@@ -28,7 +28,7 @@ jobs:
         run: |
           sudo ./builder/init/apt-get.sh
       - run: |
-          . ./builder/init/init.linux_x86.sh
+          ./builder/init/init.linux_x86.sh
           ./builder/init/tools.linux_x86.sh
         env:
           WSB_WORKSPACE: ${{ github.workspace }}
