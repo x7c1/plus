@@ -2,8 +2,6 @@
 
 set -xue
 
-#PLUS_RUST_VERSION="1.42.0"
-
 . ./builder/init/env.sh
 
 main() {
