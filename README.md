@@ -45,7 +45,7 @@ Copyright (C) 2019 Free Software Foundation, Inc.
 
 ## Run `act`
 
-To run test:
+To run tests:
 
 ```
 $ act --reuse --job cargo-test -P ubuntu-latest=nektos/act-environments-ubuntu:18.04

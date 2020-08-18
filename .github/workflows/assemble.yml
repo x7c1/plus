@@ -14,20 +14,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
       - uses: actions/cache@v2
         with:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
+            ~/.cargo/bin
             target
-          key: ${{ runner.os }}-cargo-${{ github.run_id }}
+          key: ${{ runner.os }}-cargo-test-${{ github.run_id }}
           restore-keys: |
-            ${{ runner.os }}-cargo-
+            ${{ runner.os }}-cargo-test-
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
 
       - name: Run apt-get
         run: |
@@ -63,20 +65,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
       - uses: actions/cache@v2
         with:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
+            ~/.cargo/bin
             target
-          key: ${{ runner.os }}-cargo-musl-${{ github.run_id }}
+          key: ${{ runner.os }}-target-linux-x86-${{ github.run_id }}
           restore-keys: |
-            ${{ runner.os }}-cargo-musl-
+            ${{ runner.os }}-target-linux-x86-
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+
       - name: Run apt-get
         run: |
           sudo ./builder/init/apt-get.sh
@@ -99,20 +104,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
       - uses: actions/cache@v2
         with:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
+            ~/.cargo/bin
             target
-          key: ${{ runner.os }}-cargo-musl-armv7-${{ github.run_id }}
+          key: ${{ runner.os }}-target-linux-armv7-${{ github.run_id }}
           restore-keys: |
-            ${{ runner.os }}-cargo-musl-armv7-
+            ${{ runner.os }}-target-linux-armv7-
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+
       - name: Run apt-get
         run: |
           sudo ./builder/init/apt-get.sh

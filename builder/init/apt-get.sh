@@ -3,7 +3,7 @@
 set -xue
 
 file=$0
-hash=$(sha1sum "$file")
+current_hash=$(sha1sum "$file")
 hash_marker="$file".sha1
 
 main() {
@@ -13,15 +13,15 @@ main() {
   fi
   setup_apt
   echo "done!"
-  sha1sum "$file" > "$file".sha1
+  echo "$current_hash" > "$file".sha1
 }
 
 already_latest() {
   if [ ! -e "$hash_marker" ]; then
     return 1
   fi
-  current=$(cat "$hash_marker")
-  if [ "$current" = "$hash" ]; then
+  cached=$(cat "$hash_marker")
+  if [ "$cached" = "$current_hash" ]; then
     return 0
   else
     return 1
