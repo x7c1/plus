@@ -27,7 +27,7 @@ async fn main() {
             println!("[done]");
         }
         Err(e) => {
-            eprintln!("wsb-task failed: {:#?}", e);
+            eprintln!("plus-task failed: {:#?}", e);
             exit(1);
         }
     }

@@ -134,7 +134,7 @@ task_runner() {
   cargo run \
     ${BUILD_MODE} \
     --target=$1 \
-    --package=wsb-task \
+    --package=plus-task \
     "${@:2}"
 }
 

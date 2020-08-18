@@ -68,7 +68,7 @@ run_package_specified_tests() {
   cargo test \
     ${BUILD_MODE} \
     --target="${TARGET_X86}" \
-    --package wsb-task \
+    --package plus-task \
     -- --nocapture core
 }
 

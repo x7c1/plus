@@ -32,7 +32,7 @@ impl Task {
             .arg("build")
             .push_arg(params.build_mode())
             .args(&["--target", params.as_build_target().as_triple()])
-            .args(&["--workspace", "--exclude=shellwork", "--exclude=wsb-task"])
+            .args(&["--workspace", "--exclude=shellwork", "--exclude=plus-task"])
             .env("RUSTFLAGS", params.opt_level())
             .env_entry(params.cc())
     }
