@@ -20,7 +20,7 @@ fn load_test_bucket() -> FromStrResult<String> {
 }
 
 fn load_apps_dir() -> FromStrResult<String> {
-    SingleValue::new("WSB_APPS_DIR").as_required()
+    SingleValue::new("PLUS_APPS_DIR").as_required()
 }
 
 fn load_workspace_dir() -> FromStrResult<String> {
