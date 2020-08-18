@@ -1,5 +1,5 @@
 use crate::s3api::get_object::fixtures::OUTPUT;
-use wsb_pilot::PilotResult;
+use plus_pilot::PilotResult;
 
 #[test]
 fn is_written_correctly() -> PilotResult<()> {

@@ -24,7 +24,7 @@ run_unit_tests_for_linux_x86() {
   cargo test \
     ${BUILD_MODE} \
     --target="${TARGET_X86}" \
-    --workspace --exclude=wsb-pilot \
+    --workspace --exclude=plus-pilot \
     -- --nocapture
 }
 

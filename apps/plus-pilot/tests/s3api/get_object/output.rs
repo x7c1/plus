@@ -1,5 +1,5 @@
 use crate::s3api::get_object::fixtures::OUTPUT;
-use wsb_pilot::PilotResult;
+use plus_pilot::PilotResult;
 
 /* rf. output example by `aws s3api get-object`
 {

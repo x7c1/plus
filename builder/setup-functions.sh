@@ -69,7 +69,7 @@ build_pilot() {
   cargo test \
     ${BUILD_MODE} \
     --target=$1 \
-    --package=wsb-pilot \
+    --package=plus-pilot \
     --no-run
 }
 
@@ -79,7 +79,7 @@ build_pilot_and_output_json() {
   cargo test \
     ${BUILD_MODE} \
     --target=$1 \
-    --package=wsb-pilot \
+    --package=plus-pilot \
     --no-run \
     --message-format=json \
     | jq -r "select(.profile.test == true) | .filenames[]" \

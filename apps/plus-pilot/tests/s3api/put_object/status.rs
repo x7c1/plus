@@ -1,7 +1,7 @@
 use crate::s3api::put_object::fixtures::OUTPUT;
 use crate::s3api::put_object::workspace;
 use crate::s3api::TEST_BUCKET;
-use wsb_pilot::PilotResult;
+use plus_pilot::PilotResult;
 
 #[test]
 fn is_zero_on_succeeded() -> PilotResult<()> {

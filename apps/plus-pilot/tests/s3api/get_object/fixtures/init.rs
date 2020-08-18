@@ -2,7 +2,7 @@ use crate::s3api::get_object::fixtures::create_sample_pair;
 use crate::s3api::get_object::workspace;
 use crate::s3api::TEST_BUCKET;
 use std::path::PathBuf;
-use wsb_pilot::PilotResult;
+use plus_pilot::PilotResult;
 
 pub fn run() -> PilotResult<()> {
     delete_downloaded_files()?;

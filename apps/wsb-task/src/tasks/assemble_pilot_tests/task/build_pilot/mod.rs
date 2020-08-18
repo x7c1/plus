@@ -10,7 +10,7 @@ pub fn create_runner(params: &Params) -> Runner<Unprepared> {
         .arg("test")
         .push_arg(params.build_mode())
         .args(&["--target", params.target.as_triple()])
-        .args(&["--package", "wsb-pilot"])
+        .args(&["--package", "plus-pilot"])
         .arg("--no-run")
         .env("RUSTFLAGS", params.opt_level())
         .env_entry(params.cc());

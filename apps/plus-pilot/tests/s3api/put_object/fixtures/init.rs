@@ -1,7 +1,7 @@
 use crate::s3api::put_object::fixtures::create_sample_pair;
 use crate::s3api::put_object::workspace;
 use crate::s3api::TEST_BUCKET;
-use wsb_pilot::PilotResult;
+use plus_pilot::PilotResult;
 
 pub fn run() -> PilotResult<()> {
     delete_s3_mock_files()?;

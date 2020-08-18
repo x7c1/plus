@@ -1,5 +1,5 @@
 use crate::s3api::put_object::fixtures::OUTPUT;
-use wsb_pilot::PilotResult;
+use plus_pilot::PilotResult;
 
 #[test]
 fn is_uploaded_correctly() -> PilotResult<()> {

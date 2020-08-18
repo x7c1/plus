@@ -1,9 +1,9 @@
 use crate::s3api::{TEST_APPS_DIR, TEST_WORKSPACE_DIR};
 use std::path::{Path, PathBuf};
 use std::{fs, io};
-use wsb_pilot::cmd::CommandRunner;
-use wsb_pilot::Error::InvalidWorkspace;
-use wsb_pilot::PilotResult;
+use plus_pilot::cmd::CommandRunner;
+use plus_pilot::Error::InvalidWorkspace;
+use plus_pilot::PilotResult;
 
 #[derive(Debug)]
 pub struct Workspace {

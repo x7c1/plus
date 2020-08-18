@@ -60,7 +60,7 @@ run_specified_tests() {
   cargo test \
     ${BUILD_MODE} \
     --target="${TARGET_X86}" \
-    --workspace --exclude=wsb-pilot \
+    --workspace --exclude=plus-pilot \
     -- --nocapture auth::v4::calculator
 }
 
