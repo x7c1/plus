@@ -11,7 +11,7 @@ pub enum Error {
     ReqwestError(reqwest::Error),
 
     #[fail(display = "plus_aws::Error > {}", 0)]
-    SabiCoreError(plus_aws::Error),
+    PlusAwsError(plus_aws::Error),
 
     #[fail(display = "crate::core::Error > {}", 0)]
     S3CoreError(crate::core::Error),
@@ -31,7 +31,7 @@ impl From<reqwest::Error> for Error {
 
 impl From<plus_aws::Error> for Error {
     fn from(e: plus_aws::Error) -> Self {
-        Error::SabiCoreError(e)
+        Error::PlusAwsError(e)
     }
 }
 

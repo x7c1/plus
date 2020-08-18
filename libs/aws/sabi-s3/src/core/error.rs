@@ -15,7 +15,7 @@ pub enum Error {
     FileNotFound { path: String, description: String },
 
     #[fail(display = "plus_aws::Error > {}", 0)]
-    SabiCoreError(plus_aws::Error),
+    PlusAwsError(plus_aws::Error),
 
     #[fail(display = "headers::Error > {}", 0)]
     S3HeaderError(headers::Error),
@@ -35,7 +35,7 @@ impl<A: Debug> From<env_extractor::Error<A>> for Error {
 
 impl From<plus_aws::Error> for Error {
     fn from(e: plus_aws::Error) -> Self {
-        Error::SabiCoreError(e)
+        Error::PlusAwsError(e)
     }
 }
 
