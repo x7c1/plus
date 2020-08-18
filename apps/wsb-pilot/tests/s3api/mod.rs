@@ -24,5 +24,5 @@ fn load_apps_dir() -> FromStrResult<String> {
 }
 
 fn load_workspace_dir() -> FromStrResult<String> {
-    SingleValue::new("WSB_WORKSPACE_DIR").as_required()
+    SingleValue::new("PLUS_WORKSPACE_DIR").as_required()
 }

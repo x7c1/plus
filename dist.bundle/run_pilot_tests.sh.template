@@ -11,7 +11,7 @@ pilot_args=("${@:2}")
 WSB_APPS_DIR=$(pwd)
 export WSB_APPS_DIR
 
-WSB_WORKSPACE_DIR=$(pwd)/wsb-pilot-workspace
-export WSB_WORKSPACE_DIR
+PLUS_WORKSPACE_DIR=$(pwd)/wsb-pilot-workspace
+export PLUS_WORKSPACE_DIR
 
 ./wsb_pilot_tests "${pilot_args[@]}"
