@@ -38,7 +38,7 @@ impl<A: Debug> From<clap_extractor::Error<A>> for Error {
     }
 }
 
-#[impl_sabi_s3_errors]
+#[impl_plus_s3_errors]
 pub trait IntoS3Error: Into<sabi_s3::Error> {}
 
 impl<A: IntoS3Error> From<A> for Error {

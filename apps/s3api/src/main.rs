@@ -11,7 +11,7 @@ extern crate failure;
 extern crate serde_derive;
 
 #[macro_use]
-extern crate sabi_s3_macros;
+extern crate plus_s3_macros;
 
 mod commands;
 

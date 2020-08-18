@@ -1,5 +1,5 @@
 [package]
-name = "sabi-s3-macros"
+name = "plus-s3-macros"
 version = "0.0.1"
 edition = "2018"
 
