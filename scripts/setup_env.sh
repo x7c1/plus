@@ -28,8 +28,9 @@ restart_container() {
 
 write_main() {
   path="./builder/main.gen.sh"
-  echo "#!/usr/bin/env bash" > ${path}
-  echo -e "\n$1" >> ${path}
+  echo -e "#!/usr/bin/env bash\n" > ${path}
+  echo -e ". ${MOUNT_DIR}/builder/init.local/setup.sh\n" >> ${path}
+  echo -e "$1" >> ${path}
 }
 
 export IMAGE_NAME="ubuntu:latest"
