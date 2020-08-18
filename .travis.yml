@@ -9,6 +9,7 @@ services:
 
 before_install:
   - ./scripts.travis/setup_docker.sh
+  # - ./scripts.travis/setup_docker.sh
 
 before_script:
   - ./scripts/run_builder.sh cargo-fmt.sh --all-check
