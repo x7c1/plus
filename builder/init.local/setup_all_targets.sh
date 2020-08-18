@@ -5,7 +5,7 @@ set -xue
 export DEBIAN_FRONTEND="noninteractive"
 ./builder/init/apt-get.sh
 
-. ./builder/init/setup_rust.sh
+. ./builder/init.local/setup_rust.sh
 
 . ./builder/init/init.linux_x86.sh
 
