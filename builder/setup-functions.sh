@@ -17,7 +17,7 @@ get_arch_labels() {
 
 get_artifact_names() {
   names=(
-    "wsb_pilot_tests"
+    "plus_pilot_tests"
     "s3api"
   )
   echo ${names[@]}
@@ -83,7 +83,7 @@ build_pilot_and_output_json() {
     --no-run \
     --message-format=json \
     | jq -r "select(.profile.test == true) | .filenames[]" \
-    | grep wsb_pilot_tests
+    | grep plus_pilot_tests
 }
 
 copy_release_apps() {

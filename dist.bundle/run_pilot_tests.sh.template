@@ -14,4 +14,4 @@ export PLUS_APPS_DIR
 PLUS_WORKSPACE_DIR=$(pwd)/plus_pilot_workspace
 export PLUS_WORKSPACE_DIR
 
-./wsb_pilot_tests "${pilot_args[@]}"
+./plus_pilot_tests "${pilot_args[@]}"

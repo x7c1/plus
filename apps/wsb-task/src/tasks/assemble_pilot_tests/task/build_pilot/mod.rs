@@ -25,7 +25,7 @@ pub fn create_runner(params: &Params) -> Runner<Unprepared> {
 
 fn pipe_to_get_file_name(base: Runner<Unprepared>) -> Runner<Unprepared> {
     let jq = program("jq").args(&["-r", "select(.profile.test == true) | .filenames[]"]);
-    let grep = program("grep").arg("wsb_pilot_tests");
+    let grep = program("grep").arg("plus_pilot_tests");
     let tr = program("tr").args(&["-d", "\n"]);
     base.args(&["--message-format", "json"])
         .pipe(jq)

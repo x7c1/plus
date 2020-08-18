@@ -72,7 +72,7 @@ impl CopyFile {
     {
         let params = copy_as_artifact::Params::builder(*params.as_build_target())
             .src(&output.pilot_file_path())
-            .dst(Path::new("wsb_pilot_tests"))
+            .dst(Path::new("plus_pilot_tests"))
             .build();
 
         let runner = copy_as_artifact::create_runner(&params);

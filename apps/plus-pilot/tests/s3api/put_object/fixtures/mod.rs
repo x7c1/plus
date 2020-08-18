@@ -2,10 +2,10 @@ mod init;
 
 use crate::s3api::put_object::{workspace, SampleParameters};
 use crate::s3api::{ParametersPair, TEST_BUCKET};
-use serde_json::Value;
-use std::io;
 use plus_pilot::cmd::{CommandOutput, CommandRunner};
 use plus_pilot::PilotResult;
+use serde_json::Value;
+use std::io;
 
 lazy_static! {
     pub static ref OUTPUT: Fixture = setup_fixture().unwrap();

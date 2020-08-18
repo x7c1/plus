@@ -9,7 +9,7 @@ pub fn app_names() -> Vec<&'static str> {
 }
 
 pub fn executable_names() -> Vec<&'static str> {
-    let mut others = vec!["wsb_pilot_tests"];
+    let mut others = vec!["plus_pilot_tests"];
     let mut names = app_names();
     names.append(&mut others);
     names
