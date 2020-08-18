@@ -5,7 +5,7 @@
 # $ source ./run_pilot_tests.sh "s3-bucket-for-test" --nocapture
 # $ source ./run_pilot_tests.sh "s3-bucket-for-test" --nocapture s3api::get_object
 
-export WSB_TEST_BUCKET=$1
+export PLUS_TEST_BUCKET=$1
 pilot_args=("${@:2}")
 
 PLUS_APPS_DIR=$(pwd)

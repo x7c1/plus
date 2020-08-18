@@ -16,7 +16,7 @@ lazy_static! {
 }
 
 fn load_test_bucket() -> FromStrResult<String> {
-    SingleValue::new("WSB_TEST_BUCKET").as_required()
+    SingleValue::new("PLUS_TEST_BUCKET").as_required()
 }
 
 fn load_apps_dir() -> FromStrResult<String> {
