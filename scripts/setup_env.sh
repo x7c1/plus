@@ -32,5 +32,5 @@ write_main() {
   echo -e "\n$1" >> ${path}
 }
 
-export IMAGE_NAME="plus_builder"
-export CONTAINER_NAME="${IMAGE_NAME}_cacher"
+export IMAGE_NAME="ubuntu:latest"
+export CONTAINER_NAME="plus_builder"

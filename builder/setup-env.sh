@@ -21,7 +21,7 @@ export ARTIFACTS_DIR="${PLUS_PROJECT_ROOT}/dist"
 
 export OSX_SDK="MacOSX10.15.sdk.tar.bz2"
 export OSX_SDK_CC="x86_64-apple-darwin19-clang"
-export OSXCROSS_ROOT="${WSB_WORKSPACE}/osxcross"
+export OSXCROSS_ROOT="${PLUS_PROJECT_ROOT}/osxcross"
 
 export TARGET_X86="x86_64-unknown-linux-musl"
 export TARGET_ARMV7="armv7-unknown-linux-musleabihf"
