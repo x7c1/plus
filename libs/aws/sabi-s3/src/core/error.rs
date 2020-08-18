@@ -14,8 +14,8 @@ pub enum Error {
     )]
     FileNotFound { path: String, description: String },
 
-    #[fail(display = "sabi_core::Error > {}", 0)]
-    SabiCoreError(sabi_core::Error),
+    #[fail(display = "plus_aws::Error > {}", 0)]
+    SabiCoreError(plus_aws::Error),
 
     #[fail(display = "headers::Error > {}", 0)]
     S3HeaderError(headers::Error),
@@ -33,8 +33,8 @@ impl<A: Debug> From<env_extractor::Error<A>> for Error {
     }
 }
 
-impl From<sabi_core::Error> for Error {
-    fn from(e: sabi_core::Error) -> Self {
+impl From<plus_aws::Error> for Error {
+    fn from(e: plus_aws::Error) -> Self {
         Error::SabiCoreError(e)
     }
 }

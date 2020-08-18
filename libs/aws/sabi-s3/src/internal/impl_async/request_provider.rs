@@ -4,12 +4,12 @@ use crate::core::verbs::{HasBucketScope, HasMethod, HasObjectKey, ToEndpoint};
 use crate::internal;
 use crate::internal::Error::RegionNotSpecified;
 use crate::internal::RequestParts;
+use plus_aws::auth::v4::request::AuthorizationFactory;
+use plus_aws::auth::Credentials;
+use plus_aws::http::request::{header, RichHeaderMap};
+use plus_aws::index::RegionCode;
 use reqwest::header::HeaderMap;
 use reqwest::{Method, Url};
-use sabi_core::auth::v4::request::AuthorizationFactory;
-use sabi_core::auth::Credentials;
-use sabi_core::http::request::{header, RichHeaderMap};
-use sabi_core::index::RegionCode;
 
 pub struct RequestProvider<'a, A>
 where

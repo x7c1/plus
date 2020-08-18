@@ -6,8 +6,8 @@ use crate::actions;
 use crate::actions::{get_object, put_object};
 use crate::core::verbs::HasBucketScope;
 use crate::core::S3Bucket;
-use sabi_core::auth::Credentials;
-use sabi_core::index::RegionCode;
+use plus_aws::auth::Credentials;
+use plus_aws::index::RegionCode;
 use Error::{CredentialsError, RegionCodeError};
 
 #[derive(Debug)]

@@ -3,8 +3,8 @@ pub type Result<T> = ::std::result::Result<T, Error>;
 #[derive(Fail, Debug)]
 pub enum Error {
     #[fail(display = "CredentialsError > {}", 0)]
-    CredentialsError(sabi_core::Error),
+    CredentialsError(plus_aws::Error),
 
     #[fail(display = "RegionCodeError > {}", 0)]
-    RegionCodeError(sabi_core::Error),
+    RegionCodeError(plus_aws::Error),
 }

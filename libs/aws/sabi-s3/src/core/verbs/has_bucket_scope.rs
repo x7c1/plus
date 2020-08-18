@@ -1,6 +1,6 @@
 use crate::core::S3Bucket;
-use sabi_core::auth::Credentials;
-use sabi_core::index::RegionCode;
+use plus_aws::auth::Credentials;
+use plus_aws::index::RegionCode;
 
 pub trait HasBucketScope {
     fn credentials(&self) -> &Credentials;

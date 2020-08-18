@@ -1,9 +1,9 @@
 use crate::core;
 use chrono::{DateTime, Utc};
+use plus_aws::auth::v4::canonical::HashedPayload;
+use plus_aws::http::request::header::ContentType;
+use plus_aws::index::RegionCode;
 use reqwest::Body;
-use sabi_core::auth::v4::canonical::HashedPayload;
-use sabi_core::http::request::header::ContentType;
-use sabi_core::index::RegionCode;
 
 pub struct RequestResource<'a> {
     pub body: Option<Body>,

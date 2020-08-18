@@ -2,11 +2,11 @@ use crate::actions::put_object;
 use crate::core;
 use crate::core::request::{RequestResource, ResourceLoader};
 use crate::core::verbs::HasObjectKey;
-use sabi_core::auth::v4::canonical::HashedPayload;
-use sabi_core::auth::v4::chrono::now;
-use sabi_core::http::request::header::ContentType;
-use sabi_core::index::RegionCode;
-use sabi_core::io::stream::bytes_stream;
+use plus_aws::auth::v4::canonical::HashedPayload;
+use plus_aws::auth::v4::chrono::now;
+use plus_aws::http::request::header::ContentType;
+use plus_aws::index::RegionCode;
+use plus_aws::io::stream::bytes_stream;
 use std::io::ErrorKind::NotFound;
 use tokio::fs::File;
 

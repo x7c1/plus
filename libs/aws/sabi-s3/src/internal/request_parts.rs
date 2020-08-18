@@ -1,10 +1,10 @@
 use chrono::{DateTime, Utc};
+use plus_aws::auth::v4::canonical::{HashedPayload, HeadersCapturer};
+use plus_aws::auth::v4::chrono::DateStamp;
+use plus_aws::auth::v4::request::AuthorizationParts;
+use plus_aws::auth::v4::sign::CredentialScope;
+use plus_aws::index::{RegionCode, ServiceCode};
 use reqwest::{Method, Url};
-use sabi_core::auth::v4::canonical::{HashedPayload, HeadersCapturer};
-use sabi_core::auth::v4::chrono::DateStamp;
-use sabi_core::auth::v4::request::AuthorizationParts;
-use sabi_core::auth::v4::sign::CredentialScope;
-use sabi_core::index::{RegionCode, ServiceCode};
 
 pub struct RequestParts<'a> {
     pub url: Url,

@@ -6,9 +6,9 @@ use crate::core::request::{RequestResource, ResourceLoader};
 use crate::core::verbs::HasObjectKey;
 use bytes::Bytes;
 use futures_util::stream::Stream;
-use sabi_core::auth::v4::canonical::HashedPayload;
-use sabi_core::auth::v4::chrono::now;
-use sabi_core::io::stream::BodyReceiver;
+use plus_aws::auth::v4::canonical::HashedPayload;
+use plus_aws::auth::v4::chrono::now;
+use plus_aws::io::stream::BodyReceiver;
 use std::path::PathBuf;
 
 #[derive(Debug)]
