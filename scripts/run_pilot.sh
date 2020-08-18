@@ -39,7 +39,7 @@ output=run_pilot_path.tmp
 PLUS_APPS_DIR="$(pwd)/target/x86_64-unknown-linux-musl/debug"
 export PLUS_APPS_DIR
 
-PLUS_WORKSPACE_DIR="$(pwd)/dist.bundle/wsb-pilot-workspace"
+PLUS_WORKSPACE_DIR="$(pwd)/dist.bundle/plus_pilot_workspace"
 export PLUS_WORKSPACE_DIR
 
 . ./scripts/run_pilot.local.sh

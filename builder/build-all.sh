@@ -17,7 +17,7 @@ for arch in $(get_arch_labels); do
     cp "$file_path" "$arch_dir/wsb_pilot_tests"
   fi
   # create workspace directory.
-  cp -r "./dist.bundle/wsb-pilot-workspace" "$arch_dir"
+  cp -r "./dist.bundle/plus_pilot_workspace" "$arch_dir"
 
   # create runner script.
   template="./dist.bundle/run_pilot_tests.sh.template"

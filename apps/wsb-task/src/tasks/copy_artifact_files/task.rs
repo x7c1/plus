@@ -38,8 +38,8 @@ impl TaskCommands {
 
     fn copy_workspace(&self) -> TaskResult<()> {
         let params = copy_as_artifact::Params::builder(self.target)
-            .src(Path::new("dist.bundle/wsb-pilot-workspace"))
-            .dst(Path::new("wsb-pilot-workspace"))
+            .src(Path::new("dist.bundle/plus_pilot_workspace"))
+            .dst(Path::new("plus_pilot_workspace"))
             .build();
 
         self.spawn(&params)
