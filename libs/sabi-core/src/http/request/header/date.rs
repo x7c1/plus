@@ -1,5 +1,5 @@
 use crate::http::request::{HeaderFragment, ToHeaderFragment};
-use crate::SabiResult;
+use crate::PlusResult;
 use chrono::{DateTime, Utc};
 use http::header::DATE;
 
@@ -21,7 +21,7 @@ impl Date {
 }
 
 impl ToHeaderFragment for Date {
-    fn into(self) -> SabiResult<HeaderFragment> {
+    fn into(self) -> PlusResult<HeaderFragment> {
         Ok(HeaderFragment {
             key: DATE,
             value: self.as_str().parse()?,

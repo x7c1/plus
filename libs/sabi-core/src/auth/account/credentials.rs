@@ -1,6 +1,6 @@
 use crate::auth::{AccessKey, SecretKey};
 use crate::env::aws;
-use crate::SabiResult;
+use crate::PlusResult;
 
 #[derive(Debug)]
 pub struct Credentials {
@@ -9,7 +9,7 @@ pub struct Credentials {
 }
 
 impl Credentials {
-    pub fn from_env() -> SabiResult<Credentials> {
+    pub fn from_env() -> PlusResult<Credentials> {
         let credentials = Self::builder()
             .access_key(aws::access_key().as_required()?)
             .secret_key(aws::secret_key().as_required()?)

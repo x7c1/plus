@@ -26,12 +26,12 @@ pub use signed_headers::SignedHeaders;
 mod tests {
     use super::*;
     use crate::http::request::RichHeaderMap;
-    use crate::SabiResult;
+    use crate::PlusResult;
     use http::{HeaderMap, Method};
     use url::Url;
 
     #[test]
-    fn it_works() -> SabiResult<()> {
+    fn it_works() -> PlusResult<()> {
         let url =
             Url::parse("https://iam.amazonaws.com/?Action=ListUsers&Version=2010-05-08").unwrap();
 
@@ -49,7 +49,7 @@ mod tests {
         Ok(())
     }
 
-    fn to_headers(url: &Url) -> SabiResult<HeaderMap> {
+    fn to_headers(url: &Url) -> PlusResult<HeaderMap> {
         let headers = HeaderMap::new()
             .push(("host", url.host_str().unwrap()))?
             .push((

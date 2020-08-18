@@ -2,7 +2,7 @@ use crate::auth::account::AccessKey;
 use crate::auth::v4::calculator::Signature;
 use crate::auth::v4::canonical::SignedHeaders;
 use crate::auth::v4::sign::{Algorithm, CredentialScope};
-use crate::SabiResult;
+use crate::PlusResult;
 use http::HeaderValue;
 
 pub struct Authorization(String);
@@ -27,7 +27,7 @@ impl Authorization {
     pub fn as_str(&self) -> &str {
         &self.0
     }
-    pub fn to_header_value(&self) -> SabiResult<HeaderValue> {
+    pub fn to_header_value(&self) -> PlusResult<HeaderValue> {
         let value = self.as_str().parse()?;
         Ok(value)
     }

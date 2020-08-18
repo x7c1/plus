@@ -9,7 +9,7 @@ pub mod env;
 
 mod error;
 pub use error::Error;
-pub use error::Result as SabiResult;
+pub use error::Result as PlusResult;
 
 pub mod http;
 pub mod index;

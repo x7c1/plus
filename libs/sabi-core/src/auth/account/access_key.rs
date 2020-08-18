@@ -1,4 +1,4 @@
-use crate::SabiResult;
+use crate::PlusResult;
 use std::str::FromStr;
 
 #[derive(Debug)]
@@ -17,7 +17,7 @@ impl AccessKey {
 impl FromStr for AccessKey {
     type Err = crate::Error;
 
-    fn from_str(s: &str) -> SabiResult<Self> {
+    fn from_str(s: &str) -> PlusResult<Self> {
         Ok(Self::new(s))
     }
 }
