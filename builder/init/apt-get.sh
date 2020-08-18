@@ -7,8 +7,8 @@ current_hash=$(sha1sum "$file")
 hash_marker="$file".sha1
 
 main() {
-  if already_latest; then
-    echo "latest modules already installed."
+  if already_applied; then
+    echo "already applied."
     exit
   fi
   setup_apt
@@ -16,7 +16,7 @@ main() {
   echo "$current_hash" > "$file".sha1
 }
 
-already_latest() {
+already_applied() {
   if [ ! -e "$hash_marker" ]; then
     return 1
   fi
