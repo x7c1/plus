@@ -3,6 +3,6 @@ use plus_pilot::PilotResult;
 
 #[test]
 fn is_uploaded_correctly() -> PilotResult<()> {
-    assert_eq!(OUTPUT.wsb.download_text()?, OUTPUT.wsb.uploaded_text()?);
+    assert_eq!(OUTPUT.plus.download_text()?, OUTPUT.plus.uploaded_text()?);
     Ok(())
 }

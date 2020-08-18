@@ -5,14 +5,14 @@ use plus_pilot::PilotResult;
 
 #[test]
 fn is_zero_on_succeeded() -> PilotResult<()> {
-    assert_eq!(OUTPUT.wsb.status_code, 0);
+    assert_eq!(OUTPUT.plus.status_code, 0);
     Ok(())
 }
 
 #[test]
 fn is_non_zero_on_invalid_subcommand() -> PilotResult<()> {
     let output = workspace()
-        .wsb_s3api()
+        .plus_s3api()
         .arg("unknown-subcommand")
         .execute()?;
 
@@ -24,7 +24,7 @@ fn is_non_zero_on_invalid_subcommand() -> PilotResult<()> {
 fn is_non_zero_if_body_not_found() -> PilotResult<()> {
     let body = "./invalid/file/path";
     let output = workspace()
-        .wsb_s3api()
+        .plus_s3api()
         .arg("put-object")
         .args(&["--bucket", &TEST_BUCKET])
         .args(&["--key", "sample-object-key"])

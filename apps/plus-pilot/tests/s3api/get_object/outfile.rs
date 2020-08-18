@@ -3,6 +3,6 @@ use plus_pilot::PilotResult;
 
 #[test]
 fn is_written_correctly() -> PilotResult<()> {
-    assert_eq!(OUTPUT.wsb.outfile_text()?, OUTPUT.aws.outfile_text()?);
+    assert_eq!(OUTPUT.plus.outfile_text()?, OUTPUT.aws.outfile_text()?);
     Ok(())
 }

@@ -23,7 +23,7 @@ impl Workspace {
         runner.current_dir(&self.dir)
     }
 
-    pub fn wsb_s3api(&self) -> CommandRunner {
+    pub fn plus_s3api(&self) -> CommandRunner {
         let runner = CommandRunner::new(format!("{}/s3api", *TEST_APPS_DIR));
         runner.current_dir(&self.dir)
     }

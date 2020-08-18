@@ -12,7 +12,7 @@ lazy_static! {
 }
 
 pub struct Fixture {
-    pub wsb: OutputFixture,
+    pub plus: OutputFixture,
     pub aws: OutputFixture,
 }
 
@@ -33,12 +33,12 @@ fn setup_fixture() -> PilotResult<Fixture> {
     init::run()?;
 
     let pair = create_sample_pair();
-    let wsb = {
-        let output = workspace().wsb_s3api().run(download, &pair.wsb)?;
+    let plus = {
+        let output = workspace().plus_s3api().run(download, &pair.plus)?;
         OutputFixture {
             status_code: output.status_code(),
             json: output.stdout_to_json()?,
-            parameters: pair.wsb,
+            parameters: pair.plus,
         }
     };
     let aws = {
@@ -49,7 +49,7 @@ fn setup_fixture() -> PilotResult<Fixture> {
             parameters: pair.aws,
         }
     };
-    Ok(Fixture { wsb, aws })
+    Ok(Fixture { plus, aws })
 }
 
 fn create_sample_pair() -> ParametersPair<SampleParameters> {
@@ -57,9 +57,9 @@ fn create_sample_pair() -> ParametersPair<SampleParameters> {
     let object_key = &params[0].object_key;
 
     ParametersPair {
-        wsb: SampleParameters {
+        plus: SampleParameters {
             object_key: object_key.to_owned(),
-            outfile_dst: "./sample1.wsb.tmp".into(),
+            outfile_dst: "./sample1.plus.tmp".into(),
         },
         aws: SampleParameters {
             object_key: object_key.to_owned(),

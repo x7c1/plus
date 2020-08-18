@@ -3,6 +3,6 @@ use plus_pilot::PilotResult;
 
 #[test]
 fn is_zero_on_succeeded() -> PilotResult<()> {
-    assert_eq!(OUTPUT.wsb.status_code, 0);
+    assert_eq!(OUTPUT.plus.status_code, 0);
     Ok(())
 }
