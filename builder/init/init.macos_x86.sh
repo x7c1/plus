@@ -2,10 +2,6 @@
 
 set -xue
 
-main() {
-  rustup toolchain install "${PLUS_RUST_VERSION}"-x86_64-unknown-linux-gnu
-  rustup target add --toolchain ${PLUS_RUST_VERSION} x86_64-apple-darwin
-  echo "done!"
-}
+. ./builder/init/setup.sh
 
-main
+rustup target add --toolchain ${PLUS_RUST_VERSION} x86_64-apple-darwin
