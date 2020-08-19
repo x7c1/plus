@@ -14,7 +14,7 @@ pub enum Error {
     ClapExtractorError(String),
 
     #[fail(display = "plus_s3::Error > {}", 0)]
-    SabiS3Error(plus_s3::Error),
+    PlusS3Error(plus_s3::Error),
 
     #[fail(display = "serde_json::Error > {}", 0)]
     SerdeJsonError(serde_json::Error),
@@ -43,7 +43,7 @@ pub trait IntoS3Error: Into<plus_s3::Error> {}
 
 impl<A: IntoS3Error> From<A> for Error {
     fn from(e: A) -> Self {
-        Error::SabiS3Error(e.into())
+        Error::PlusS3Error(e.into())
     }
 }
 
