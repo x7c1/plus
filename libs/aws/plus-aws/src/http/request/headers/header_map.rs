@@ -1,27 +1,26 @@
 use crate::auth::v4::request::AuthorizationFactory;
 use crate::http::request::ToHeaderFragment;
 use crate::Error::HostNotFound;
-use crate::PlusResult;
 use http::header::{AUTHORIZATION, HOST};
 use http::HeaderMap;
 use url::Url;
 
 pub trait RichHeaderMap: Sized {
-    fn push<A>(self, header: A) -> PlusResult<Self>
+    fn push<A>(self, header: A) -> crate::Result<Self>
     where
         A: ToHeaderFragment;
 
-    fn push_if_exists<A>(self, header: Option<A>) -> PlusResult<Self>
+    fn push_if_exists<A>(self, header: Option<A>) -> crate::Result<Self>
     where
         A: ToHeaderFragment;
 
-    fn host(self, url: &Url) -> PlusResult<Self>;
+    fn host(self, url: &Url) -> crate::Result<Self>;
 
-    fn authorize_with(self, factory: AuthorizationFactory) -> PlusResult<Self>;
+    fn authorize_with(self, factory: AuthorizationFactory) -> crate::Result<Self>;
 }
 
 impl RichHeaderMap for HeaderMap {
-    fn push<A>(mut self, header: A) -> PlusResult<Self>
+    fn push<A>(mut self, header: A) -> crate::Result<Self>
     where
         A: ToHeaderFragment,
     {
@@ -30,7 +29,7 @@ impl RichHeaderMap for HeaderMap {
         Ok(self)
     }
 
-    fn push_if_exists<A>(self, header: Option<A>) -> PlusResult<Self>
+    fn push_if_exists<A>(self, header: Option<A>) -> crate::Result<Self>
     where
         A: ToHeaderFragment,
     {
@@ -41,7 +40,7 @@ impl RichHeaderMap for HeaderMap {
         }
     }
 
-    fn host(mut self, url: &Url) -> PlusResult<Self> {
+    fn host(mut self, url: &Url) -> crate::Result<Self> {
         let host = url
             .host_str()
             .ok_or_else(|| HostNotFound(url.clone()))?
@@ -51,7 +50,7 @@ impl RichHeaderMap for HeaderMap {
         Ok(self)
     }
 
-    fn authorize_with(mut self, factory: AuthorizationFactory) -> PlusResult<Self> {
+    fn authorize_with(mut self, factory: AuthorizationFactory) -> crate::Result<Self> {
         self.insert(AUTHORIZATION, factory.create_from(&self).to_header_value()?);
         Ok(self)
     }

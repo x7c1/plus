@@ -1,6 +1,5 @@
 use crate::env::aws;
 use crate::verbs::AsBytes;
-use crate::PlusResult;
 use std::str::FromStr;
 
 /// see also:
@@ -17,7 +16,7 @@ impl RegionCode {
         Self::Any(key.into())
     }
 
-    pub fn find_from_env() -> PlusResult<Option<RegionCode>> {
+    pub fn find_from_env() -> crate::Result<Option<RegionCode>> {
         let code = aws::default_region().as_optional()?;
         Ok(code)
     }
@@ -40,7 +39,7 @@ impl AsBytes for RegionCode {
 impl FromStr for RegionCode {
     type Err = crate::Error;
 
-    fn from_str(s: &str) -> PlusResult<Self> {
+    fn from_str(s: &str) -> crate::Result<Self> {
         Ok(Self::any(s))
     }
 }

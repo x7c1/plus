@@ -27,12 +27,11 @@ mod tests {
     use crate::auth::SecretKey;
     use crate::http::request::RichHeaderMap;
     use crate::index::{RegionCode, ServiceCode};
-    use crate::PlusResult;
     use http::{HeaderMap, Method};
     use url::Url;
 
     #[test]
-    fn it_can_create_signing_key() -> PlusResult<()> {
+    fn it_can_create_signing_key() -> crate::Result<()> {
         let secret_key = create_secret_key();
         let scope = create_scope();
         let signing_key = SigningKey::new(&secret_key, &scope);
@@ -45,7 +44,7 @@ mod tests {
     }
 
     #[test]
-    fn it_can_calculate_signature() -> PlusResult<()> {
+    fn it_can_calculate_signature() -> crate::Result<()> {
         let scope = create_scope();
         let string_to_sign = {
             let link = "https://iam.amazonaws.com/?Action=ListUsers&Version=2010-05-08";
@@ -88,7 +87,7 @@ mod tests {
         )
     }
 
-    fn to_headers(url: &Url) -> PlusResult<HeaderMap> {
+    fn to_headers(url: &Url) -> crate::Result<HeaderMap> {
         let headers = HeaderMap::new()
             .push(("host", url.host_str().unwrap()))?
             .push((

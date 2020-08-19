@@ -1,4 +1,3 @@
-use crate::PlusResult;
 use http::header::HeaderName;
 use http::HeaderValue;
 
@@ -8,11 +7,11 @@ pub struct HeaderFragment {
 }
 
 pub trait ToHeaderFragment {
-    fn into(self) -> PlusResult<HeaderFragment>;
+    fn into(self) -> crate::Result<HeaderFragment>;
 }
 
 impl<'a> ToHeaderFragment for (&'static str, &'a str) {
-    fn into(self) -> PlusResult<HeaderFragment> {
+    fn into(self) -> crate::Result<HeaderFragment> {
         let (key, value) = self;
         Ok(HeaderFragment {
             key: key.parse()?,
@@ -22,7 +21,7 @@ impl<'a> ToHeaderFragment for (&'static str, &'a str) {
 }
 
 impl ToHeaderFragment for (&'static str, u64) {
-    fn into(self) -> PlusResult<HeaderFragment> {
+    fn into(self) -> crate::Result<HeaderFragment> {
         let (key, value) = self;
         Ok(HeaderFragment {
             key: key.parse()?,

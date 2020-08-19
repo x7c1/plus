@@ -1,5 +1,4 @@
 use crate::verbs::AsBytes;
-use crate::PlusResult;
 use characters::{AsStr, MultiByte};
 use std::fmt;
 use std::str::FromStr;
@@ -36,7 +35,7 @@ impl fmt::Debug for SecretKey {
 impl FromStr for SecretKey {
     type Err = crate::Error;
 
-    fn from_str(s: &str) -> PlusResult<Self> {
+    fn from_str(s: &str) -> crate::Result<Self> {
         Ok(Self::new(s))
     }
 }

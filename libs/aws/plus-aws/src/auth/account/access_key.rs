@@ -1,4 +1,3 @@
-use crate::PlusResult;
 use std::str::FromStr;
 
 #[derive(Debug)]
@@ -17,7 +16,7 @@ impl AccessKey {
 impl FromStr for AccessKey {
     type Err = crate::Error;
 
-    fn from_str(s: &str) -> PlusResult<Self> {
+    fn from_str(s: &str) -> crate::Result<Self> {
         Ok(Self::new(s))
     }
 }

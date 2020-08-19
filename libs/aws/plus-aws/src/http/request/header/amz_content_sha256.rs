@@ -1,6 +1,5 @@
 use crate::http::request::HeaderFragment;
 use crate::http::request::ToHeaderFragment;
-use crate::PlusResult;
 use http::header::HeaderName;
 use std::str::FromStr;
 
@@ -17,7 +16,7 @@ impl AmzContentSha256 {
 }
 
 impl ToHeaderFragment for AmzContentSha256 {
-    fn into(self) -> PlusResult<HeaderFragment> {
+    fn into(self) -> crate::Result<HeaderFragment> {
         Ok(HeaderFragment {
             key: HeaderName::from_str("X-Amz-Content-Sha256")?,
             value: self.as_str().parse()?,

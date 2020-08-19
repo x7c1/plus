@@ -1,5 +1,4 @@
 use crate::io::stream::bytes_stream;
-use crate::PlusResult;
 use bytes::Bytes;
 use futures_util::{future, stream::Stream, TryStreamExt};
 use hex::ToHex;
@@ -23,14 +22,14 @@ impl HashedPayload {
         self.0.as_str()
     }
 
-    pub async fn from_file(file: fs::File) -> PlusResult<Self> {
+    pub async fn from_file(file: fs::File) -> crate::Result<Self> {
         let stream = bytes_stream::from_file(file);
         let hash = calculate(stream).await?;
         Ok(hash)
     }
 }
 
-async fn calculate<S>(stream: S) -> PlusResult<HashedPayload>
+async fn calculate<S>(stream: S) -> crate::Result<HashedPayload>
 where
     S: Stream<Item = io::Result<Bytes>>,
     S: Unpin,
