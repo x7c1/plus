@@ -11,7 +11,7 @@ Install `docker` first.
 Build crates on the container:
 
 ```
-$ ./scripts/build.sh
+$ make build
 ```
 
 ### For macOS

@@ -9,10 +9,10 @@ services:
   - docker
 
 before_script:
-  - ./scripts/run_builder.sh cargo-fmt.sh --all-check
-  - ./scripts/run_builder.sh cargo-clippy.sh --debug --opt-level=0
+  - make cargo-fmt-check
+  - make cargo-clippy
 
 script:
   - |
-    ./scripts/run_tests.sh &&
-    ./scripts/build.sh
+    make cargo-test &&
+    make assemble
