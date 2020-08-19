@@ -11,7 +11,7 @@ Install `docker` first.
 Build crates on the container:
 
 ```
-$ make build
+$ make assemble
 ```
 
 ### For macOS
