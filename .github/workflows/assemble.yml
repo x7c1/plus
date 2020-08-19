@@ -9,6 +9,9 @@ on:
   pull_request:
     branches:
       - '*'
+env:
+  PLUS_PROJECT_ROOT: ${{ github.workspace }}
+
 jobs:
   cargo-test:
     runs-on: ubuntu-latest
@@ -38,23 +41,16 @@ jobs:
         run: |
           . ./builder/init/init.linux_x86.sh
           ./builder/init/tools.linux_x86.sh
-        env:
-          PLUS_PROJECT_ROOT: ${{ github.workspace }}
+
       - name: Run cargo fmt
         run: |
           ./builder/cargo-fmt.sh --all-check
-        env:
-          PLUS_PROJECT_ROOT: ${{ github.workspace }}
       - name: Run cargo clippy
         run: |
           ./builder/cargo-clippy.sh --debug --opt-level=0
-        env:
-          PLUS_PROJECT_ROOT: ${{ github.workspace }}
       - name: Run cargo test
         run: |
           ./builder/cargo-test.sh --debug --opt-level=0
-        env:
-          PLUS_PROJECT_ROOT: ${{ github.workspace }}
 
   target-linux-x86:
     needs: cargo-test
@@ -84,14 +80,10 @@ jobs:
       - name: Set up toolchains
         run: |
           ./builder/init/init.linux_x86.sh
-        env:
-          PLUS_PROJECT_ROOT: ${{ github.workspace }}
 
       - name: Assemble artifacts
         run: |
           ./builder/assemble.sh
-        env:
-          PLUS_PROJECT_ROOT: ${{ github.workspace }}
 
   target-linux-armv7:
     needs: cargo-test
@@ -121,8 +113,6 @@ jobs:
       - name: Set up toolchains
         run: |
           ./builder/init/init.linux_armv7.sh
-        env:
-          PLUS_PROJECT_ROOT: ${{ github.workspace }}
 
 #      - name: Assemble artifacts
 #        run: |
