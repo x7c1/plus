@@ -19,7 +19,7 @@ impl ClapTask<TaskResult<()>> for Task {
 
     fn design(&self) -> App {
         SubCommand::with_name(self.name())
-            .about("Build wasabi applications.")
+            .about("Build Plus applications.")
             .arg(build_target::arg())
             .arg(build_mode::arg())
     }
