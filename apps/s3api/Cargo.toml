@@ -6,7 +6,7 @@ edition = "2018"
 [dependencies]
 clap-extractor = { path = "../../libs/clap-extractor" }
 clap-task = { path = "../../libs/clap-task" }
-sabi-s3 = { path = "../../libs/aws/sabi-s3" }
+plus-s3 = { path = "../../libs/aws/plus-s3" }
 plus-s3-macros = { path = "../../libs/aws/plus-s3-macros" }
 
 async-trait = "0.1"

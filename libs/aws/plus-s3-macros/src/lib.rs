@@ -13,10 +13,10 @@ pub fn impl_plus_s3_errors(_attr: TokenStream, item: TokenStream) -> TokenStream
     let expanded = quote! {
         #original_item
 
-        impl #trait_name for sabi_s3::actions::Error {}
-        impl #trait_name for sabi_s3::client::Error {}
-        impl #trait_name for sabi_s3::core::Error {}
-        impl #trait_name for sabi_s3::internal::Error {}
+        impl #trait_name for plus_s3::actions::Error {}
+        impl #trait_name for plus_s3::client::Error {}
+        impl #trait_name for plus_s3::core::Error {}
+        impl #trait_name for plus_s3::internal::Error {}
     };
     TokenStream::from(expanded)
 }
