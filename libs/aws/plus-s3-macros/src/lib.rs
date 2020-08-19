@@ -4,7 +4,7 @@ use proc_macro::TokenStream;
 use quote::quote;
 
 /// usage:
-/// [wasabi/error.rs at d190b336fd33d2c6b1d1e4429b74a7408990883d](https://github.com/x7c1/wasabi/blob/d190b336fd33d2c6b1d1e4429b74a7408990883d/apps/s3api/src/error.rs#L38-L45)
+/// [s3api/error.rs at b7a0f4b39a1b03ed010d362fc91ca4f1e0b18a2d](https://github.com/x7c1/plus/blob/b7a0f4b39a1b03ed010d362fc91ca4f1e0b18a2d/apps/s3api/src/error.rs#L41-L48)
 #[proc_macro_attribute]
 pub fn impl_plus_s3_errors(_attr: TokenStream, item: TokenStream) -> TokenStream {
     let original_item: syn::ItemTrait = syn::parse(item).unwrap();
