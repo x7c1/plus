@@ -8,12 +8,11 @@
 
 . ./builder/setup-env.sh
 
-cd "$PROJECT_ROOT" || exit 1
+cd "$PLUS_PROJECT_ROOT" || exit 1
 . ./builder/lib.linux_x86.sh
 
 main() {
   set -x
-
   for_task_runner
 }
 
@@ -40,7 +39,7 @@ dev() {
 }
 
 s3api() {
-  "$PROJECT_ROOT"/target/x86_64-unknown-linux-musl/debug/s3api $@
+  "$PLUS_PROJECT_ROOT"/target/x86_64-unknown-linux-musl/debug/s3api $@
 }
 
 run_put() {
@@ -61,7 +60,7 @@ run_specified_tests() {
   cargo test \
     ${BUILD_MODE} \
     --target="${TARGET_X86}" \
-    --workspace --exclude=wsb-pilot \
+    --workspace --exclude=plus-pilot \
     -- --nocapture auth::v4::calculator
 }
 
@@ -69,7 +68,7 @@ run_package_specified_tests() {
   cargo test \
     ${BUILD_MODE} \
     --target="${TARGET_X86}" \
-    --package wsb-task \
+    --package plus-task \
     -- --nocapture core
 }
 

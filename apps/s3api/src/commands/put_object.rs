@@ -2,9 +2,9 @@ use crate::{CommandOutput, CommandResult};
 use clap::{App, Arg, ArgMatches, SubCommand};
 use clap_extractor::Matcher;
 use clap_task::ClapTask;
-use sabi_s3::actions::put_object::FileRequest;
-use sabi_s3::client::S3Client;
-use sabi_s3::core::S3Bucket;
+use plus_s3::actions::put_object::FileRequest;
+use plus_s3::client::S3Client;
+use plus_s3::core::S3Bucket;
 
 // see also:
 // https://docs.aws.amazon.com/cli/latest/reference/s3api/put-object.html

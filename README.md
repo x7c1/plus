@@ -1,4 +1,4 @@
-# wasabi
+# Plus
 
 S3 Client for Rust
 
@@ -6,20 +6,12 @@ S3 Client for Rust
 
 Install `docker` first.
 
-## Setup
-
-Create a container image to build crates:
-
-```
-$ ./scripts/setup_builder_docker.sh
-```
-
 ## Build
 
 Build crates on the container:
 
 ```
-$ ./scripts/build.sh
+$ make assemble
 ```
 
 ### For macOS
@@ -41,4 +33,18 @@ $ brew install bash
 $ bash --version
 GNU bash, version 5.0.11(1)-release (x86_64-apple-darwin19.0.0)
 Copyright (C) 2019 Free Software Foundation, Inc.
+```
+
+## Run `act`
+
+To run tests:
+
+```
+$ act --reuse --job cargo-test -P ubuntu-latest=nektos/act-environments-ubuntu:18.04
+```
+
+To run all jobs:
+
+```
+$ act --reuse -P ubuntu-latest=nektos/act-environments-ubuntu:18.04
 ```

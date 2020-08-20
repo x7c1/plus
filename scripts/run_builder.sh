@@ -2,10 +2,9 @@
 
 . ./scripts/setup_env.sh
 
-IMAGE_NAME=wasabi_builder
-MOUNT_DIR=/wasabi
+MOUNT_DIR=/plus
 
-write_main "${MOUNT_DIR}/builder/$(echo $@)"
+write_main "${MOUNT_DIR}/builder/${*}"
 
 if [[ "$(current_container)" ]]; then
   restart_container

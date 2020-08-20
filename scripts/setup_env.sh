@@ -7,18 +7,19 @@ set -e
 set -u
 
 current_container() {
-  docker inspect --format '{{.Created}}' ${CONTAINER_NAME}
+  docker inspect --format '{{.Created}}' "${CONTAINER_NAME}"
 }
 
 run_container() {
   docker run \
       --privileged \
-      --volume "$(pwd)":${MOUNT_DIR} \
-      --name ${CONTAINER_NAME} \
+      --volume "$(pwd)":"${MOUNT_DIR}" \
+      --name "${CONTAINER_NAME}" \
       --tty \
-      --workdir ${MOUNT_DIR} \
-      ${IMAGE_NAME} \
-      sh ${MOUNT_DIR}/builder/main.gen.sh
+      --workdir "${MOUNT_DIR}" \
+      --env PLUS_PROJECT_ROOT="${MOUNT_DIR}" \
+      "${IMAGE_NAME}" \
+      sh "${MOUNT_DIR}"/builder/main.gen.sh
 }
 
 restart_container() {
@@ -27,8 +28,10 @@ restart_container() {
 
 write_main() {
   path="./builder/main.gen.sh"
-  echo "#!/usr/bin/env bash" > ${path}
-  echo -e "\n$1" >> ${path}
+  echo -e "#!/usr/bin/env bash\n" > ${path}
+  echo -e ". ${MOUNT_DIR}/builder/init.local/setup_all_targets.sh\n" >> ${path}
+  echo -e "$1" >> ${path}
 }
 
-export CONTAINER_NAME=wasabi_builder_cacher
+export IMAGE_NAME="ubuntu:latest"
+export CONTAINER_NAME="plus_builder"

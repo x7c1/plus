@@ -6,7 +6,7 @@
 
 . ./builder/setup-env.sh --debug --opt-level=0
 . ./builder/lib.linux_x86.sh
-cd "$PROJECT_ROOT" || exit 1
+cd "$PLUS_PROJECT_ROOT" || exit 1
 
 main() {
   # show executed commands.

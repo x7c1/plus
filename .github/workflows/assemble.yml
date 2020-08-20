@@ -1,0 +1,121 @@
+name: assemble
+on:
+  workflow_dispatch:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - '*'
+env:
+  PLUS_PROJECT_ROOT: ${{ github.workspace }}
+
+jobs:
+  cargo-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            ~/.cargo/bin
+            target
+          key: ${{ runner.os }}-cargo-test-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-test-
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+
+      - name: Run apt-get
+        run: |
+          sudo ./builder/init/apt-get.sh
+      - name: Set up toolchains
+        run: |
+          . ./builder/init/init.linux_x86.sh
+          ./builder/init/tools.linux_x86.sh
+
+      - name: Run cargo fmt
+        run: |
+          ./builder/cargo-fmt.sh --all-check
+      - name: Run cargo clippy
+        run: |
+          ./builder/cargo-clippy.sh --debug --opt-level=0
+      - name: Run cargo test
+        run: |
+          ./builder/cargo-test.sh --debug --opt-level=0
+
+  target-linux-x86:
+    needs: cargo-test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            ~/.cargo/bin
+            target
+          key: ${{ runner.os }}-target-linux-x86-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.os }}-target-linux-x86-
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+
+      - name: Run apt-get
+        run: |
+          sudo ./builder/init/apt-get.sh
+      - name: Set up toolchains
+        run: |
+          ./builder/init/init.linux_x86.sh
+
+      - name: Assemble artifacts
+        run: |
+          ./builder/assemble.sh
+
+  target-linux-armv7:
+    needs: cargo-test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            ~/.cargo/bin
+            target
+          key: ${{ runner.os }}-target-linux-armv7-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.os }}-target-linux-armv7-
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+
+      - name: Run apt-get
+        run: |
+          sudo ./builder/init/apt-get.sh
+      - name: Set up toolchains
+        run: |
+          ./builder/init/init.linux_armv7.sh
+
+#      - name: Assemble artifacts
+#        run: |
+#          ./builder/assemble.sh
+#        env:
+#          PLUS_PROJECT_ROOT: ${{ github.workspace }}

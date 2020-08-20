@@ -1,19 +1,18 @@
 sudo: required
 
-language: python
-python:
-  - "3.6"
+# ubuntu 20.04
+dist: focal
+
+language: minimal
 
 services:
   - docker
 
-before_install:
-  - ./scripts.travis/setup_docker.sh
-
 before_script:
-  - ./scripts/run_builder.sh cargo-fmt.sh --all-check
+  - make cargo-fmt-check
+  - make cargo-clippy
 
 script:
   - |
-    ./scripts/run_tests.sh &&
-    ./scripts/build.sh
+    make cargo-test &&
+    make assemble

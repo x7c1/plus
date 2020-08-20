@@ -5,13 +5,13 @@
 # $ source ./run_pilot_tests.sh "s3-bucket-for-test" --nocapture
 # $ source ./run_pilot_tests.sh "s3-bucket-for-test" --nocapture s3api::get_object
 
-export WSB_TEST_BUCKET=$1
+export PLUS_TEST_BUCKET=$1
 pilot_args=("${@:2}")
 
-WSB_APPS_DIR=$(pwd)
-export WSB_APPS_DIR
+PLUS_APPS_DIR=$(pwd)
+export PLUS_APPS_DIR
 
-WSB_WORKSPACE_DIR=$(pwd)/wsb-pilot-workspace
-export WSB_WORKSPACE_DIR
+PLUS_WORKSPACE_DIR=$(pwd)/plus_pilot_workspace
+export PLUS_WORKSPACE_DIR
 
-./wsb_pilot_tests "${pilot_args[@]}"
+./plus_pilot_tests "${pilot_args[@]}"

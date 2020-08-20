@@ -1,6 +1,6 @@
 [workspace]
 members = [
-    "apps/wsb-pilot",
-    "apps/wsb-task",
+    "apps/plus-pilot",
+    "apps/plus-task",
     "apps/s3api",
 ]

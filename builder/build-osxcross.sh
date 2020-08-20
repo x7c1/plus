@@ -5,7 +5,7 @@ if is_osx_sdk_installed; then
   return
 fi
 
-src_path="$PROJECT_ROOT/builder/$OSX_SDK"
+src_path="$PLUS_PROJECT_ROOT/builder/$OSX_SDK"
 if [[ ! -f "$src_path" ]]; then
   echo "OSX SDK tarball not found. [$src_path]"
   return
@@ -21,4 +21,4 @@ fi
 cd "$OSXCROSS_ROOT" || exit 1
 UNATTENDED=1 ./build.sh
 
-cd "$PROJECT_ROOT" || exit 1
+cd "$PLUS_PROJECT_ROOT" || exit 1

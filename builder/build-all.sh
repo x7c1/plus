@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 . ./builder/setup-env.sh
-cd "$PROJECT_ROOT" || exit 1
+cd "$PLUS_PROJECT_ROOT" || exit 1
 
 # show executed commands.
 set -x
@@ -14,10 +14,10 @@ for arch in $(get_arch_labels); do
 
   file_path=$(build_e2e_tests_for_${arch})
   if [[ -n "$file_path" ]]; then
-    cp "$file_path" "$arch_dir/wsb_pilot_tests"
+    cp "$file_path" "$arch_dir/plus_pilot_tests"
   fi
   # create workspace directory.
-  cp -r "./dist.bundle/wsb-pilot-workspace" "$arch_dir"
+  cp -r "./dist.bundle/plus_pilot_workspace" "$arch_dir"
 
   # create runner script.
   template="./dist.bundle/run_pilot_tests.sh.template"

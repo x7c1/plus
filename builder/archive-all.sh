@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 . ./builder/setup-env.sh
-cd "$PROJECT_ROOT" || exit 1
+cd "$PLUS_PROJECT_ROOT" || exit 1
 
 # show executed commands.
 set -x

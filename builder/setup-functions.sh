@@ -9,15 +9,15 @@ set -u
 get_arch_labels() {
   labels=(
     "linux_x86"
-    "linux_armv7"
-    "macos_x86"
+#    "linux_armv7"
+#    "macos_x86"
   )
   echo ${labels[@]}
 }
 
 get_artifact_names() {
   names=(
-    "wsb_pilot_tests"
+    "plus_pilot_tests"
     "s3api"
   )
   echo ${names[@]}
@@ -69,7 +69,7 @@ build_pilot() {
   cargo test \
     ${BUILD_MODE} \
     --target=$1 \
-    --package=wsb-pilot \
+    --package=plus-pilot \
     --no-run
 }
 
@@ -79,15 +79,15 @@ build_pilot_and_output_json() {
   cargo test \
     ${BUILD_MODE} \
     --target=$1 \
-    --package=wsb-pilot \
+    --package=plus-pilot \
     --no-run \
     --message-format=json \
     | jq -r "select(.profile.test == true) | .filenames[]" \
-    | grep wsb_pilot_tests
+    | grep plus_pilot_tests
 }
 
 copy_release_apps() {
-  target_dir=${PROJECT_ROOT}/target/$1/release
+  target_dir=${PLUS_PROJECT_ROOT}/target/$1/release
   for name in $(get_artifact_names); do
     app=${target_dir}/${name}
     if [[ -f ${app} ]]; then
@@ -134,7 +134,7 @@ task_runner() {
   cargo run \
     ${BUILD_MODE} \
     --target=$1 \
-    --package=wsb-task \
+    --package=plus-task \
     "${@:2}"
 }
 

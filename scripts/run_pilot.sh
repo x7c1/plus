@@ -36,11 +36,11 @@ output=run_pilot_path.tmp
     --opt-level=0 \
     --pilot-output=${output}
 
-WSB_APPS_DIR="$(pwd)/target/x86_64-unknown-linux-musl/debug"
-export WSB_APPS_DIR
+PLUS_APPS_DIR="$(pwd)/target/x86_64-unknown-linux-musl/debug"
+export PLUS_APPS_DIR
 
-WSB_WORKSPACE_DIR="$(pwd)/dist.bundle/wsb-pilot-workspace"
-export WSB_WORKSPACE_DIR
+PLUS_WORKSPACE_DIR="$(pwd)/dist.bundle/plus_pilot_workspace"
+export PLUS_WORKSPACE_DIR
 
 . ./scripts/run_pilot.local.sh
 
