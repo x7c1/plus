@@ -83,7 +83,7 @@ jobs:
 
       - name: Assemble artifacts
         run: |
-          ./builder/assemble.sh
+          ./builder/assemble.sh linux_x86
 
   target-linux-armv7:
     needs: cargo-test
