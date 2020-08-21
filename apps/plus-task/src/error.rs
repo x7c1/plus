@@ -5,24 +5,13 @@ use std::string;
 
 pub type Result<T> = ::std::result::Result<T, Error>;
 
-#[derive(Fail, Debug)]
+#[derive(Debug)]
 pub enum Error {
-    #[fail(display = "clap_task::Error > {}", 0)]
     ClapTaskError(clap_task::Error),
-
-    #[fail(display = "clap_extractor::Error > {}", 0)]
-    ClapExtractorError(String),
-
-    #[fail(display = "shellwork::Error > {}", 0)]
+    ClapExtractorError(Box<dyn Debug>),
     ShellworkError(shellwork::Error),
-
-    #[fail(display = "std::io::Error > {}", 0)]
     StdIoError(std::io::Error),
-
-    #[fail(display = "string::FromUtf8Error > {}", 0)]
     StringFromUtf8Error(string::FromUtf8Error),
-
-    #[fail(display = "unknown target > {}", 0)]
     UnknownBuildTarget(String),
 }
 
@@ -32,9 +21,12 @@ impl From<clap_task::Error> for Error {
     }
 }
 
-impl<A: Debug> From<clap_extractor::Error<A>> for Error {
+impl<A: Debug> From<clap_extractor::Error<A>> for Error
+where
+    A: 'static,
+{
     fn from(e: clap_extractor::Error<A>) -> Self {
-        Error::ClapExtractorError(format!("{:?}", e))
+        Error::ClapExtractorError(Box::new(e))
     }
 }
 

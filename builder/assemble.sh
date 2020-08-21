@@ -6,7 +6,35 @@ set -e
 # not allow undefined values.
 set -u
 
+build_target=$1
+
 main() {
+  task build-apps \
+    --target="$build_target" --release
+
+  task assemble-pilot-tests \
+    --target="$build_target" --release
+
+  task copy-artifact-files \
+    --target="$build_target" --release
+
+  task package-artifacts \
+    --target="$build_target"
+
+  ls -lh dist/"$build_target"
+
+  task strip-executables \
+    --target="$build_target"
+
+  task package-artifacts \
+    --target="$build_target"
+
+  ls -lh dist/"$build_target"
+
+  println "done."
+}
+
+main_old() {
   build_for_release
 
   println "copying apps..."
@@ -35,6 +63,11 @@ main() {
 
 println() {
   echo -e "\n>> $1"
+}
+
+task() {
+  set -x
+  ./target/x86_64-unknown-linux-musl/debug/plus-task "$@"
 }
 
 build_for_release() {

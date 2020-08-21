@@ -1,8 +1,9 @@
 mod task;
+
 use task::Task;
 
 use crate::tasks::shared;
-use crate::tasks::shared::build_target;
+use crate::tasks::shared::{build_mode, build_target};
 use crate::TaskResult;
 use clap::{App, ArgMatches, SubCommand};
 use clap_task::ClapTask;
@@ -21,6 +22,7 @@ impl ClapTask<TaskResult<()>> for Task {
         SubCommand::with_name(self.name())
             .about("Copy files to artifact directory.")
             .arg(build_target::arg())
+            .arg(build_mode::arg())
     }
 
     async fn run<'a>(&'a self, matches: &'a ArgMatches<'a>) -> TaskResult<()> {

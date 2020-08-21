@@ -1,6 +1,9 @@
 
 assemble:
-	./scripts/run_builder.sh assemble.sh
+	./scripts/run_builder.sh assemble.sh linux_x86
+
+build-task:
+	./scripts/run_builder.sh build-task.sh --debug --opt-level=0
 
 cargo-clippy:
 	./scripts/run_builder.sh cargo-clippy.sh --debug --opt-level=0
