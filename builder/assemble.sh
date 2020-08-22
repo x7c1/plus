@@ -19,6 +19,12 @@ else
 fi
 
 main() {
+  echo "current"
+  ls -alh .
+
+  echo "dist"
+  ls -alh ./dist
+
   task build-apps \
     --target="$build_target" --release
 
