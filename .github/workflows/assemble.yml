@@ -116,11 +116,7 @@ jobs:
         run: |
           ./builder/init/init.linux_x86.sh
 
-#      - name: Bulid plus-task
-#        run: |
-#          ./builder/build-task.sh --debug --opt-level=0
-
-      - name: Download plust-task
+      - name: Download plus-task
         uses: actions/download-artifact@v2
         with:
           name: plus-task
@@ -158,7 +154,7 @@ jobs:
         run: |
           ./builder/init/init.linux_armv7.sh
 
-      - name: Download plust-task
+      - name: Download plus-task
         uses: actions/download-artifact@v2
         with:
           name: plus-task
