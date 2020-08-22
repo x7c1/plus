@@ -13,7 +13,39 @@ env:
   PLUS_PROJECT_ROOT: ${{ github.workspace }}
 
 jobs:
+  build-task-runner:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            ~/.cargo/bin
+            target
+          key: ${{ runner.os }}-task-runner-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.os }}-task-runner-
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+
+      - name: Run build-task
+        run: |
+          ./builder/build-task.sh --debug --opt-level=0
+
+      - name: Upload plus-task
+        uses: actions/upload-artifact@v2
+        with:
+          name: plus-task
+          path: ./target/x86_64-unknown-linux-musl/debug/plus-task
+
   cargo-test:
+    needs: build-task-runner
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -81,9 +113,14 @@ jobs:
         run: |
           ./builder/init/init.linux_x86.sh
 
-      - name: Bulid plus-task
-        run: |
-          ./builder/build-task.sh --debug --opt-level=0
+#      - name: Bulid plus-task
+#        run: |
+#          ./builder/build-task.sh --debug --opt-level=0
+
+      - name: Download plust-task
+        uses: actions/download-artifact@v2
+        with:
+          name: plus-task
 
       - name: Assemble artifacts
         run: |
