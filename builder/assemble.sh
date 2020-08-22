@@ -25,6 +25,9 @@ main() {
   echo "dist"
   ls -alh ./dist
 
+  echo "target"
+  ls -alh "./dist/$build_target"
+
   task build-apps \
     --target="$build_target" --release
 

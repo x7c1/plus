@@ -9,10 +9,12 @@ services:
   - docker
 
 before_script:
+  - ls -al . && ls -al ./dist
   - make cargo-fmt-check
   - make cargo-clippy
 
 script:
   - |
+    ls -al . && ls -al ./dist
     make cargo-test &&
     make assemble
