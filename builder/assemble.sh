@@ -8,6 +8,15 @@ set -u
 
 build_target=$1
 
+if [ -e ./plus-task ]; then
+  plus_task_path="./plus-task"
+elif [ -e ./target/x86_64-unknown-linux-musl/debug/plus-task ]; then
+  plus_task_path="./target/x86_64-unknown-linux-musl/debug/plus-task"
+else
+  echo "plus-task not found"
+  exit 1
+fi
+
 main() {
   task build-apps \
     --target="$build_target" --release
@@ -66,8 +75,14 @@ println() {
 }
 
 task() {
-  set -x
-  ./target/x86_64-unknown-linux-musl/debug/plus-task "$@"
+  line="$plus_task_path $(quote_args "$@")"
+  eval "$line"
+}
+
+quote_args () {
+    for arg in "$@"; do
+        printf %s "\"$arg\" "
+    done
 }
 
 build_for_release() {
