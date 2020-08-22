@@ -1,6 +1,11 @@
+target=linux_x86
 
+# rf. https://stackoverflow.com/a/10699588
+CFLAGS = -c -g -D $(target)
+
+# usage: make assemble target=linux_armv7
 assemble:
-	./scripts/run_builder.sh assemble.sh linux_x86
+	./scripts/run_builder.sh assemble.sh $(target)
 
 build-task:
 	./scripts/run_builder.sh build-task.sh --debug --opt-level=0
