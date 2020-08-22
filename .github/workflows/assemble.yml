@@ -38,8 +38,9 @@ jobs:
         run: sudo ./builder/init/apt-get.sh
       - name: Set up toolchains
         run: |
-          . ./builder/init/setup.sh
-          ./builder/init/init.linux_x86.sh
+          . ./builder/init/env.sh
+          ./builder/init/run-if-changed.sh ./builder/init/init.sh
+          ./builder/init/run-if-changed.sh ./builder/init/init.linux_x86.sh
 
       - name: Run build-task
         run: ./builder/build-task.sh --debug --opt-level=0
@@ -76,9 +77,10 @@ jobs:
         run: sudo ./builder/init/apt-get.sh
       - name: Set up toolchains
         run: |
-          . ./builder/init/setup.sh
-          ./builder/init/init.linux_x86.sh
-          ./builder/init/tools.linux_x86.sh
+          . ./builder/init/env.sh
+          ./builder/init/run-if-changed.sh ./builder/init/init.sh
+          ./builder/init/run-if-changed.sh ./builder/init/init.linux_x86.sh
+          ./builder/init/run-if-changed.sh ./builder/init/tools.linux_x86.sh
 
       - name: Run cargo fmt
         run: |
@@ -117,8 +119,9 @@ jobs:
           sudo ./builder/init/apt-get.sh
       - name: Set up toolchains
         run: |
-          . ./builder/init/setup.sh
-          ./builder/init/init.linux_x86.sh
+          . ./builder/init/env.sh
+          ./builder/init/run-if-changed.sh ./builder/init/init.sh
+          ./builder/init/run-if-changed.sh ./builder/init/init.linux_x86.sh
 
       - name: Download plus-task
         uses: actions/download-artifact@v2
@@ -156,8 +159,9 @@ jobs:
           sudo ./builder/init/apt-get.sh
       - name: Set up toolchains
         run: |
-          . ./builder/init/setup.sh
-          ./builder/init/init.linux_armv7.sh
+          . ./builder/init/env.sh
+          ./builder/init/run-if-changed.sh ./builder/init/init.sh
+          ./builder/init/run-if-changed.sh ./builder/init/init.linux_armv7.sh
 
       - name: Download plus-task
         uses: actions/download-artifact@v2
