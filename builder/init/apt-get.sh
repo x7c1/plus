@@ -5,8 +5,8 @@ set -xue
 main() {
   apt-get update
   apt-get install -y \
-    gcc-arm-linux-gnueabihf \
     jq \
+    xz-utils \
     musl-tools \
     tree
 
