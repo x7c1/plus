@@ -34,9 +34,9 @@ setup_apt() {
     gcc-arm-linux-gnueabihf \
     jq \
     musl-tools \
-    clang \
-    cmake \
     tree
+#    clang \
+#    cmake \
 }
 
 main
