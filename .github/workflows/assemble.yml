@@ -35,7 +35,8 @@ jobs:
           override: true
 
       - name: Run apt-get
-        run: sudo ./builder/init/apt-get.sh
+        run: |
+          sudo ./builder/init/run-if-changed.sh ./builder/init/apt-get.sh
       - name: Set up toolchains
         run: |
           . ./builder/init/env.sh
@@ -74,7 +75,8 @@ jobs:
           override: true
 
       - name: Run apt-get
-        run: sudo ./builder/init/apt-get.sh
+        run: |
+          sudo ./builder/init/run-if-changed.sh ./builder/init/apt-get.sh
       - name: Set up toolchains
         run: |
           . ./builder/init/env.sh
@@ -116,7 +118,7 @@ jobs:
 
       - name: Run apt-get
         run: |
-          sudo ./builder/init/apt-get.sh
+          sudo ./builder/init/run-if-changed.sh ./builder/init/apt-get.sh
       - name: Set up toolchains
         run: |
           . ./builder/init/env.sh
@@ -156,7 +158,8 @@ jobs:
 
       - name: Run apt-get
         run: |
-          sudo ./builder/init/apt-get.sh
+          sudo ./builder/init/run-if-changed.sh ./builder/init/apt-get.sh
+          sudo ./builder/init/run-if-changed.sh ./builder/init/apt-get.linux_armv7.sh
       - name: Set up toolchains
         run: |
           . ./builder/init/env.sh
