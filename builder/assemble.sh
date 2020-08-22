@@ -19,19 +19,8 @@ else
 fi
 
 main() {
-  echo "current"
-  ls -alh .
-
-  echo "dist"
-  ls -alh ./dist
-
-  echo "target"
-  ls -alh "./dist/$build_target"
-
   task build-apps \
     --target="$build_target" --release
-
-  ls -alh dist/"$build_target"
 
   task assemble-pilot-tests \
     --target="$build_target" --release

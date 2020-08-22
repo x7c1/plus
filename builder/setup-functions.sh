@@ -122,12 +122,18 @@ is_osx_sdk_installed() {
 }
 
 setup_artifacts_directory() {
+  echo "[1] setup_artifacts_directory"
+  ls .
   [[ -d ${ARTIFACTS_DIR} ]] || mkdir ${ARTIFACTS_DIR}
 
+  echo "[2] setup_artifacts_directory"
+  ls .
   for arch in $(get_arch_labels); do
     arch_dir="${ARTIFACTS_DIR}/${arch}"
     [[ -d ${arch_dir} ]] || mkdir ${arch_dir}
   done
+  echo "[3] setup_artifacts_directory"
+  ls .
 }
 
 task_runner() {
