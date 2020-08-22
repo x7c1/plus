@@ -22,6 +22,9 @@ main() {
   task build-apps \
     --target="$build_target" --release
 
+  task setup-artifacts-directory \
+    --target="$build_target"
+
   task assemble-pilot-tests \
     --target="$build_target" --release
 
