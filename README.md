@@ -35,6 +35,19 @@ GNU bash, version 5.0.11(1)-release (x86_64-apple-darwin19.0.0)
 Copyright (C) 2019 Free Software Foundation, Inc.
 ```
 
+
+<!--
+
+## Notes
+
+running `act` not works because `actions/upload-artifact` fails:
+
+```
+[assemble/build-task-runner ]   ❗  ::error::Unable to get ACTIONS_RUNTIME_TOKEN env variable
+[assemble/build-task-runner ]   ❌  Failure - Upload plus-task
+Error: exit with `FAILURE`: 1
+```
+
 ## Run `act`
 
 To run tests:
@@ -48,3 +61,4 @@ To run all jobs:
 ```
 $ act --reuse -P ubuntu-latest=nektos/act-environments-ubuntu:18.04
 ```
+-->
