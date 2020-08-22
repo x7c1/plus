@@ -76,7 +76,8 @@ jobs:
         run: sudo ./builder/init/apt-get.sh
       - name: Set up toolchains
         run: |
-          . ./builder/init/init.linux_x86.sh
+          . ./builder/init/setup.sh
+          ./builder/init/init.linux_x86.sh
           ./builder/init/tools.linux_x86.sh
 
       - name: Run cargo fmt
