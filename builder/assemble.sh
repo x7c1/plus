@@ -10,6 +10,7 @@ build_target=$1
 
 if [ -e ./plus-task ]; then
   plus_task_path="./plus-task"
+  chmod u+x "$plus_task_path"
 elif [ -e ./target/x86_64-unknown-linux-musl/debug/plus-task ]; then
   plus_task_path="./target/x86_64-unknown-linux-musl/debug/plus-task"
 else
