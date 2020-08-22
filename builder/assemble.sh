@@ -22,10 +22,10 @@ main() {
   task build-apps \
     --target="$build_target" --release
 
+  ls -alh dist/"$build_target"
+
   task assemble-pilot-tests \
     --target="$build_target" --release
-
-  ls -alh dist/"$build_target"
 
   task copy-artifact-files \
     --target="$build_target" --release
