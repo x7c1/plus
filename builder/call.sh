@@ -4,4 +4,4 @@ set -xue
 
 . ./builder/assemble.sh
 
-eval "$1"
+eval "$*"
