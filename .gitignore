@@ -2,6 +2,7 @@
 *.tmp
 builder/*.gen.sh
 builder/*.local.sh
+builder/init/*.sha1
 scripts/*.local.sh
 
 # artifacts

@@ -30,6 +30,7 @@ write_main() {
   path="./builder/main.gen.sh"
   echo -e "#!/usr/bin/env bash\n" > ${path}
   echo -e ". ${MOUNT_DIR}/builder/init.local/setup_all_targets.sh\n" >> ${path}
+  echo -e ". ${MOUNT_DIR}/builder/assemble.sh\n" >> ${path}
   echo -e "$1" >> ${path}
 }
 

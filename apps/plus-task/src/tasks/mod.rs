@@ -14,6 +14,9 @@ pub mod copy_artifact_files;
 pub mod package_artifacts;
 
 #[macro_use]
+pub mod setup_artifacts_directory;
+
+#[macro_use]
 pub mod show_sizes;
 
 #[macro_use]
@@ -27,6 +30,7 @@ pub fn define_all() -> Vec<Box<dyn ClapTask<TaskResult<()>>>> {
         build_apps::clap(),
         copy_artifact_files::clap(),
         package_artifacts::clap(),
+        setup_artifacts_directory::clap(),
         show_sizes::clap(),
         strip_executables::clap(),
     ]

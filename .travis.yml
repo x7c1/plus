@@ -14,5 +14,7 @@ before_script:
 
 script:
   - |
-    make cargo-test &&
-    make assemble
+    set -e
+    make cargo-test
+    make assemble target=linux_x86
+    make assemble target=linux_armv7
