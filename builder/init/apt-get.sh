@@ -10,7 +10,7 @@ main() {
     musl-tools \
     tree
 
-# todo: add these modules to init.macos_x86.sh
+# todo: add these modules to apt-get.macos_x86.sh
 #    clang \
 #    cmake \
 
