@@ -6,8 +6,6 @@ set -e
 # not allow undefined values.
 set -u
 
-build_target=$1
-
 if [ -e ./plus-task ]; then
   plus_task_path="./plus-task"
   chmod u+x "$plus_task_path"
@@ -18,7 +16,10 @@ else
   exit 1
 fi
 
-main() {
+assemble() {
+  set +x
+  build_target=$1
+
   task build-apps \
     --target="$build_target" --release
 
@@ -45,6 +46,33 @@ main() {
   ls -lh dist/"$build_target"
 
   println "done."
+}
+
+build_task_runner() {
+  export RUSTFLAGS="-C opt-level=0"
+  cargo build --target=x86_64-unknown-linux-musl \
+    --package=plus-task
+}
+
+cargo_clippy() {
+  export RUSTFLAGS="-C opt-level=0"
+  cargo clippy --target=x86_64-unknown-linux-musl
+}
+
+cargo_fmt() {
+  export RUSTFLAGS="-C opt-level=0"
+  cargo fmt --verbose -- --emit files
+}
+
+cargo_fmt_check() {
+  export RUSTFLAGS="-C opt-level=0"
+  cargo fmt --verbose --all -- --check
+}
+
+cargo_test() {
+  export RUSTFLAGS="-C opt-level=0"
+  cargo test --target=x86_64-unknown-linux-musl \
+    --workspace --exclude=plus-pilot -- --nocapture
 }
 
 main_old() {
@@ -99,5 +127,3 @@ build_for_release() {
 show_file_size() {
   ls -lh dist/**
 }
-
-main

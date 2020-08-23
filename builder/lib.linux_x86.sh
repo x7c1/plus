@@ -34,11 +34,11 @@ cargo_fmt() {
     -- --emit files
 }
 
-cargo_clippy() {
-  cargo clippy \
-    ${BUILD_MODE} \
-    --target="${TARGET_X86}"
-}
+#cargo_clippy() {
+#  cargo clippy \
+#    ${BUILD_MODE} \
+#    --target="${TARGET_X86}"
+#}
 
 task_runner_for_linux_x86() {
   task_runner ${TARGET_X86} "$@"

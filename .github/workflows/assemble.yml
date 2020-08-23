@@ -44,7 +44,7 @@ jobs:
           ./builder/init/run-if-changed.sh ./builder/init/init.linux_x86.sh
 
       - name: Run build-task
-        run: ./builder/build-task.sh --debug --opt-level=0
+        run: ./builder/call.sh build_task_runner
 
       - name: Upload plus-task
         uses: actions/upload-artifact@v2
@@ -85,14 +85,11 @@ jobs:
           ./builder/init/run-if-changed.sh ./builder/init/tools.linux_x86.sh
 
       - name: Run cargo fmt
-        run: |
-          ./builder/cargo-fmt.sh --all-check
+        run: ./builder/call.sh cargo_fmt_check
       - name: Run cargo clippy
-        run: |
-          ./builder/cargo-clippy.sh --debug --opt-level=0
+        run: ./builder/call.sh cargo_clippy
       - name: Run cargo test
-        run: |
-          ./builder/cargo-test.sh --debug --opt-level=0
+        run: ./builder/call.sh cargo_test
 
   target-linux-x86:
     needs: cargo-test
@@ -131,8 +128,7 @@ jobs:
           name: plus-task
 
       - name: Assemble artifacts
-        run: |
-          ./builder/assemble.sh linux_x86
+        run: ./builder/call.sh assemble linux_x86
 
   target-linux-armv7:
     needs: cargo-test
@@ -172,5 +168,4 @@ jobs:
           name: plus-task
 
       - name: Assemble artifacts
-        run: |
-          ./builder/assemble.sh linux_armv7
+        run: ./builder/call.sh assemble linux_armv7

@@ -3,7 +3,8 @@
 . ./scripts/setup_env.sh
 
 MOUNT_DIR=/plus
-command="${MOUNT_DIR}/builder/${*}"
+#command="${MOUNT_DIR}/builder/${*}"
+command="${*}"
 task_path="./target/x86_64-unknown-linux-musl/debug/plus-task"
 
 main() {
