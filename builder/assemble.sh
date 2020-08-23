@@ -6,16 +6,6 @@ set -e
 # not allow undefined values.
 set -u
 
-if [ -e ./plus-task ]; then
-  plus_task_path="./plus-task"
-  chmod u+x "$plus_task_path"
-elif [ -e ./target/x86_64-unknown-linux-musl/debug/plus-task ]; then
-  plus_task_path="./target/x86_64-unknown-linux-musl/debug/plus-task"
-else
-  echo "plus-task not found"
-  exit 1
-fi
-
 assemble() {
   set +x
   build_target=$1
@@ -108,6 +98,17 @@ println() {
 }
 
 task() {
+  if [ -e ./plus-task ]; then
+    # when called by GitHub Actions using actions/download-artifact
+    plus_task_path="./plus-task"
+    chmod u+x "$plus_task_path"
+  elif [ -e ./target/x86_64-unknown-linux-musl/debug/plus-task ]; then
+    # when called by local Docker container
+    plus_task_path="./target/x86_64-unknown-linux-musl/debug/plus-task"
+  else
+    echo "plus-task not found"
+    exit 1
+  fi
   line="$plus_task_path $(quote_args "$@")"
   eval "$line"
 }

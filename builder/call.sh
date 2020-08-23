@@ -4,4 +4,4 @@ set -xue
 
 . ./builder/assemble.sh
 
-eval "$*"
+eval "$(quote_args "$@")"
