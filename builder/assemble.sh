@@ -35,7 +35,7 @@ assemble() {
 
   ls -lh dist/"$build_target"
 
-  println "done."
+  echo "done."
 }
 
 build_task_runner() {
@@ -66,37 +66,6 @@ cargo_test() {
     -- --nocapture
 }
 
-main_old() {
-  build_for_release
-
-  println "copying apps..."
-  ./builder/copy-as-artifacts.sh
-
-  println "archiving..."
-  ./builder/archive-all.sh
-
-  println "before strip"
-  show_file_size
-
-  println "stripping..."
-  ./builder/strip-files.sh
-
-  println "archiving..."
-  ./builder/archive-all.sh
-
-  println "after strip"
-  show_file_size
-
-  println "artifact details"
-  ./builder/show-artifacts.sh
-
-  println "done."
-}
-
-println() {
-  echo -e "\n>> $1"
-}
-
 task() {
   if [ -e ./plus-task ]; then
     # when called by GitHub Actions using actions/download-artifact
@@ -117,15 +86,4 @@ quote_args () {
     for arg in "$@"; do
         printf %s "\"$arg\" "
     done
-}
-
-build_for_release() {
-  # rf.
-  # [What do the optimization levels `-Os` and `-Oz` do in rustc? - Stack Overflow]
-  # https://stackoverflow.com/questions/45608392/what-do-the-optimization-levels-os-and-oz-do-in-rustc
-  ./builder/build-all.sh --release --opt-level=z
-}
-
-show_file_size() {
-  ls -lh dist/**
 }
