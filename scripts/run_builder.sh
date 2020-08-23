@@ -3,14 +3,13 @@
 . ./scripts/setup_env.sh
 
 MOUNT_DIR=/plus
-#command="${MOUNT_DIR}/builder/${*}"
 command="${*}"
 task_path="./target/x86_64-unknown-linux-musl/debug/plus-task"
 
 main() {
   set -x
   if [ ! -e "${task_path}" ]; then
-    write_main "${MOUNT_DIR}/builder/build-task.sh --debug --opt-level=0"
+    write_main "${MOUNT_DIR}/builder/call.sh build_task_runner"
     run
   fi
   write_main "$command"

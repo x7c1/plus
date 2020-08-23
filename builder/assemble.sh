@@ -72,7 +72,8 @@ cargo_fmt_check() {
 cargo_test() {
   export RUSTFLAGS="-C opt-level=0"
   cargo test --target=x86_64-unknown-linux-musl \
-    --workspace --exclude=plus-pilot -- --nocapture
+    --workspace --exclude=plus-pilot \
+    -- --nocapture
 }
 
 main_old() {
