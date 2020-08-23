@@ -6,23 +6,6 @@ set -e
 # not allow undefined values.
 set -u
 
-get_arch_labels() {
-  labels=(
-    "linux_x86"
-#    "linux_armv7"
-#    "macos_x86"
-  )
-  echo ${labels[@]}
-}
-
-get_artifact_names() {
-  names=(
-    "plus_pilot_tests"
-    "s3api"
-  )
-  echo ${names[@]}
-}
-
 get_opt_level() {
   while getopts ":-:" OPT; do
     case "${OPT}" in
@@ -86,32 +69,6 @@ build_pilot_and_output_json() {
     | grep plus_pilot_tests
 }
 
-copy_release_apps() {
-  target_dir=${PLUS_PROJECT_ROOT}/target/$1/release
-  for name in $(get_artifact_names); do
-    app=${target_dir}/${name}
-    if [[ -f ${app} ]]; then
-      cp ${app} ${ARTIFACTS_DIR}/$2/${name}
-    fi
-  done
-}
-
-strip_release_files() {
-  target_dir=${ARTIFACTS_DIR}/$1
-  for name in $(get_artifact_names); do
-    app=${target_dir}/${name}
-    $2 ${app}
-  done
-}
-
-show_artifacts() {
-  target_dir=${ARTIFACTS_DIR}/$1
-  for name in $(get_artifact_names); do
-    cd ${target_dir}
-    file ${name} | sed $'s/,/,\\\n /g'
-  done
-}
-
 is_osx_sdk_installed() {
   target=${OSXCROSS_ROOT}/target/bin/${OSX_SDK_CC}
   if [[ -f ${target} ]]; then
@@ -126,13 +83,5 @@ task_runner() {
     ${BUILD_MODE} \
     --target=$1 \
     --package=plus-task \
-    "${@:2}"
-}
-
-test_shellwork() {
-  cargo test \
-    ${BUILD_MODE} \
-    --target=$1 \
-    --package=shellwork \
     "${@:2}"
 }
