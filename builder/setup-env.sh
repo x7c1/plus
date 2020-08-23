@@ -32,8 +32,6 @@ export MAX_PARALLEL=$(getconf _NPROCESSORS_ONLN)
 # used by rustc
 export RUSTFLAGS="-C opt-level=$OPT_LEVEL"
 
-#setup_artifacts_directory
-
 cd ${PLUS_PROJECT_ROOT}
 . ./builder/build-osxcross.sh
 
