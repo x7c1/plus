@@ -174,3 +174,17 @@ jobs:
 
       - name: Assemble artifacts
         run: ./builder/call.sh assemble linux_armv7
+
+  release-libraries:
+    needs:
+      - target-linux-x86
+      - target-linux-armv7
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+      - run: ./publisher/call.sh publish_libraries
