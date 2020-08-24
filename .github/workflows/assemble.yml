@@ -200,4 +200,4 @@ jobs:
 
       - run: |
           ./builder/call.sh task release-libraries \
-            --files="${{ steps.files.outputs.added_modified }}"
+            --files='${{ steps.files.outputs.added_modified }}'
