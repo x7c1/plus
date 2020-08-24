@@ -8,7 +8,7 @@ assemble:
 	./scripts/run_builder.sh assemble $(target)
 
 build-task:
-	./scripts/run_builder.sh cargo plus-build-task
+	./scripts/run_builder.sh build_task_runner
 
 cargo-clippy:
 	./scripts/run_builder.sh cargo_clippy

@@ -191,4 +191,12 @@ jobs:
         uses: jitterbit/get-changed-files@v1
         with:
           format: 'json'
-      - run: ./publisher/call.sh publish_libraries "${{ steps.files.outputs.all }}"
+
+      - name: Download plus-task
+        uses: actions/download-artifact@v2
+        with:
+          name: plus-task
+
+      - run: |
+          ./builder/call.sh task release-libraries \
+            --files="${{ steps.files.outputs.added_modified }}"
