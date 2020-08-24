@@ -176,6 +176,7 @@ jobs:
         run: ./builder/call.sh assemble linux_armv7
 
   release-libraries:
+    needs: build-task-runner
 #    needs:
 #      - target-linux-x86
 #      - target-linux-armv7
