@@ -49,7 +49,9 @@ impl FromStr for ChangedFiles {
 
     fn from_str(x: &str) -> Result<Self, Self::Err> {
         println!("changed files - passed args: {}", x);
-        let files = ChangedFiles { paths: serde_json::from_str(x)? };
+        let files = ChangedFiles {
+            paths: serde_json::from_str(x)?,
+        };
         Ok(files)
     }
 }
