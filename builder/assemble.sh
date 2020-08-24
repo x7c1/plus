@@ -83,7 +83,7 @@ task() {
 }
 
 quote_args () {
-    for arg in "$@"; do
-        printf %s "\"$arg\" "
-    done
+  for arg in "$@"; do
+    printf %s "'$arg' "
+  done
 }

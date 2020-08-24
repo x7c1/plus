@@ -26,7 +26,7 @@ run() {
 
 quote_args () {
   for arg in "$@"; do
-    printf %s "\"$arg\" "
+    printf %s "'$arg' "
   done
 }
 
