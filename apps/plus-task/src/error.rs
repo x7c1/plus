@@ -9,6 +9,7 @@ pub type Result<T> = ::std::result::Result<T, Error>;
 pub enum Error {
     ClapTaskError(clap_task::Error),
     ClapExtractorError(Box<dyn Debug>),
+    SerdeJsonError(serde_json::Error),
     ShellworkError(shellwork::Error),
     StdIoError(std::io::Error),
     StringFromUtf8Error(string::FromUtf8Error),
@@ -27,6 +28,12 @@ where
 {
     fn from(e: clap_extractor::Error<A>) -> Self {
         Error::ClapExtractorError(Box::new(e))
+    }
+}
+
+impl From<serde_json::Error> for Error {
+    fn from(e: serde_json::Error) -> Self {
+        Error::SerdeJsonError(e)
     }
 }
 

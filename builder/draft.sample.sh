@@ -13,21 +13,22 @@ cd "$PLUS_PROJECT_ROOT" || exit 1
 
 main() {
   set -x
+  task release-libraries '--files=[".github/workflows/assemble.yml","Makefile","apps/plus-task/src/tasks/mod.rs","apps/plus-task/src/tasks/release_libraries/mod.rs","apps/plus-task/src/tasks/release_libraries/task.rs","builder/assemble.sh","libs/env-extractor/Cargo.toml","scripts/run_builder.sh"]'
   for_task_runner
 }
 
 for_task_runner() {
-  task_runner_for_linux_x86 build-apps --target=linux_x86
-  task_runner_for_linux_x86 assemble-pilot-tests --target=linux_x86
-  task_runner_for_linux_x86 copy-artifact-files --target=linux_x86
-  task_runner_for_linux_x86 package-artifacts --target=linux_x86
+  task build-apps --target=linux_x86
+  task assemble-pilot-tests --target=linux_x86
+  task copy-artifact-files --target=linux_x86
+  task package-artifacts --target=linux_x86
   ls -lh dist
 
-  task_runner_for_linux_x86 strip-executables --target=linux_x86
-  task_runner_for_linux_x86 package-artifacts --target=linux_x86
+  task strip-executables --target=linux_x86
+  task package-artifacts --target=linux_x86
   ls -lh dist
 
-  task_runner_for_linux_x86 help
+  task help
 }
 
 dev() {
@@ -58,16 +59,14 @@ run_get() {
 
 run_specified_tests() {
   cargo test \
-    ${BUILD_MODE} \
-    --target="${TARGET_X86}" \
+    --target="x86_64-unknown-linux-musl" \
     --workspace --exclude=plus-pilot \
     -- --nocapture auth::v4::calculator
 }
 
 run_package_specified_tests() {
   cargo test \
-    ${BUILD_MODE} \
-    --target="${TARGET_X86}" \
+    --target="x86_64-unknown-linux-musl" \
     --package plus-task \
     -- --nocapture core
 }

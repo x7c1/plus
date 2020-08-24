@@ -1,6 +1,7 @@
 use crate::core::env::artifacts_dir;
 use crate::core::support::program_exists;
 use crate::TaskResult;
+use serde::Deserialize;
 use shellwork::core::command;
 use shellwork::core::command::{Runner, Unprepared};
 use std::str::FromStr;
@@ -38,7 +39,7 @@ pub struct Params {
     pub files: ChangedFiles,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Deserialize)]
 pub struct ChangedFiles {
     pub paths: Vec<String>,
 }
@@ -46,17 +47,9 @@ pub struct ChangedFiles {
 impl FromStr for ChangedFiles {
     type Err = crate::Error;
 
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        println!("s...{}", s);
-        unimplemented!()
+    fn from_str(x: &str) -> Result<Self, Self::Err> {
+        println!("changed files - passed args: {}", x);
+        let files = ChangedFiles { paths: serde_json::from_str(x)? };
+        Ok(files)
     }
 }
-//
-// impl CanExtractOptional<ChangedFiles> for FromSingle<'_, '_> {
-//     type Err = crate::Error;
-//
-//     fn get_optional(&self) -> Result<ChangedFiles, Self::Err> {
-//         self.matches.value_of("key")
-//         unimplemented!()
-//     }
-// }
