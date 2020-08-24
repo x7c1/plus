@@ -176,9 +176,9 @@ jobs:
         run: ./builder/call.sh assemble linux_armv7
 
   release-libraries:
-    needs:
-      - target-linux-x86
-      - target-linux-armv7
+#    needs:
+#      - target-linux-x86
+#      - target-linux-armv7
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
