@@ -188,6 +188,10 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
+      - name: Run apt-get
+        run: |
+          sudo ./builder/init/run-if-changed.sh ./builder/init/apt-get.sh
+
       - id: files
         uses: jitterbit/get-changed-files@v1
         with:
