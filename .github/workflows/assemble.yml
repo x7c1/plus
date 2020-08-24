@@ -187,4 +187,8 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
-      - run: ./publisher/call.sh publish_libraries
+      - id: files
+        uses: jitterbit/get-changed-files@v1
+        with:
+          format: 'json'
+      - run: ./publisher/call.sh publish_libraries "${{ steps.files.outputs.all }}"

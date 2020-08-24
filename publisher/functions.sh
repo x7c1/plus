@@ -9,8 +9,12 @@ set -u
 publish_libraries() {
   set +x
 
+  files=$1
+  echo "$files"
+
   current=$(git branch --show-current)
   echo "current branch...$current"
+
   git diff master..."${current}" --name-only --diff-filter=AM | cat
 
   cargo publish --dry-run --manifest-path ./libs/env-extractor/Cargo.toml
