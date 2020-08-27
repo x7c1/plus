@@ -8,6 +8,8 @@ authors = ["haco <jmtaro+crates@gmail.com>"]
 license = "MIT/Apache-2.0"
 description = "Modules to extract environment variables."
 keywords = ["env"]
+homepage = "https://github.com/x7c1/plus/tree/master/libs/env-extractor"
+readme = "libs/env-extractor/README.md"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
