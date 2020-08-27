@@ -1,9 +1,7 @@
-use crate::core::env::artifacts_dir;
 use crate::core::support::program_exists;
 use crate::TaskResult;
 use serde::Deserialize;
 use shellwork::core::command;
-use shellwork::core::command::{Runner, Unprepared};
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
 
@@ -11,27 +9,22 @@ pub struct Task;
 
 impl Task {
     pub fn start(&self, params: &Params) -> TaskResult<()> {
-        println!("params...{:#?}", params);
-        let runner = self.runner().prepare(program_exists)?;
-        runner.spawn()?;
+        println!("[start] params...{:#?}", params);
+
+        let mut tomls = params.files.lib_cargo_tomls();
+        tomls.try_for_each(|toml| self.dry_run(toml))?;
         Ok(())
     }
 
-    fn runner(&self) -> Runner<Unprepared> {
-        command::program("tree")
-            // specify max tree depth to descend
-            .args(&["-L", "2"])
-            // use ANSI line graphics hack when printing indentation lines
-            .arg("-A")
-            // sort output by change time
-            .arg("-c")
-            // print directory sizes
-            .arg("--du")
-            // print human readable file size in SI units (powers of 1000)
-            .arg("--si")
-            // list directories before files
-            .arg("--dirsfirst")
-            .arg(artifacts_dir())
+    fn dry_run(&self, toml: &Path) -> TaskResult<()> {
+        let runner = command::program("cargo").args(&[
+            "publish",
+            // "--dry-run",
+            "--manifest-path",
+            toml.to_str().expect("path to Cargo.toml required"),
+        ]);
+        runner.prepare(program_exists)?.spawn()?;
+        Ok(())
     }
 }
 
