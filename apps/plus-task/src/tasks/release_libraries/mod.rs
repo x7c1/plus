@@ -29,12 +29,22 @@ impl ClapTask<TaskResult<()>> for Task {
                     .takes_value(true)
                     .help("All added and modified files."),
             )
+            .arg(
+                Arg::with_name("dry-run")
+                    .long("dry-run")
+                    .help("Perform 'cargo publish --dry-run'"),
+            )
     }
 
     async fn run<'a>(&'a self, matches: &'a ArgMatches<'a>) -> TaskResult<()> {
         let params = Params {
             files: matches.single("files").as_required()?,
         };
-        self.start(&params)
+        let dry_run: bool = matches.single("dry-run").as_optional()?.unwrap_or(false);
+        if dry_run {
+            self.dry_run(&params)
+        } else {
+            self.release(&params)
+        }
     }
 }

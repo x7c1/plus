@@ -8,18 +8,37 @@ use std::str::FromStr;
 pub struct Task;
 
 impl Task {
-    pub fn start(&self, params: &Params) -> TaskResult<()> {
-        println!("[start] params...{:#?}", params);
+    pub fn release(&self, params: &Params) -> TaskResult<()> {
+        println!("[start] #release params...{:#?}", params);
 
         let mut tomls = params.files.lib_cargo_tomls();
-        tomls.try_for_each(|toml| self.dry_run(toml))?;
+        tomls.try_for_each(|toml| self.start(toml))?;
         Ok(())
     }
 
-    fn dry_run(&self, toml: &Path) -> TaskResult<()> {
+    pub fn dry_run(&self, params: &Params) -> TaskResult<()> {
+        println!("[start] #dry_run params...{:#?}", params);
+
+        let mut tomls = params.files.lib_cargo_tomls();
+        tomls.try_for_each(|toml| self.start_dry_run(toml))?;
+        Ok(())
+    }
+
+    fn start(&self, toml: &Path) -> TaskResult<()> {
         let runner = command::program("cargo").args(&[
             "publish",
             // "--dry-run",
+            "--manifest-path",
+            toml.to_str().expect("path to Cargo.toml required"),
+        ]);
+        runner.prepare(program_exists)?.spawn()?;
+        Ok(())
+    }
+
+    fn start_dry_run(&self, toml: &Path) -> TaskResult<()> {
+        let runner = command::program("cargo").args(&[
+            "publish",
+            "--dry-run",
             "--manifest-path",
             toml.to_str().expect("path to Cargo.toml required"),
         ]);
