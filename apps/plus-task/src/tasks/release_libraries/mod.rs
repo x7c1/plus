@@ -40,8 +40,7 @@ impl ClapTask<TaskResult<()>> for Task {
         let params = Params {
             files: matches.single("files").as_required()?,
         };
-        let dry_run: bool = matches.single("dry-run").as_optional()?.unwrap_or(false);
-        if dry_run {
+        if matches.is_present("dry-run") {
             self.dry_run(&params)
         } else {
             self.release(&params)
