@@ -11,11 +11,11 @@ pub struct EnvVar {
 
 type EnvResult<Y, X> = crate::Result<Y, <X as FromStr>::Err>;
 
-impl EnvVar {
-    pub fn new<A: Into<String>>(key: A) -> EnvVar {
-        EnvVar { key: key.into() }
-    }
+pub fn env_var<A: Into<String>>(key: A) -> EnvVar {
+    EnvVar { key: key.into() }
+}
 
+impl EnvVar {
     pub fn as_optional<A>(&self) -> crate::Result<Option<A>, <A as FromStr>::Err>
     where
         A: FromStr,

@@ -1,10 +1,9 @@
-use env_extractor::{EnvVar, RequiredResult};
+use env_extractor::{env_var, required};
 
 mod parameters_pair;
 pub use parameters_pair::ParametersPair;
 
 mod workspace;
-use std::str::FromStr;
 pub use workspace::Workspace;
 
 mod get_object;
@@ -16,16 +15,14 @@ lazy_static! {
     static ref TEST_WORKSPACE_DIR: String = load_workspace_dir().unwrap();
 }
 
-type EnvResult = RequiredResult<String>;
-
-fn load_test_bucket() -> EnvResult {
-    EnvVar::new("PLUS_TEST_BUCKET").as_required()
+fn load_test_bucket() -> required::Result<String> {
+    env_var("PLUS_TEST_BUCKET").as_required()
 }
 
-fn load_apps_dir() -> EnvResult {
-    EnvVar::new("PLUS_APPS_DIR").as_required()
+fn load_apps_dir() -> required::Result<String> {
+    env_var("PLUS_APPS_DIR").as_required()
 }
 
-fn load_workspace_dir() -> EnvResult {
-    EnvVar::new("PLUS_WORKSPACE_DIR").as_required()
+fn load_workspace_dir() -> required::Result<String> {
+    env_var("PLUS_WORKSPACE_DIR").as_required()
 }
