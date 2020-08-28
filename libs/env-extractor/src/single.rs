@@ -1,7 +1,5 @@
-use crate::to_parse_error;
 use crate::Error;
-use crate::Error::NotPresent;
-
+use crate::Error::{NotPresent, ParseError};
 use std::env;
 use std::env::VarError;
 use std::fmt::Debug;
@@ -57,4 +55,8 @@ impl EnvVar {
         };
         maybe.map(to_parsed).unwrap_or_else(if_not_found)
     }
+}
+
+fn to_parse_error<E: Debug>(key: String, value: String, cause: E) -> Error<E> {
+    ParseError { key, value, cause }
 }
