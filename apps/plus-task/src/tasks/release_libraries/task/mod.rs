@@ -35,12 +35,6 @@ impl Task {
         let runner = self.runner_to_publish(toml);
         runner.prepare(program_exists)?.spawn()?;
 
-        /*
-        github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
-        git config user.email "abcde@example.com"
-        git config user.name "abcde"
-         */
-
         // rf. https://github.community/t/github-actions-bot-email-address/17204/4
         let r1 = command::program("git").arg("config").args(&[
             "user.email",
