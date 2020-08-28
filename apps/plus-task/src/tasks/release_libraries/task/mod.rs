@@ -47,9 +47,15 @@ impl Task {
                 "user.email",
                 "41898282+github-actions[bot]@users.noreply.github.com",
             ])
-            .args(&["user.name", "github-actions[bot]"]);
 
         let output = r1.prepare(no_op::<crate::Error>)?.capture()?;
+        println!("git config...{:#?}", output);
+
+        let r2 = command::program("git")
+            .arg("config")
+            .args(&["user.name", "github-actions[bot]"]);
+
+        let output = r2.prepare(no_op::<crate::Error>)?.capture()?;
         println!("git config...{:#?}", output);
 
         let cargo_toml = CargoToml::load(toml)?;
