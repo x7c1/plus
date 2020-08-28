@@ -7,7 +7,7 @@ use serde::Deserialize;
 use shellwork::core::command;
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
-use shellwork::core::command::{Runner, Unprepared};
+use shellwork::core::command::{Runner, Unprepared, no_op};
 use crate::error::Error::PackageAlreadyPublished;
 
 pub struct Task;
@@ -32,6 +32,32 @@ impl Task {
     fn start(&self, toml: &Path) -> TaskResult<()> {
         let runner = self.runner_to_publish(toml);
         runner.prepare(program_exists)?.spawn()?;
+
+        let cargo_toml = CargoToml::load(toml)?;
+        let tag = format!("{}-v{}", cargo_toml.package.name, cargo_toml.package.version);
+
+        let runner1 = command::program("git").args(&[
+            "tag",
+            "-a",
+            &tag,
+            "-m",
+            &format!("add tag: {}", tag),
+        ]);
+        let output = runner1.prepare(no_op::<crate::Error>)?.capture()?;
+        println!("git tag...{:#?}", output);
+
+        let runner2 = command::program("git").args(&[
+            "push",
+            "origin",
+            &tag,
+        ]);
+        let output2 = runner2.prepare(no_op::<crate::Error>)?.capture()?;
+        println!("git push...{:#?}", output2);
+
+        /*
+        todo: git tag & git push
+        git tag -a $tag -m 'tag $tag'
+         */
         Ok(())
     }
 

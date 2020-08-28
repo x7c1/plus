@@ -22,8 +22,8 @@ impl CargoToml {
 
 #[derive(Clone, Debug, Deserialize)]
 pub struct CargoTomlPackage {
-    name: String,
-    version: String,
+    pub name: String,
+    pub version: String,
 }
 
 pub fn already_has(package: &CargoTomlPackage) -> TaskResult<bool> {
