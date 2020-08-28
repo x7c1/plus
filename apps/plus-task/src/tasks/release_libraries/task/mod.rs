@@ -1,9 +1,14 @@
+pub mod crates_io;
+use crates_io::CargoToml;
+
 use crate::core::support::program_exists;
 use crate::TaskResult;
 use serde::Deserialize;
 use shellwork::core::command;
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
+use shellwork::core::command::{Runner, Unprepared};
+use crate::error::Error::PackageAlreadyPublished;
 
 pub struct Task;
 
@@ -25,25 +30,27 @@ impl Task {
     }
 
     fn start(&self, toml: &Path) -> TaskResult<()> {
-        let runner = command::program("cargo").args(&[
-            "publish",
-            // "--dry-run",
-            "--manifest-path",
-            toml.to_str().expect("path to Cargo.toml required"),
-        ]);
+        let runner = self.runner_to_publish(toml);
         runner.prepare(program_exists)?.spawn()?;
         Ok(())
     }
 
     fn start_dry_run(&self, toml: &Path) -> TaskResult<()> {
-        let runner = command::program("cargo").args(&[
-            "publish",
-            "--dry-run",
-            "--manifest-path",
-            toml.to_str().expect("path to Cargo.toml required"),
-        ]);
+        let cargo_toml = CargoToml::load(toml)?;
+        if crates_io::already_has(&cargo_toml.package)? {
+            return Err(PackageAlreadyPublished(cargo_toml.package))
+        }
+        let runner = self.runner_to_publish(toml).arg("--dry-run");
         runner.prepare(program_exists)?.spawn()?;
         Ok(())
+    }
+
+    fn runner_to_publish(&self, toml: &Path) -> Runner<Unprepared> {
+        command::program("cargo").args(&[
+            "publish",
+            "--manifest-path",
+            toml.to_str().expect("path to Cargo.toml required"),
+        ])
     }
 }
 
@@ -58,7 +65,7 @@ pub struct ChangedFiles {
 }
 
 impl ChangedFiles {
-    pub fn lib_cargo_tomls(&self) -> impl Iterator<Item = &Path> {
+    pub fn lib_cargo_tomls(&self) -> impl Iterator<Item=&Path> {
         self.paths.iter().filter_map(|path| {
             if path.starts_with("libs/") && path.ends_with("Cargo.toml") {
                 Some(path.as_path())

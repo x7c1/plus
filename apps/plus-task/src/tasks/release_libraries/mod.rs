@@ -1,5 +1,5 @@
 mod task;
-
+pub use task::crates_io;
 use task::Task;
 
 use crate::tasks::release_libraries::task::Params;

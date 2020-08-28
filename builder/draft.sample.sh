@@ -1,10 +1,7 @@
 #!/usr/bin/env bash
 
 # Usage:
-# 1.
-#   $ cp ./builder/draft.sample.sh ./builder/draft.local.sh
-# 2.
-#   $ make draft
+# $ make draft
 
 . ./builder/assemble.sh
 
@@ -58,6 +55,7 @@ run_get() {
 }
 
 run_specified_tests() {
+  export RUSTFLAGS="-C opt-level=0"
   cargo test \
     --target="x86_64-unknown-linux-musl" \
     --workspace --exclude=plus-pilot \
@@ -65,6 +63,7 @@ run_specified_tests() {
 }
 
 run_package_specified_tests() {
+  export RUSTFLAGS="-C opt-level=0"
   cargo test \
     --target="x86_64-unknown-linux-musl" \
     --package plus-task \
