@@ -15,7 +15,7 @@ pub struct CargoToml {
 impl CargoToml {
     pub fn load(path: &Path) -> TaskResult<CargoToml> {
         let content = fs::read_to_string(path)?;
-        let cargo_toml = toml::from_str(&content).map_err(|e| InvalidCargoToml(e))?;
+        let cargo_toml = toml::from_str(&content).map_err(InvalidCargoToml)?;
         Ok(cargo_toml)
     }
 }

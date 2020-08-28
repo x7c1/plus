@@ -34,12 +34,29 @@ impl Task {
         let runner = self.runner_to_publish(toml);
         runner.prepare(program_exists)?.spawn()?;
 
+        /*
+        github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+        git config user.email "abcde@example.com"
+        git config user.name "abcde"
+         */
+
+        // rf. https://github.community/t/github-actions-bot-email-address/17204/4
+        let r1 = command::program("git")
+            .arg("config")
+            .args(&[
+                "user.email",
+                "41898282+github-actions[bot]@users.noreply.github.com",
+            ])
+            .args(&["user.name", "github-actions[bot]"]);
+
+        let output = r1.prepare(no_op::<crate::Error>)?.capture()?;
+        println!("git config...{:#?}", output);
+
         let cargo_toml = CargoToml::load(toml)?;
         let tag = format!(
             "{}-v{}",
             cargo_toml.package.name, cargo_toml.package.version
         );
-
         let runner1 = command::program("git")
             .arg("tag")
             .args(&["-a", &tag])
