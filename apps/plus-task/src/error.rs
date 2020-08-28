@@ -1,8 +1,8 @@
 extern crate failure;
 
+use crate::tasks::release_libraries::crates_io::CargoTomlPackage;
 use std::fmt::Debug;
 use std::string;
-use crate::tasks::release_libraries::crates_io::CargoTomlPackage;
 
 pub type Result<T> = ::std::result::Result<T, Error>;
 

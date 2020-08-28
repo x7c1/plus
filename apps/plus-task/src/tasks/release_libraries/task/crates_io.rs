@@ -1,15 +1,15 @@
+use crate::error::Error::{CrateVersionNotFound, InvalidCargoToml};
 use crate::TaskResult;
-use std::path::Path;
-use std::fs;
-use crate::error::Error::{InvalidCargoToml, CrateVersionNotFound};
 use serde_derive::Deserialize;
 use shellwork::core::command;
 use shellwork::core::command::no_op;
+use std::fs;
+use std::path::Path;
 use toml::Value;
 
 #[derive(Debug, Deserialize)]
 pub struct CargoToml {
-    pub package: CargoTomlPackage
+    pub package: CargoTomlPackage,
 }
 
 impl CargoToml {
@@ -27,16 +27,13 @@ pub struct CargoTomlPackage {
 }
 
 pub fn already_has(package: &CargoTomlPackage) -> TaskResult<bool> {
-    let runner = command::program("cargo").args(&[
-        "search",
-        &package.name,
-    ]);
+    let runner = command::program("cargo").args(&["search", &package.name]);
     let output = runner.prepare(no_op::<crate::Error>)?.capture()?;
     let stdout = output.stdout();
     let exists = if let Some(version) = extract_version(stdout.as_ref(), &package.name) {
         version == package.version
     } else {
-        return Err(CrateVersionNotFound(package.clone()))
+        return Err(CrateVersionNotFound(package.clone()));
     };
     Ok(exists)
 }
@@ -48,8 +45,8 @@ fn extract_version(toml_line: &str, package_name: &str) -> Option<String> {
 
 #[cfg(test)]
 mod tests {
+    use crate::tasks::release_libraries::task::crates_io::{extract_version, CargoToml};
     use crate::TaskResult;
-    use crate::tasks::release_libraries::task::crates_io::{CargoToml, extract_version};
     use std::path::PathBuf;
 
     #[test]

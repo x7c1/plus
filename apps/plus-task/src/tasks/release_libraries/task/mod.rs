@@ -1,14 +1,15 @@
 pub mod crates_io;
+
 use crates_io::CargoToml;
 
 use crate::core::support::program_exists;
+use crate::error::Error::PackageAlreadyPublished;
 use crate::TaskResult;
 use serde::Deserialize;
 use shellwork::core::command;
+use shellwork::core::command::{no_op, Runner, Unprepared};
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
-use shellwork::core::command::{Runner, Unprepared, no_op};
-use crate::error::Error::PackageAlreadyPublished;
 
 pub struct Task;
 
@@ -34,37 +35,30 @@ impl Task {
         runner.prepare(program_exists)?.spawn()?;
 
         let cargo_toml = CargoToml::load(toml)?;
-        let tag = format!("{}-v{}", cargo_toml.package.name, cargo_toml.package.version);
+        let tag = format!(
+            "{}-v{}",
+            cargo_toml.package.name, cargo_toml.package.version
+        );
 
-        let runner1 = command::program("git").args(&[
-            "tag",
-            "-a",
-            &tag,
-            "-m",
-            &format!("add tag: {}", tag),
-        ]);
+        let runner1 = command::program("git")
+            .arg("tag")
+            .args(&["-a", &tag])
+            .args(&["-m", &format!("add tag: {}", tag)]);
+
         let output = runner1.prepare(no_op::<crate::Error>)?.capture()?;
         println!("git tag...{:#?}", output);
 
-        let runner2 = command::program("git").args(&[
-            "push",
-            "origin",
-            &tag,
-        ]);
+        let runner2 = command::program("git").args(&["push", "origin", &tag]);
         let output2 = runner2.prepare(no_op::<crate::Error>)?.capture()?;
         println!("git push...{:#?}", output2);
 
-        /*
-        todo: git tag & git push
-        git tag -a $tag -m 'tag $tag'
-         */
         Ok(())
     }
 
     fn start_dry_run(&self, toml: &Path) -> TaskResult<()> {
         let cargo_toml = CargoToml::load(toml)?;
         if crates_io::already_has(&cargo_toml.package)? {
-            return Err(PackageAlreadyPublished(cargo_toml.package))
+            return Err(PackageAlreadyPublished(cargo_toml.package));
         }
         let runner = self.runner_to_publish(toml).arg("--dry-run");
         runner.prepare(program_exists)?.spawn()?;
@@ -91,7 +85,7 @@ pub struct ChangedFiles {
 }
 
 impl ChangedFiles {
-    pub fn lib_cargo_tomls(&self) -> impl Iterator<Item=&Path> {
+    pub fn lib_cargo_tomls(&self) -> impl Iterator<Item = &Path> {
         self.paths.iter().filter_map(|path| {
             if path.starts_with("libs/") && path.ends_with("Cargo.toml") {
                 Some(path.as_path())
