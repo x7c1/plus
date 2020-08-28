@@ -7,18 +7,18 @@ use std::env::VarError;
 use std::fmt::Debug;
 use std::str::FromStr;
 
-pub struct SingleValue {
+pub struct EnvVar {
     pub key: String,
 }
 
-type ResultFromStr<Y, X> = crate::Result<Y, <X as FromStr>::Err>;
+type EnvResult<Y, X> = crate::Result<Y, <X as FromStr>::Err>;
 
-impl SingleValue {
-    pub fn new<A: Into<String>>(key: A) -> SingleValue {
-        SingleValue { key: key.into() }
+impl EnvVar {
+    pub fn new<A: Into<String>>(key: A) -> EnvVar {
+        EnvVar { key: key.into() }
     }
 
-    pub fn as_optional<A>(&self) -> ResultFromStr<Option<A>, A>
+    pub fn as_optional<A>(&self) -> crate::Result<Option<A>, <A as FromStr>::Err>
     where
         A: FromStr,
         <A as FromStr>::Err: Debug,
@@ -28,7 +28,7 @@ impl SingleValue {
         self.parse(if_not_found, reify)
     }
 
-    pub fn as_required<A>(&self) -> ResultFromStr<A, A>
+    pub fn as_required<A>(&self) -> crate::Result<A, <A as FromStr>::Err>
     where
         A: FromStr,
         <A as FromStr>::Err: Debug,
@@ -38,12 +38,12 @@ impl SingleValue {
         self.parse(if_not_found, reify)
     }
 
-    fn parse<X, Y, F1, F2>(&self, if_not_found: F1, reify: F2) -> ResultFromStr<Y, X>
+    fn parse<X, Y, F1, F2>(&self, if_not_found: F1, reify: F2) -> EnvResult<Y, X>
     where
         X: FromStr,
         <X as FromStr>::Err: Debug,
-        F1: Fn() -> ResultFromStr<Y, X>,
-        F2: Fn(X) -> ResultFromStr<Y, X>,
+        F1: Fn() -> EnvResult<Y, X>,
+        F2: Fn(X) -> EnvResult<Y, X>,
     {
         let to_parsed = |value: String| {
             X::from_str(&value)

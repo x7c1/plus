@@ -1,13 +1,13 @@
 pub mod aws {
-    use env_extractor::SingleValue;
+    use env_extractor::EnvVar;
 
-    pub fn default_region() -> SingleValue {
-        SingleValue::new("AWS_DEFAULT_REGION")
+    pub fn default_region() -> EnvVar {
+        EnvVar::new("AWS_DEFAULT_REGION")
     }
-    pub fn access_key() -> SingleValue {
-        SingleValue::new("AWS_ACCESS_KEY_ID")
+    pub fn access_key() -> EnvVar {
+        EnvVar::new("AWS_ACCESS_KEY_ID")
     }
-    pub fn secret_key() -> SingleValue {
-        SingleValue::new("AWS_SECRET_ACCESS_KEY")
+    pub fn secret_key() -> EnvVar {
+        EnvVar::new("AWS_SECRET_ACCESS_KEY")
     }
 }
