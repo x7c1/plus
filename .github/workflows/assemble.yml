@@ -11,7 +11,6 @@ on:
       - '*'
 env:
   PLUS_PROJECT_ROOT: ${{ github.workspace }}
-
 jobs:
   build-task-runner:
     runs-on: ubuntu-latest
@@ -174,3 +173,47 @@ jobs:
 
       - name: Assemble artifacts
         run: ./builder/call.sh assemble linux_armv7
+
+  release-libraries:
+    needs: build-task-runner
+#    needs:
+#      - target-linux-x86
+#      - target-linux-armv7
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+      - name: Run apt-get
+        run: |
+          sudo ./builder/init/run-if-changed.sh ./builder/init/apt-get.sh
+
+      - id: files
+        uses: jitterbit/get-changed-files@v1
+        with:
+          format: 'json'
+
+      - name: Download plus-task
+        uses: actions/download-artifact@v2
+        with:
+          name: plus-task
+
+      - name: Release libraries --dry-run
+        if: ${{ github.ref != 'refs/heads/master' }}
+        run: |
+          ./builder/call.sh task release-libraries \
+            --files='${{ steps.files.outputs.added_modified }}' \
+            --dry-run
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+
+      - name: Release libraries
+#        if: ${{ github.ref == 'refs/heads/master' }}
+        run: |
+          ./builder/call.sh task release-libraries \
+            --files='${{ steps.files.outputs.added_modified }}'
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
