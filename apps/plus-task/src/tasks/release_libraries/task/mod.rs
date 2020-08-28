@@ -41,12 +41,10 @@ impl Task {
          */
 
         // rf. https://github.community/t/github-actions-bot-email-address/17204/4
-        let r1 = command::program("git")
-            .arg("config")
-            .args(&[
-                "user.email",
-                "41898282+github-actions[bot]@users.noreply.github.com",
-            ])
+        let r1 = command::program("git").arg("config").args(&[
+            "user.email",
+            "41898282+github-actions[bot]@users.noreply.github.com",
+        ]);
 
         let output = r1.prepare(no_op::<crate::Error>)?.capture()?;
         println!("git config...{:#?}", output);
