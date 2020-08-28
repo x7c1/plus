@@ -4,9 +4,9 @@
 # 1.
 #   $ cp ./builder/draft.sample.sh ./builder/draft.local.sh
 # 2.
-#   $ ./scripts/run_draft.sh
+#   $ make draft
 
-. ./builder/setup-env.sh
+. ./builder/assemble.sh
 
 cd "$PLUS_PROJECT_ROOT" || exit 1
 . ./builder/lib.linux_x86.sh

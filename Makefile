@@ -23,4 +23,6 @@ cargo-test:
 	./scripts/run_builder.sh cargo_test
 
 draft:
+	[ ! -e ./builder/draft.local.sh ] || \
+		cp ./builder/draft.sample.sh ./builder/draft.local.sh
 	./scripts/run_builder.sh ./builder/draft.local.sh
