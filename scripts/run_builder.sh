@@ -3,8 +3,8 @@
 . ./scripts/setup_env.sh
 
 MOUNT_DIR=/plus
-command="${*}"
 task_path="./target/x86_64-unknown-linux-musl/debug/plus-task"
+#command=("$@")
 
 main() {
   set -x
@@ -12,7 +12,7 @@ main() {
     write_main "${MOUNT_DIR}/builder/call.sh build_task_runner"
     run
   fi
-  write_main "$command"
+  write_main "$(quote_args "$@")"
   run
 }
 
@@ -24,4 +24,10 @@ run() {
   fi
 }
 
-main
+quote_args () {
+  for arg in "$@"; do
+    printf %s "'$arg' "
+  done
+}
+
+main "$@"

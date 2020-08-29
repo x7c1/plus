@@ -1,24 +1,15 @@
 mod error;
 pub use error::Error;
-pub use error::FromStrResult;
-pub use error::Result as ExtractorResult;
+pub use error::Result;
 
 mod single;
-pub use single::SingleValue;
+pub use single::{env_var, EnvVar};
 
-use crate::Error::ParseError;
-use std::fmt::Debug;
-
-pub trait CanExtractOptional<A> {
-    type Err;
-    fn get_optional(&self) -> Result<A, Self::Err>;
+pub mod required {
+    use std::str::FromStr;
+    pub type Result<A> = crate::Result<A, <A as FromStr>::Err>;
 }
-
-pub trait CanExtractRequired<A> {
-    type Err;
-    fn get_required(&self) -> Result<A, Self::Err>;
-}
-
-fn to_parse_error<E: Debug>(key: String, value: String, cause: E) -> Error<E> {
-    ParseError { key, value, cause }
+pub mod optional {
+    use std::str::FromStr;
+    pub type Result<A> = crate::Result<Option<A>, <A as FromStr>::Err>;
 }

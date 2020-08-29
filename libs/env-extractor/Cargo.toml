@@ -1,7 +1,15 @@
 [package]
 name = "env-extractor"
-version = "0.0.0"
+version = "0.0.5"
 edition = "2018"
+
+# Fields to publish on crates.io
+authors = ["haco <jmtaro+crates@gmail.com>"]
+license = "MIT/Apache-2.0"
+description = "Modules to extract environment variables."
+keywords = ["env"]
+homepage = "https://github.com/x7c1/plus/tree/master/libs/env-extractor"
+readme = "README.md"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
