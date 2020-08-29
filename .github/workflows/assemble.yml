@@ -211,7 +211,7 @@ jobs:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
 
       - name: Release libraries
-        if: ${{ github.ref == 'refs/heads/master' }}
+#        if: ${{ github.ref == 'refs/heads/master' }}
         run: |
           ./builder/call.sh task release-libraries \
             --files='${{ steps.files.outputs.added_modified }}'
