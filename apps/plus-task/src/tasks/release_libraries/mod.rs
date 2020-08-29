@@ -1,6 +1,6 @@
 mod task;
-pub use task::crates_io;
 use task::Task;
+pub use task::{CargoToml, CargoTomlPackage};
 
 use crate::tasks::release_libraries::task::Params;
 use crate::TaskResult;

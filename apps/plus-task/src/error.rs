@@ -1,6 +1,6 @@
 extern crate failure;
 
-use crate::tasks::release_libraries::crates_io::CargoTomlPackage;
+use crate::tasks::release_libraries::CargoTomlPackage;
 use std::fmt::Debug;
 use std::string;
 

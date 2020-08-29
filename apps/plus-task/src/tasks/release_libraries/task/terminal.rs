@@ -1,10 +1,10 @@
 use crate::error::Error::{CrateVersionNotFound, PackageAlreadyPublished};
-use crate::tasks::release_libraries::crates_io::extract_version;
-use crate::tasks::release_libraries::task::crates_io::{CargoToml, CargoTomlPackage};
+use crate::tasks::release_libraries::task::cargo_toml::{CargoToml, CargoTomlPackage};
 use crate::TaskResult;
 use shellwork::core::command;
 use shellwork::core::command::{no_op, Runner, Unprepared};
 use std::path::Path;
+use toml::Value;
 
 pub struct ReleaseTerminal<'a> {
     cargo_toml_path: &'a Path,
@@ -46,6 +46,7 @@ impl ReleaseTerminal<'_> {
             .args(&["search", &self.package.name])
             .prepare(no_op::<crate::Error>)?
             .capture()?;
+
         let stdout = output.stdout();
         let exists = if let Some(version) = extract_version(stdout.as_ref(), &self.package.name) {
             version == self.package.version
@@ -113,4 +114,33 @@ fn create_next_tag(package: &CargoTomlPackage) -> String {
         prefix = package.name,
         version = package.version
     )
+}
+
+fn extract_version(toml_line: &str, package_name: &str) -> Option<String> {
+    let value = toml_line.parse::<Value>().unwrap();
+    value[package_name].as_str().map(|x| x.to_string())
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::tasks::release_libraries::task::cargo_toml::CargoToml;
+    use crate::tasks::release_libraries::task::terminal::extract_version;
+    use crate::TaskResult;
+    use std::path::PathBuf;
+
+    #[test]
+    fn load_toml() -> TaskResult<()> {
+        let path = PathBuf::from("Cargo.toml");
+        let toml = CargoToml::load(&path)?;
+        assert_eq!(toml.package.name, "plus-task");
+        Ok(())
+    }
+
+    #[test]
+    fn extract_package_version() -> TaskResult<()> {
+        let line = r#"env-extractor = "0.1.2"    # Modules to extract environment variables."#;
+        let version = extract_version(line, "env-extractor");
+        assert_eq!(version, Some("0.1.2".to_string()));
+        Ok(())
+    }
 }

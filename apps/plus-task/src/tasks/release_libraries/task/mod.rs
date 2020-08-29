@@ -4,7 +4,8 @@ pub use changed_files::ChangedFiles;
 mod terminal;
 pub use terminal::ReleaseTerminal;
 
-pub mod crates_io;
+mod cargo_toml;
+pub use cargo_toml::{CargoToml, CargoTomlPackage};
 
 use crate::TaskResult;
 use std::path::Path;
