@@ -40,6 +40,7 @@ impl ReleaseTerminal<'_> {
         Ok(())
     }
 
+    /// return Err if the package version already exists.
     pub fn cargo_search(&self) -> TaskResult<()> {
         let output = command::program("cargo")
             .args(&["search", &self.package.name])
