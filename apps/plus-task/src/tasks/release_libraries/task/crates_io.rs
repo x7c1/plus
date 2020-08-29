@@ -1,8 +1,6 @@
-use crate::error::Error::{CrateVersionNotFound, InvalidCargoToml};
+use crate::error::Error::InvalidCargoToml;
 use crate::TaskResult;
 use serde_derive::Deserialize;
-use shellwork::core::command;
-use shellwork::core::command::no_op;
 use std::fs;
 use std::path::Path;
 use toml::Value;
@@ -26,19 +24,7 @@ pub struct CargoTomlPackage {
     pub version: String,
 }
 
-pub fn already_has(package: &CargoTomlPackage) -> TaskResult<bool> {
-    let runner = command::program("cargo").args(&["search", &package.name]);
-    let output = runner.prepare(no_op::<crate::Error>)?.capture()?;
-    let stdout = output.stdout();
-    let exists = if let Some(version) = extract_version(stdout.as_ref(), &package.name) {
-        version == package.version
-    } else {
-        return Err(CrateVersionNotFound(package.clone()));
-    };
-    Ok(exists)
-}
-
-fn extract_version(toml_line: &str, package_name: &str) -> Option<String> {
+pub fn extract_version(toml_line: &str, package_name: &str) -> Option<String> {
     let value = toml_line.parse::<Value>().unwrap();
     value[package_name].as_str().map(|x| x.to_string())
 }

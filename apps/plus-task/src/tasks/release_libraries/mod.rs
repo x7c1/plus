@@ -41,7 +41,7 @@ impl ClapTask<TaskResult<()>> for Task {
             files: matches.single("files").as_required()?,
         };
         if matches.is_present("dry-run") {
-            self.dry_run(&params)
+            self.release_dry_run(&params)
         } else {
             self.release(&params)
         }
