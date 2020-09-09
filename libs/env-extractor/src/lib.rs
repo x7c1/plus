@@ -27,7 +27,7 @@ mod tests {
 
         #[test]
         fn return_none_if_not_found() {
-            let sample = Sample1 {
+            let sample = Sample {
                 x: env_var("unknown_variable_name").as_optional().unwrap(),
             };
             assert_eq!(sample.x.is_none(), true);
@@ -35,20 +35,20 @@ mod tests {
 
         #[test]
         fn can_call_from_str_if_defined() {
-            let sample: Option<Sample1> = env_var("PATH").as_optional().unwrap();
+            let sample: Option<Sample> = env_var("PATH").as_optional().unwrap();
             assert_eq!(sample.is_some(), true);
         }
 
         #[derive(Debug)]
-        struct Sample1 {
+        struct Sample {
             x: Option<String>,
         }
 
-        impl FromStr for Sample1 {
+        impl FromStr for Sample {
             type Err = <String as FromStr>::Err;
 
             fn from_str(s: &str) -> Result<Self, Self::Err> {
-                Ok(Sample1 {
+                Ok(Sample {
                     x: Some(s.to_string()),
                 })
             }
@@ -72,7 +72,7 @@ mod tests {
 
         #[test]
         fn return_value_if_key_found() {
-            let sample = Sample2 {
+            let sample = Sample {
                 x: env_var("PATH").as_required().unwrap(),
             };
             assert_eq!(sample.x.is_empty(), false);
@@ -80,20 +80,20 @@ mod tests {
 
         #[test]
         fn can_call_from_str_if_defined() {
-            let sample: Sample2 = env_var("PATH").as_required().unwrap();
+            let sample: Sample = env_var("PATH").as_required().unwrap();
             assert_eq!(sample.x.is_empty(), false);
         }
 
         #[derive(Debug)]
-        struct Sample2 {
+        struct Sample {
             x: String,
         }
 
-        impl FromStr for Sample2 {
+        impl FromStr for Sample {
             type Err = <String as FromStr>::Err;
 
             fn from_str(s: &str) -> Result<Self, Self::Err> {
-                Ok(Sample2 { x: s.to_string() })
+                Ok(Sample { x: s.to_string() })
             }
         }
     }
