@@ -4,7 +4,6 @@
 
 MOUNT_DIR=/plus
 task_path="./target/x86_64-unknown-linux-musl/debug/plus-task"
-#command=("$@")
 
 main() {
   set -x
