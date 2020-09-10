@@ -42,6 +42,8 @@ build_task_runner() {
   export RUSTFLAGS="-C opt-level=0"
   cargo build --target=x86_64-unknown-linux-musl \
     --package=plus-task
+
+  strip target/x86_64-unknown-linux-musl/debug/plus-task
 }
 
 cargo_clippy() {
@@ -83,7 +85,7 @@ task() {
 }
 
 quote_args () {
-    for arg in "$@"; do
-        printf %s "\"$arg\" "
-    done
+  for arg in "$@"; do
+    printf %s "'$arg' "
+  done
 }

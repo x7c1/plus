@@ -1,5 +1,6 @@
 extern crate failure;
 
+use crate::tasks::release_libraries::CargoTomlPackage;
 use std::fmt::Debug;
 use std::string;
 
@@ -7,11 +8,15 @@ pub type Result<T> = ::std::result::Result<T, Error>;
 
 #[derive(Debug)]
 pub enum Error {
+    PackageAlreadyPublished(CargoTomlPackage),
     ClapTaskError(clap_task::Error),
     ClapExtractorError(Box<dyn Debug>),
+    CrateVersionNotFound(CargoTomlPackage),
+    SerdeJsonError(serde_json::Error),
     ShellworkError(shellwork::Error),
     StdIoError(std::io::Error),
     StringFromUtf8Error(string::FromUtf8Error),
+    InvalidCargoToml(toml::de::Error),
     UnknownBuildTarget(String),
 }
 
@@ -27,6 +32,12 @@ where
 {
     fn from(e: clap_extractor::Error<A>) -> Self {
         Error::ClapExtractorError(Box::new(e))
+    }
+}
+
+impl From<serde_json::Error> for Error {
+    fn from(e: serde_json::Error) -> Self {
+        Error::SerdeJsonError(e)
     }
 }
 
