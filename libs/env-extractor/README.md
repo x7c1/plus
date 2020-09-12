@@ -48,7 +48,7 @@ match load_my_path() {
 }
 ```
 
-Use `as_option()` instead, when handling optional value :
+Use `as_optional()` instead, when handling optional value :
 
 ```rust
 let sample: Option<MyPath> = env_var("foooooo").as_optional()?;
