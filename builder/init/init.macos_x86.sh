@@ -8,16 +8,21 @@ main () {
   if is_osxcross_installed; then
     printf "[skip] already installed: osxcross\n\n"
   else
-    setup_osxcross
+    extract_osxcross
   fi
 }
 
+extract_osxcross() {
+  cd "${PLUS_PROJECT_ROOT}/builder"
+  tar -xvf osxcross.tar.xz
+}
+
 setup_osxcross() {
-  if [ ! -d "$PLUS_PROJECT_ROOT"/osxcross ]; then
+  if [ ! -d "$OSXCROSS_ROOT" ]; then
     printf "[skip] not found: osxcross\n\n"
     return
   fi
-  cd "$PLUS_PROJECT_ROOT"/osxcross ||  exit 1
+  cd "$OSXCROSS_ROOT" ||  exit 1
   UNATTENDED=1 ./build.sh
 }
 

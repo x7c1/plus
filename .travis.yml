@@ -18,3 +18,4 @@ script:
     make cargo-test
     make assemble target=linux_x86
     make assemble target=linux_armv7
+    make assemble target=macos_x86
