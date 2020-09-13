@@ -4,10 +4,10 @@ set -xue
 
 apt-get update
 apt-get install -y \
-  clang
+  clang \
+  cmake
 
 #   \
-#  cmake \
 #  git \
 #  libxml2-dev \
 #  libssl-dev \
