@@ -7,6 +7,7 @@ export DEBIAN_FRONTEND="noninteractive"
 main() {
   run ./builder/init/apt-get.sh
   run ./builder/init/apt-get.linux_armv7.sh
+  run ./builder/init/apt-get.macos_x86.sh
 
   . ./builder/init.local/setup_rust.sh
   . ./builder/init/env.sh

@@ -200,6 +200,8 @@ jobs:
       - name: Run apt-get
         run: |
           sudo ./builder/init/run-if-changed.sh ./builder/init/apt-get.sh
+          sudo ./builder/init/run-if-changed.sh ./builder/init/apt-get.macos_x86.sh
+
       - name: Set up toolchains
         run: |
           . ./builder/init/env.sh
@@ -207,8 +209,6 @@ jobs:
           ./builder/init/run-if-changed.sh ./builder/init/init.sh
           ./builder/init/run-if-changed.sh ./builder/init/init.macos_x86.sh
           ./scripts/download_osxcross.sh
-        env:
-          CR_PAT: ${{ secrets.CR_PAT }}
 
       - name: Download plus-task
         uses: actions/download-artifact@v2
