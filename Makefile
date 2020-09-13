@@ -24,6 +24,9 @@ cargo-fmt-check:
 cargo-test:
 	./scripts/run_builder.sh cargo_test
 
+download-osxcross:
+	./scripts/download_osxcross.sh
+
 draft:
 	[ -e ./builder/draft.local.sh ] || \
 		cp ./builder/draft.sample.sh ./builder/draft.local.sh

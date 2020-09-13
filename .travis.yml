@@ -11,6 +11,7 @@ services:
 before_script:
   - make cargo-fmt-check
   - make cargo-clippy
+  - make download-osxcross
 
 script:
   - |

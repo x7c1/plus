@@ -4,6 +4,8 @@ MOUNT_DIR=/plus
 IMAGE_NAME=ghcr.io/x7c1/osxcross
 CONTAINER_NAME=osxcross-loader
 
+echo "$CR_PAT" | docker login ghcr.io --username x7c1 --password-stdin
+
 docker run \
     --privileged \
     --volume "$(pwd)":"${MOUNT_DIR}" \

@@ -186,6 +186,7 @@ jobs:
             ~/.cargo/git
             ~/.cargo/bin
             target
+            builder/osxcross
           key: ${{ runner.os }}-target-macos-x86-${{ github.run_id }}
           restore-keys: |
             ${{ runner.os }}-target-macos-x86-
@@ -205,6 +206,7 @@ jobs:
           . ./builder/init/env.macos_x86.sh
           ./builder/init/run-if-changed.sh ./builder/init/init.sh
           ./builder/init/run-if-changed.sh ./builder/init/init.macos_x86.sh
+          ./scripts/download_osxcross.sh
 
       - name: Download plus-task
         uses: actions/download-artifact@v2
