@@ -212,7 +212,9 @@ jobs:
           name: plus-task
 
       - name: Assemble artifacts
-        run: ./builder/call.sh assemble macos_x86
+        run: |
+          . ./builder/init/env.macos_x86.sh
+          ./builder/call.sh assemble macos_x86
 
   release-libraries:
     needs:
