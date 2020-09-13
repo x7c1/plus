@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 MOUNT_DIR=/plus
-IMAGE_NAME=ghcr.io/x7c1/osxcross
+IMAGE_NAME=ghcr.io/x7c1/osxcross:0.1
 CONTAINER_NAME=osxcross-loader
 
 echo "$CR_PAT" | docker login ghcr.io --username x7c1 --password-stdin
