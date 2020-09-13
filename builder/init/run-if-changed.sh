@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -xue
+set -ue
 
 script_file=$1
 current_hash=$(sha1sum "$script_file")
