@@ -13,6 +13,10 @@ main () {
 }
 
 setup_osxcross() {
+  if [ ! -d "$PLUS_PROJECT_ROOT"/osxcross ]; then
+    printf "[skip] not found: osxcross\n\n"
+    return
+  fi
   cd "$PLUS_PROJECT_ROOT"/osxcross ||  exit 1
   UNATTENDED=1 ./build.sh
 }
