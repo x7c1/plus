@@ -8,11 +8,11 @@ hash_marker="$script_file".sha1
 
 main() {
   if already_executed; then
-    echo "already executed: ${script_file}"
-    exit
+    printf "[skip] already executed: ${script_file}\n\n"
+    return
   fi
   $script_file
-  echo "done!"
+  echo "[done] ${script_file}"
   echo "$current_hash" > "$script_file".sha1
 }
 
