@@ -8,6 +8,11 @@ language: minimal
 services:
   - docker
 
+cache:
+  directories:
+    - builder/osxcross
+    - target
+
 before_script:
   - make download-osxcross
   - make cargo-fmt-check
