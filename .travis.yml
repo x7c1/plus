@@ -9,9 +9,9 @@ services:
   - docker
 
 before_script:
+  - make download-osxcross
   - make cargo-fmt-check
   - make cargo-clippy
-  - make download-osxcross
 
 script:
   - |
