@@ -2,8 +2,6 @@
 
 set -xue
 
-#rustup target add --toolchain "${PLUS_RUST_VERSION}" x86_64-apple-darwin
-
 main () {
   rustup target add --toolchain "${PLUS_RUST_VERSION}" x86_64-apple-darwin
 
@@ -17,7 +15,7 @@ main () {
 }
 
 git_clone_osxcross() {
-  if [ -d "$OSXCROSS_ROOT" ]; then
+  if [ -d "$OSXCROSS_ROOT/tarballs" ]; then
     printf "[skip] already cloned: osxcross\n\n"
   else
     cd "${PLUS_PROJECT_ROOT}/builder"
@@ -45,20 +43,6 @@ install_osxcross() {
   UNATTENDED=1 ./build.sh
 }
 
-#extract_osxcross() {
-#  cd "${PLUS_PROJECT_ROOT}/builder"
-#  tar -xvf osxcross.tar.xz
-#}
-#
-#setup_osxcross() {
-#  if [ ! -d "$OSXCROSS_ROOT" ]; then
-#    printf "[skip] not found: osxcross\n\n"
-#    return
-#  fi
-#  cd "$OSXCROSS_ROOT" ||  exit 1
-#  UNATTENDED=1 ./build.sh
-#}
-#
 is_osxcross_installed() {
   target=${OSXCROSS_ROOT}/target/bin/${OSX_SDK_CC}
   if [ -f "${target}" ]; then
