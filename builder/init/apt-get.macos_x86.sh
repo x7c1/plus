@@ -4,7 +4,9 @@ set -xue
 
 apt-get update
 apt-get install -y \
-  libssl-dev
+  libz-dev
+#   \
+#  libssl-dev
 
 #   \
 #  clang \
