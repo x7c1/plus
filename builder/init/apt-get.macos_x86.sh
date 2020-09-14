@@ -11,18 +11,3 @@ apt-get install -y \
   libssl-dev \
   libz-dev \
   patch
-
-#  libz-dev
-#   \
-#  libssl-dev
-
-#   \
-#  clang \
-#  cmake
-
-#   \
-#  git \
-#  libxml2-dev \
-#  libssl-dev \
-#  libz-dev \
-#  patch
