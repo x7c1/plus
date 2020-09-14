@@ -9,6 +9,12 @@ if [ -f "$MOUNT_DIR/$sdk" ]; then
   echo "[skip] already downloaded: $sdk"
   exit
 fi
+
+if [ -f "$MOUNT_DIR/builder/osxcross/tarballs/$sdk" ]; then
+  echo "[skip] already downloaded: $sdk"
+  exit
+fi
+
 set -x
 docker run \
     --privileged \
