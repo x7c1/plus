@@ -204,11 +204,11 @@ jobs:
 
       - name: Set up toolchains
         run: |
+          ./scripts/download_osxcross.sh
           . ./builder/init/env.sh
           . ./builder/init/env.macos_x86.sh
           ./builder/init/run-if-changed.sh ./builder/init/init.sh
           ./builder/init/run-if-changed.sh ./builder/init/init.macos_x86.sh
-          ./scripts/download_osxcross.sh
 
       - name: Download plus-task
         uses: actions/download-artifact@v2
