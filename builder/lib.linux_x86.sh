@@ -9,7 +9,3 @@ cargo_fmt() {
     --verbose \
     -- --emit files
 }
-
-task_runner_for_linux_x86() {
-  task_runner ${TARGET_X86} "$@"
-}
