@@ -69,15 +69,6 @@ build_pilot_and_output_json() {
     | grep plus_pilot_tests
 }
 
-is_osx_sdk_installed() {
-  target=${OSXCROSS_ROOT}/target/bin/${OSX_SDK_CC}
-  if [[ -f ${target} ]]; then
-    return 0
-  else
-    return 1
-  fi
-}
-
 task_runner() {
   cargo run \
     ${BUILD_MODE} \

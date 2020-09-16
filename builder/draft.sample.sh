@@ -28,14 +28,6 @@ for_task_runner() {
   task help
 }
 
-dev() {
-  build_apps_for_linux_x86
-  run_unit_tests_for_linux_x86
-  cargo_fmt
-  cargo_clippy
-  run_specified_tests
-}
-
 s3api() {
   "$PLUS_PROJECT_ROOT"/target/x86_64-unknown-linux-musl/debug/s3api $@
 }
