@@ -8,7 +8,7 @@ hash_marker="$script_file".sha1
 
 main() {
   if already_executed; then
-    printf "[skip] already executed: ${script_file}\n\n"
+    printf "[skip] already executed: %s\n\n" "$script_file"
     return
   fi
   $script_file

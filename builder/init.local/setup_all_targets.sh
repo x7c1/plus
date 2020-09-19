@@ -33,9 +33,24 @@ setup_linux_armv7() {
 }
 
 setup_macos_x86() {
-  run ./builder/init/apt-get.macos_x86.sh
   . ./builder/init/env.macos_x86.sh
+
+  if ! has_osx_sdk; then
+    printf "[skip] not found: %s\n\n" "$OSX_SDK_TARBALL"
+    return
+  fi
+
+  run ./builder/init/apt-get.macos_x86.sh
   run ./builder/init/init.macos_x86.sh
+}
+
+has_osx_sdk() {
+  result=$(find ./builder -name "$OSX_SDK_TARBALL" -print)
+  if [ -z "$result" ]; then
+    return 1
+  else
+    return 0
+  fi
 }
 
 main
