@@ -29,7 +29,7 @@ move_sdk_tarball() {
     return
   fi
 
-  target="$PLUS_PROJECT_ROOT/$OSX_SDK_TARBALL"
+  target="$PLUS_PROJECT_ROOT/builder/$OSX_SDK_TARBALL"
   if [ ! -f "$target" ]; then
     printf "[failed] not found: %s\n\n" "$target"
     exit 1
