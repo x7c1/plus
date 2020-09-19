@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
 MOUNT_DIR=/plus
-IMAGE_NAME=ghcr.io/x7c1/osxcross:0.3
+IMAGE_NAME=ghcr.io/x7c1/osxcross:0.4
 CONTAINER_NAME=osxcross-loader
 
-sdk="MacOSX10.15.sdk.tar.bz2"
+sdk="MacOSX10.15.sdk.tar.xz"
 if [ -f ./builder/"$sdk" ]; then
   echo "[skip] already downloaded: $sdk"
   exit
