@@ -5,7 +5,6 @@ use crate::s3api::{ParametersPair, TEST_BUCKET};
 use plus_pilot::cmd::{CommandOutput, CommandRunner};
 use plus_pilot::PilotResult;
 use serde_json::Value;
-use std::io;
 
 lazy_static! {
     pub static ref OUTPUT: Fixture = setup_fixture().unwrap();
@@ -73,7 +72,7 @@ fn create_sample_pair() -> ParametersPair<SampleParameters> {
     }
 }
 
-fn upload(runner: CommandRunner, target: &SampleParameters) -> io::Result<CommandOutput> {
+fn upload(runner: CommandRunner, target: &SampleParameters) -> PilotResult<CommandOutput> {
     runner
         .arg("put-object")
         .args(&["--bucket", &TEST_BUCKET])
@@ -82,7 +81,7 @@ fn upload(runner: CommandRunner, target: &SampleParameters) -> io::Result<Comman
         .output()
 }
 
-fn download(target: &SampleParameters) -> io::Result<CommandOutput> {
+fn download(target: &SampleParameters) -> PilotResult<CommandOutput> {
     workspace()
         .aws_s3api()
         .arg("get-object")

@@ -5,7 +5,6 @@ use crate::s3api::{ParametersPair, TEST_BUCKET};
 use plus_pilot::cmd::{CommandOutput, CommandRunner};
 use plus_pilot::PilotResult;
 use serde_json::Value;
-use std::io;
 
 lazy_static! {
     pub static ref OUTPUT: Fixture = setup_fixture().unwrap();
@@ -68,7 +67,7 @@ fn create_sample_pair() -> ParametersPair<SampleParameters> {
     }
 }
 
-fn download(runner: CommandRunner, target: &SampleParameters) -> io::Result<CommandOutput> {
+fn download(runner: CommandRunner, target: &SampleParameters) -> PilotResult<CommandOutput> {
     runner
         .arg("get-object")
         .args(&["--bucket", &TEST_BUCKET])

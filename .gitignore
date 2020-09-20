@@ -9,7 +9,8 @@ scripts/*.local.sh
 dist
 
 # OSXCross
-builder/MacOSX*.sdk.tar.bz2
+builder/MacOSX*.sdk.tar.*
+builder/osxcross
 
 # IDE
 .idea

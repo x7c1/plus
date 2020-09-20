@@ -6,7 +6,6 @@ MOUNT_DIR=/plus
 task_path="./target/x86_64-unknown-linux-musl/debug/plus-task"
 
 main() {
-  set -x
   if [ ! -e "${task_path}" ]; then
     write_main "${MOUNT_DIR}/builder/call.sh build_task_runner"
     run

@@ -3,7 +3,6 @@
 set -ue
 
 main() {
-  set -x
   setup_rust
 }
 
@@ -16,7 +15,6 @@ setup_rust() {
     echo "rust already installed."
     return
   fi
-
   apt-get install -y curl
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > /usr/bin/rustup-init
   chmod +x /usr/bin/rustup-init

@@ -21,7 +21,7 @@ fn load_my_path() -> required::Result<MyPath> {
 }
 ```
 
-How to convert is represented using built-in `FromStr` :
+How to convert is represented using built-in `std::str::FromStr` :
 
 ```rust
 struct MyPath {
@@ -38,7 +38,7 @@ impl FromStr for MyPath {
 }
 ```
 
-Of course, `required::Result` can tell us the key when it's not present (but `std::env` cannot).
+Of course, `required::Result` can tell us the key when it's not present (`std::env::VarError` cannot).
 
 ```rust
 match load_my_path() {
@@ -48,7 +48,7 @@ match load_my_path() {
 }
 ```
 
-Use `as_option()` instead, when handling optional value :
+Use `as_optional()` instead when handling optional value :
 
 ```rust
 let sample: Option<MyPath> = env_var("foooooo").as_optional()?;

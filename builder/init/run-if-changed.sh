@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -xue
+set -ue
 
 script_file=$1
 current_hash=$(sha1sum "$script_file")
@@ -8,11 +8,11 @@ hash_marker="$script_file".sha1
 
 main() {
   if already_executed; then
-    echo "already executed: ${script_file}"
-    exit
+    printf "[skip] already executed: %s\n\n" "$script_file"
+    return
   fi
   $script_file
-  echo "done!"
+  echo "[done] ${script_file}"
   echo "$current_hash" > "$script_file".sha1
 }
 

@@ -8,7 +8,13 @@ language: minimal
 services:
   - docker
 
+cache:
+  directories:
+    - builder/osxcross
+    - target
+
 before_script:
+  - make download-osxcross
   - make cargo-fmt-check
   - make cargo-clippy
 
@@ -18,3 +24,4 @@ script:
     make cargo-test
     make assemble target=linux_x86
     make assemble target=linux_armv7
+    make assemble target=macos_x86

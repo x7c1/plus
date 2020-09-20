@@ -174,10 +174,57 @@ jobs:
       - name: Assemble artifacts
         run: ./builder/call.sh assemble linux_armv7
 
+  target-macos-x86:
+    needs: cargo-test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            ~/.cargo/bin
+            target
+            builder/osxcross
+          key: ${{ runner.os }}-target-macos-x86-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.os }}-target-macos-x86-
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+
+      - name: Run apt-get
+        run: |
+          sudo ./builder/init/run-if-changed.sh ./builder/init/apt-get.sh
+          sudo ./builder/init/run-if-changed.sh ./builder/init/apt-get.macos_x86.sh
+
+      - name: Set up toolchains
+        run: |
+          ./scripts/download_osxcross.sh
+          . ./builder/init/env.sh
+          . ./builder/init/env.macos_x86.sh
+          ./builder/init/run-if-changed.sh ./builder/init/init.sh
+          ./builder/init/run-if-changed.sh ./builder/init/init.macos_x86.sh
+
+      - name: Download plus-task
+        uses: actions/download-artifact@v2
+        with:
+          name: plus-task
+
+      - name: Assemble artifacts
+        run: |
+          . ./builder/init/env.macos_x86.sh
+          ./builder/call.sh assemble macos_x86
+
   release-libraries:
     needs:
       - target-linux-x86
       - target-linux-armv7
+      - target-macos-x86
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
