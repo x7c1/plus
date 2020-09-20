@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# DEPRECATED
+
 # Usage:
 #   $ ./scripts/run_release_pilot.sh [bucket-for-test]
 #
