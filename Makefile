@@ -33,4 +33,4 @@ draft:
 	./scripts/run_builder.sh ./builder/draft.local.sh
 
 run-pilot-tests:
-	./scripts/run_pilot_test.sh
+	./scripts/run_pilot_tests.sh
