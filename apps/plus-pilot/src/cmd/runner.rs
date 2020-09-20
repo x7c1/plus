@@ -1,6 +1,7 @@
 use crate::cmd::CommandOutput;
+use crate::error::Error::StdIoError;
+use crate::PilotResult;
 use std::ffi::OsStr;
-use std::io;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
@@ -41,7 +42,7 @@ impl CommandRunner {
         xs
     }
 
-    pub fn output(&self) -> io::Result<CommandOutput> {
+    pub fn output(&self) -> PilotResult<CommandOutput> {
         let reified = self.execute_silently()?;
         reified.dump();
 
@@ -49,17 +50,21 @@ impl CommandRunner {
         Ok(reified)
     }
 
-    pub fn execute(&self) -> io::Result<CommandOutput> {
+    pub fn execute(&self) -> PilotResult<CommandOutput> {
         let reified = self.execute_silently()?;
         reified.dump();
         Ok(reified)
     }
 
-    pub fn execute_silently(&self) -> io::Result<CommandOutput> {
+    pub fn execute_silently(&self) -> PilotResult<CommandOutput> {
         let output = Command::new(&self.program)
             .current_dir(&self.current_dir)
             .args(&self.args)
-            .output()?;
+            .output()
+            .map_err(|cause| StdIoError {
+                cause,
+                message: format!("[failed] program: {}", self.program),
+            })?;
 
         let reified = CommandOutput::new(output);
         Ok(reified)

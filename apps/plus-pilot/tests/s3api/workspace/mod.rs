@@ -1,9 +1,10 @@
 use crate::s3api::{TEST_APPS_DIR, TEST_WORKSPACE_DIR};
 use plus_pilot::cmd::CommandRunner;
 use plus_pilot::Error::InvalidWorkspace;
+use plus_pilot::Error::StdIoError;
 use plus_pilot::PilotResult;
+use std::fs;
 use std::path::{Path, PathBuf};
-use std::{fs, io};
 
 #[derive(Debug)]
 pub struct Workspace {
@@ -28,15 +29,24 @@ impl Workspace {
         runner.current_dir(&self.dir)
     }
 
-    pub fn cat(&self, path: &Path) -> io::Result<String> {
+    pub fn cat(&self, path: &Path) -> PilotResult<String> {
         let full_path = self.dir.join(path);
-        fs::read_to_string(full_path)
+        fs::read_to_string(&full_path).map_err(|cause| StdIoError {
+            cause,
+            message: format!(
+                "[failed] fs::read_to_string > {}",
+                full_path.to_string_lossy()
+            ),
+        })
     }
 
-    pub fn remove_if_exists(&self, path: &Path) -> io::Result<()> {
+    pub fn remove_if_exists(&self, path: &Path) -> PilotResult<()> {
         let full_path: PathBuf = self.dir.join(path);
         if full_path.exists() {
-            fs::remove_file(full_path)
+            fs::remove_file(&full_path).map_err(|cause| StdIoError {
+                cause,
+                message: format!("[failed] fs::remove_file > {}", full_path.to_string_lossy()),
+            })
         } else {
             Ok(())
         }
