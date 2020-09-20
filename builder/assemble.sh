@@ -38,6 +38,12 @@ assemble() {
   echo "done."
 }
 
+assemble_debug_pilot() {
+  task setup-artifacts-directory --target="linux_x86"
+  task assemble-pilot-tests --target="linux_x86"
+  task copy-artifact-files --target="linux_x86"
+}
+
 build_task_runner() {
   export RUSTFLAGS="-C opt-level=0"
   cargo build --target=x86_64-unknown-linux-musl \

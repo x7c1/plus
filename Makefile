@@ -31,3 +31,6 @@ draft:
 	[ -e ./builder/draft.local.sh ] || \
 		cp ./builder/draft.sample.sh ./builder/draft.local.sh
 	./scripts/run_builder.sh ./builder/draft.local.sh
+
+run-pilot-tests:
+	./scripts/run_pilot_test.sh
