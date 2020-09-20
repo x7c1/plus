@@ -6,7 +6,6 @@
 . ./builder/assemble.sh
 
 cd "$PLUS_PROJECT_ROOT" || exit 1
-. ./builder/lib.linux_x86.sh
 
 main() {
   set -x
