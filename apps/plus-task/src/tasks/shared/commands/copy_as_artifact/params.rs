@@ -1,5 +1,4 @@
 use crate::core::build_mode::BuildMode;
-use crate::core::env::artifacts_dir;
 use crate::core::support::get_artifacts_dir;
 use crate::core::targets::{AsBuildTarget, BuildTarget};
 use std::path::{Path, PathBuf};
