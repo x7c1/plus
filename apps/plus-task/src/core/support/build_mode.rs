@@ -1,4 +1,7 @@
 use crate::core::build_mode::{AsBuildMode, BuildMode};
+use crate::core::env::artifacts_dir;
+use crate::core::targets::BuildTarget;
+use std::path::PathBuf;
 
 pub trait HasBuildMode: AsBuildMode {
     fn opt_level(&self) -> String {
@@ -15,4 +18,15 @@ pub trait HasBuildMode: AsBuildMode {
             BuildMode::Release => Some("--release"),
         }
     }
+}
+
+pub fn get_artifacts_dir(target: BuildTarget, mode: BuildMode) -> PathBuf {
+    let target = {
+        let suffix = match mode {
+            BuildMode::Debug => "-debug",
+            BuildMode::Release => "",
+        };
+        format!("{}{}", target.as_abbr(), suffix)
+    };
+    artifacts_dir().join(target)
 }

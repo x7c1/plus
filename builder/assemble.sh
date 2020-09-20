@@ -14,7 +14,7 @@ assemble() {
     --target="$build_target" --release
 
   task setup-artifacts-directory \
-    --target="$build_target"
+    --target="$build_target" --release
 
   task assemble-pilot-tests \
     --target="$build_target" --release
