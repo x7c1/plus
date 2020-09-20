@@ -15,6 +15,7 @@ cache:
 
 before_script:
   - make download-osxcross
+  - make build-task
   - make cargo-fmt-check
   - make cargo-clippy
 
