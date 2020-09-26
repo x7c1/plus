@@ -8,6 +8,16 @@ impl Task {
     pub fn release(&self, params: &Params) -> TaskResult<()> {
         println!("[start] #release params...{:#?}", params);
         let mut tomls = params.files.lib_cargo_tomls();
+        /*
+        let mut tomls = params.files.lib_cargo_tomls(&params.target_packages)
+
+
+        // to release apps
+        let tomls = params.files.app_cargo_tomls(&params.target_packages)
+        if tomls.should_be_released() {
+            ...
+        }
+         */
         tomls.try_for_each(|toml| self.start(toml))?;
         Ok(())
     }
