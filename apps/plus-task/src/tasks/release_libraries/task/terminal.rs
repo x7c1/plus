@@ -83,7 +83,7 @@ impl ReleaseTerminal<'_> {
         command::program("git")
             .arg("tag")
             .args(&["-a", &self.next_tag])
-            .args(&["-m", &format!("add tag: {}", self.next_tag)])
+            .args(&["-m", ""])
             .prepare(no_op::<crate::Error>)?
             .spawn()?;
 
