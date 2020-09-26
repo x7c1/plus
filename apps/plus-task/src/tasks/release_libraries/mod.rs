@@ -36,8 +36,11 @@ impl ClapTask<TaskResult<()>> for Task {
     }
 
     async fn run<'a>(&'a self, matches: &'a ArgMatches<'a>) -> TaskResult<()> {
+        use crate::core::support::release::PackageName as Name;
+
         let params = Params {
             files: matches.single("files").as_required()?,
+            target_packages: vec![Name::EnvExtractor],
         };
         if matches.is_present("dry-run") {
             self.release_dry_run(&params)

@@ -1,4 +1,4 @@
-use crate::core::support::release::{CargoToml, ChangedFiles, ReleaseTerminal};
+use crate::core::support::release::{CargoToml, ChangedFiles, PackageName, ReleaseTerminal};
 use crate::TaskResult;
 use std::path::Path;
 
@@ -49,4 +49,5 @@ impl Task {
 #[derive(Debug)]
 pub struct Params {
     pub files: ChangedFiles,
+    pub target_packages: Vec<PackageName>,
 }
