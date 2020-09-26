@@ -13,12 +13,11 @@ pub struct ReleaseTerminal<'a> {
 }
 
 impl ReleaseTerminal<'_> {
-    pub fn load(cargo_toml_path: &Path) -> TaskResult<ReleaseTerminal> {
-        let cargo_toml = CargoToml::load(cargo_toml_path)?;
+    pub fn load(cargo_toml: CargoToml) -> TaskResult<ReleaseTerminal> {
         let terminal = ReleaseTerminal {
-            cargo_toml_path,
-            next_tag: create_next_tag(&cargo_toml.package),
-            package: cargo_toml.package,
+            cargo_toml_path: cargo_toml.path,
+            next_tag: create_next_tag(&cargo_toml.contents.package),
+            package: cargo_toml.contents.package,
         };
         Ok(terminal)
     }

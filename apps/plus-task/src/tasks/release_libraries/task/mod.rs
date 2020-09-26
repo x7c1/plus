@@ -27,8 +27,13 @@ impl Task {
         Ok(())
     }
 
-    fn start(&self, toml: &Path) -> TaskResult<()> {
-        let terminal = ReleaseTerminal::load(toml)?;
+    fn start(&self, toml_path: &Path) -> TaskResult<()> {
+        let cargo_toml = CargoToml::load(toml_path)?;
+        if cargo_toml.is_private_version() {
+            println!("[skip] {}", cargo_toml.package_summary());
+            return Ok(());
+        }
+        let terminal = ReleaseTerminal::load(cargo_toml)?;
         terminal.cargo_publish()?;
         terminal.git_config()?;
         terminal.git_tag()?;
@@ -36,8 +41,13 @@ impl Task {
         Ok(())
     }
 
-    fn start_dry_run(&self, toml: &Path) -> TaskResult<()> {
-        let terminal = ReleaseTerminal::load(toml)?;
+    fn start_dry_run(&self, toml_path: &Path) -> TaskResult<()> {
+        let cargo_toml = CargoToml::load(toml_path)?;
+        if cargo_toml.is_private_version() {
+            println!("[skip] {}", cargo_toml.package_summary());
+            return Ok(());
+        }
+        let terminal = ReleaseTerminal::load(cargo_toml)?;
         terminal.cargo_search()?;
         terminal.cargo_publish_dry_run()?;
         Ok(())
