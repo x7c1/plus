@@ -1,5 +1,5 @@
+use crate::core::support::release::{CargoToml, CargoTomlPackage};
 use crate::error::Error::{CrateVersionNotFound, PackageAlreadyPublished};
-use crate::tasks::release_libraries::task::cargo_toml::{CargoToml, CargoTomlPackage};
 use crate::TaskResult;
 use shellwork::core::command;
 use shellwork::core::command::{no_op, Runner, Unprepared};
@@ -122,8 +122,8 @@ fn extract_version(toml_line: &str, package_name: &str) -> Option<String> {
 
 #[cfg(test)]
 mod tests {
-    use crate::tasks::release_libraries::task::cargo_toml::CargoToml;
-    use crate::tasks::release_libraries::task::terminal::extract_version;
+    use crate::core::support::release::terminal::extract_version;
+    use crate::core::support::release::CargoToml;
     use crate::TaskResult;
     use std::path::PathBuf;
 

@@ -6,3 +6,5 @@ pub use cc::{confirm_cc, CCRequired};
 
 mod program;
 pub use program::{program_exists, HasProgram};
+
+pub mod release;

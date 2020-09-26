@@ -1,12 +1,4 @@
-mod changed_files;
-pub use changed_files::ChangedFiles;
-
-mod terminal;
-pub use terminal::ReleaseTerminal;
-
-mod cargo_toml;
-pub use cargo_toml::{CargoToml, CargoTomlPackage};
-
+use crate::core::support::release::{CargoToml, ChangedFiles, ReleaseTerminal};
 use crate::TaskResult;
 use std::path::Path;
 
