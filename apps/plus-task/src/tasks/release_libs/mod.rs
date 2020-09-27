@@ -2,7 +2,7 @@ mod task;
 
 use task::Task;
 
-use crate::tasks::release_libraries::task::Params;
+use crate::tasks::release_libs::task::Params;
 use crate::TaskResult;
 use clap::{App, Arg, ArgMatches, SubCommand};
 use clap_extractor::Matcher;
