@@ -1,4 +1,6 @@
+use crate::Error::UnknownPackageName;
 use std::str::FromStr;
+use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
 
 #[derive(Debug)]
@@ -42,8 +44,6 @@ impl PackageName {
         }
     }
 }
-use crate::error::Error::UnknownPackageName;
-use strum::IntoEnumIterator;
 
 impl FromStr for PackageName {
     type Err = crate::Error;

@@ -1,4 +1,5 @@
 use crate::core::support::release::{CargoToml, PackageName};
+use crate::Error::UnknownPackageName;
 use crate::TaskResult;
 use serde::Deserialize;
 use std::path::{Path, PathBuf};
@@ -19,6 +20,7 @@ impl ChangedFiles {
             .filter_map(move |toml| match toml {
                 Ok(toml) if toml.in_package(&names) => Some(Ok(toml)),
                 Ok(_) => None,
+                Err(UnknownPackageName(_)) => None,
                 Err(e) => Some(Err(e)),
             })
     }
