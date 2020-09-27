@@ -14,12 +14,12 @@ pub fn clap() -> Box<dyn ClapTask<TaskResult<()>>> {
 #[async_trait]
 impl ClapTask<TaskResult<()>> for Task {
     fn name(&self) -> &str {
-        "release-libs"
+        "release-apps"
     }
 
     fn design(&self) -> App {
         SubCommand::with_name(self.name())
-            .about("Release libraries.")
+            .about("Release applications.")
             .long_about("Run cargo publish, git tag, git push, etc")
             .arg(
                 Arg::with_name("files")
@@ -40,7 +40,7 @@ impl ClapTask<TaskResult<()>> for Task {
 
         let params = Params {
             files: matches.single("files").as_required()?,
-            target_packages: vec![Name::EnvExtractor],
+            target_packages: vec![Name::S3Api],
         };
         if matches.is_present("dry-run") {
             self.release_dry_run(&params)

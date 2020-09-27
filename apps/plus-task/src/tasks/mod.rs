@@ -14,6 +14,9 @@ pub mod copy_artifact_files;
 pub mod package_artifacts;
 
 #[macro_use]
+pub mod release_apps;
+
+#[macro_use]
 pub mod release_libs;
 
 #[macro_use]
@@ -33,6 +36,7 @@ pub fn define_all() -> Vec<Box<dyn ClapTask<TaskResult<()>>>> {
         build_apps::clap(),
         copy_artifact_files::clap(),
         package_artifacts::clap(),
+        release_apps::clap(),
         release_libs::clap(),
         setup_artifacts_directory::clap(),
         show_sizes::clap(),
