@@ -15,7 +15,7 @@ pub fn clap() -> Box<dyn ClapTask<TaskResult<()>>> {
 #[async_trait]
 impl ClapTask<TaskResult<()>> for Task {
     fn name(&self) -> &str {
-        "release-libraries"
+        "release-libs"
     }
 
     fn design(&self) -> App {
