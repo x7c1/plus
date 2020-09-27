@@ -7,5 +7,5 @@ pub use terminal::ReleaseTerminal;
 mod changed_files;
 pub use changed_files::ChangedFiles;
 
-mod package_name;
-pub use package_name::PackageName;
+mod packages;
+pub use packages::PackageName;

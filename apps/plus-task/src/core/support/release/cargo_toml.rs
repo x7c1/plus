@@ -1,30 +1,34 @@
+use crate::core::support::release::packages::PackageSettings;
+use crate::core::support::release::PackageName;
 use crate::error::Error::InvalidCargoToml;
 use crate::TaskResult;
 use serde_derive::Deserialize;
 use std::fs;
 use std::path::Path;
+use std::str::FromStr;
 
 #[derive(Debug)]
 pub struct CargoToml<'a> {
     pub path: &'a Path,
     pub contents: CargoTomlContents,
+    pub settings: PackageSettings,
 }
 
 impl CargoToml<'_> {
     pub fn load(path: &Path) -> TaskResult<CargoToml> {
         let text = fs::read_to_string(path)?;
         let contents: CargoTomlContents = toml::from_str(&text).map_err(InvalidCargoToml)?;
-        let cargo_toml = CargoToml { path, contents };
+        let settings = PackageSettings::get(PackageName::from_str(&contents.package.name)?);
+        let cargo_toml = CargoToml {
+            path,
+            contents,
+            settings,
+        };
         Ok(cargo_toml)
     }
 
-    pub fn is_private_version(&self) -> bool {
-        self.contents.package.version == "0.0.0"
-    }
-
-    pub fn package_summary(&self) -> String {
-        let package = &self.contents.package;
-        format!("name: {}, version: {}", package.name, package.version)
+    pub fn in_package(&self, names: &[PackageName]) -> bool {
+        names.contains(&self.settings.package_name)
     }
 }
 

@@ -17,6 +17,7 @@ pub enum Error {
     StdIoError(std::io::Error),
     StringFromUtf8Error(string::FromUtf8Error),
     InvalidCargoToml(toml::de::Error),
+    UnknownPackageName(String),
     UnknownBuildTarget(String),
 }
 

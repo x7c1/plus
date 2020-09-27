@@ -1,3 +1,5 @@
+use crate::core::support::release::{CargoToml, PackageName};
+use crate::TaskResult;
 use serde::Deserialize;
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
@@ -8,6 +10,23 @@ pub struct ChangedFiles {
 }
 
 impl ChangedFiles {
+    pub fn filter_cargo_tomls(
+        &self,
+        names: Vec<PackageName>,
+    ) -> impl Iterator<Item = TaskResult<CargoToml>> {
+        self.paths
+            .iter()
+            .filter_map(|path| match path {
+                _ if path.ends_with("Cargo.toml") => Some(CargoToml::load(path)),
+                _ => None,
+            })
+            .filter_map(move |toml| match toml {
+                Ok(toml) if toml.in_package(&names) => Some(Ok(toml)),
+                Ok(_) => None,
+                Err(e) => Some(Err(e)),
+            })
+    }
+    // todo: remove
     pub fn lib_cargo_tomls(&self) -> impl Iterator<Item = &Path> {
         self.paths.iter().filter_map(|path| {
             if path.starts_with("libs/") && path.ends_with("Cargo.toml") {
