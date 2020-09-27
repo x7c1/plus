@@ -14,22 +14,18 @@ impl ChangedFiles {
         &'a self,
         names: &'a [PackageName],
     ) -> impl Iterator<Item = TaskResult<CargoToml<'a>>> {
-        self.paths
-            .iter()
-            .filter_map(|path| match path {
-                _ if path.ends_with("Cargo.toml") => Some(CargoToml::load(path)),
-                _ => None,
-            })
+        self.cargo_toml_paths()
+            .map(CargoToml::load)
             .filter_map(move |toml| match toml {
                 Ok(toml) if toml.in_package(&names) => Some(Ok(toml)),
                 Ok(_) => None,
                 Err(e) => Some(Err(e)),
             })
     }
-    // todo: remove
-    pub fn lib_cargo_tomls(&self) -> impl Iterator<Item = &Path> {
+
+    pub fn cargo_toml_paths(&self) -> impl Iterator<Item = &Path> {
         self.paths.iter().filter_map(|path| {
-            if path.starts_with("libs/") && path.ends_with("Cargo.toml") {
+            if path.ends_with("Cargo.toml") {
                 Some(path.as_path())
             } else {
                 None
@@ -72,21 +68,23 @@ mod tests {
     }
 
     #[test]
-    fn filter_lib_cargo_toml() -> TaskResult<()> {
+    fn cargo_toml_paths() -> TaskResult<()> {
         let files = ChangedFiles {
             paths: vec![
                 "Makefile".into(),
                 "libs/x1/y1/Cargo.toml".into(),
                 "libs/x1/y1/FooCargo.toml".into(),
                 "Cargo.toml".into(),
-                "libs/x1/y2/Cargo.toml".into(),
+                "libs/x1/y2/z3/Cargo.toml".into(),
                 "apps/a1/Cargo.toml".into(),
             ],
         };
-        let tomls = files.lib_cargo_tomls();
+        let tomls = files.cargo_toml_paths();
         let expected: Vec<&Path> = vec![
             Path::new("libs/x1/y1/Cargo.toml"),
-            Path::new("libs/x1/y2/Cargo.toml"),
+            Path::new("Cargo.toml"),
+            Path::new("libs/x1/y2/z3/Cargo.toml"),
+            Path::new("apps/a1/Cargo.toml"),
         ];
         assert_eq!(Vec::from_iter(tomls), expected);
         Ok(())

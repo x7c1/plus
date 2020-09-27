@@ -129,9 +129,9 @@ mod tests {
 
     #[test]
     fn load_toml() -> TaskResult<()> {
-        let path = PathBuf::from("Cargo.toml");
+        let path = PathBuf::from("../../libs/env-extractor/Cargo.toml");
         let toml = CargoToml::load(&path)?;
-        assert_eq!(toml.contents.package.name, "plus-task");
+        assert_eq!(toml.contents.package.name, "env-extractor");
         Ok(())
     }
 

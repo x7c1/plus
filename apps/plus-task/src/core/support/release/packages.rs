@@ -42,12 +42,18 @@ impl PackageName {
         }
     }
 }
+use crate::error::Error::UnknownPackageName;
+use strum::IntoEnumIterator;
 
 impl FromStr for PackageName {
     type Err = crate::Error;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        // todo:
-        unimplemented!()
+        for name in PackageName::iter() {
+            if name.as_str() == s {
+                return Ok(name);
+            }
+        }
+        Err(UnknownPackageName(s.into()))
     }
 }
