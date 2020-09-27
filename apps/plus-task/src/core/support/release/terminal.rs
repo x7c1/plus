@@ -9,15 +9,15 @@ use toml::Value;
 pub struct ReleaseTerminal<'a> {
     cargo_toml_path: &'a Path,
     next_tag: String,
-    package: CargoTomlPackage,
+    package: &'a CargoTomlPackage,
 }
 
 impl ReleaseTerminal<'_> {
-    pub fn load(cargo_toml: CargoToml) -> TaskResult<ReleaseTerminal> {
+    pub fn load<'a>(cargo_toml: &'a CargoToml) -> TaskResult<ReleaseTerminal<'a>> {
         let terminal = ReleaseTerminal {
             cargo_toml_path: cargo_toml.path,
             next_tag: create_next_tag(&cargo_toml.contents.package),
-            package: cargo_toml.contents.package,
+            package: &cargo_toml.contents.package,
         };
         Ok(terminal)
     }

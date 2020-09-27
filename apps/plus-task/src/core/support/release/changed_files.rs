@@ -10,10 +10,10 @@ pub struct ChangedFiles {
 }
 
 impl ChangedFiles {
-    pub fn filter_cargo_tomls(
-        &self,
-        names: Vec<PackageName>,
-    ) -> impl Iterator<Item = TaskResult<CargoToml>> {
+    pub fn filter_cargo_tomls<'a>(
+        &'a self,
+        names: &'a [PackageName],
+    ) -> impl Iterator<Item = TaskResult<CargoToml<'a>>> {
         self.paths
             .iter()
             .filter_map(|path| match path {

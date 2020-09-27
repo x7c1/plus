@@ -44,9 +44,9 @@ impl ClapTask<TaskResult<()>> for Task {
             target_packages: vec![Name::EnvExtractor],
         };
         if matches.is_present("dry-run") {
-            self.release_dry_run(params)
+            self.release_dry_run(&params)
         } else {
-            self.release(params)
+            self.release(&params)
         }
     }
 }

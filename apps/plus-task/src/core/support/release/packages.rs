@@ -4,7 +4,7 @@ use strum_macros::EnumIter;
 #[derive(Debug)]
 pub struct PackageSettings {
     pub package_name: PackageName,
-    pub published_to_crates_io: bool,
+    pub on_crates_io: bool,
     pub has_git_tag: bool,
     pub has_github_assets: bool,
 }
@@ -14,13 +14,13 @@ impl PackageSettings {
         match name {
             PackageName::EnvExtractor => PackageSettings {
                 package_name: name,
-                published_to_crates_io: true,
+                on_crates_io: true,
                 has_git_tag: true,
                 has_github_assets: false,
             },
             PackageName::S3Api => PackageSettings {
                 package_name: name,
-                published_to_crates_io: false,
+                on_crates_io: false,
                 has_git_tag: true,
                 has_github_assets: true,
             },
