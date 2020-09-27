@@ -49,11 +49,8 @@ impl FromStr for PackageName {
     type Err = crate::Error;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        for name in PackageName::iter() {
-            if name.as_str() == s {
-                return Ok(name);
-            }
-        }
-        Err(UnknownPackageName(s.into()))
+        PackageName::iter()
+            .find(|name| name.as_str() == s)
+            .ok_or_else(|| UnknownPackageName(s.into()))
     }
 }
