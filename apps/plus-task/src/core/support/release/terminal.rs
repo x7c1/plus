@@ -1,5 +1,5 @@
+use crate::core::support::release::{CargoToml, CargoTomlPackage};
 use crate::error::Error::{CrateVersionNotFound, PackageAlreadyPublished};
-use crate::tasks::release_libraries::task::cargo_toml::{CargoToml, CargoTomlPackage};
 use crate::TaskResult;
 use shellwork::core::command;
 use shellwork::core::command::{no_op, Runner, Unprepared};
@@ -9,16 +9,15 @@ use toml::Value;
 pub struct ReleaseTerminal<'a> {
     cargo_toml_path: &'a Path,
     next_tag: String,
-    package: CargoTomlPackage,
+    package: &'a CargoTomlPackage,
 }
 
 impl ReleaseTerminal<'_> {
-    pub fn load(cargo_toml_path: &Path) -> TaskResult<ReleaseTerminal> {
-        let cargo_toml = CargoToml::load(cargo_toml_path)?;
+    pub fn load<'a>(cargo_toml: &'a CargoToml) -> TaskResult<ReleaseTerminal<'a>> {
         let terminal = ReleaseTerminal {
-            cargo_toml_path,
-            next_tag: create_next_tag(&cargo_toml.package),
-            package: cargo_toml.package,
+            cargo_toml_path: cargo_toml.path,
+            next_tag: create_next_tag(&cargo_toml.contents.package),
+            package: &cargo_toml.contents.package,
         };
         Ok(terminal)
     }
@@ -83,7 +82,7 @@ impl ReleaseTerminal<'_> {
         command::program("git")
             .arg("tag")
             .args(&["-a", &self.next_tag])
-            .args(&["-m", &format!("add tag: {}", self.next_tag)])
+            .args(&["-m", ""])
             .prepare(no_op::<crate::Error>)?
             .spawn()?;
 
@@ -123,16 +122,16 @@ fn extract_version(toml_line: &str, package_name: &str) -> Option<String> {
 
 #[cfg(test)]
 mod tests {
-    use crate::tasks::release_libraries::task::cargo_toml::CargoToml;
-    use crate::tasks::release_libraries::task::terminal::extract_version;
+    use crate::core::support::release::terminal::extract_version;
+    use crate::core::support::release::CargoToml;
     use crate::TaskResult;
     use std::path::PathBuf;
 
     #[test]
     fn load_toml() -> TaskResult<()> {
-        let path = PathBuf::from("Cargo.toml");
+        let path = PathBuf::from("../../libs/env-extractor/Cargo.toml");
         let toml = CargoToml::load(&path)?;
-        assert_eq!(toml.package.name, "plus-task");
+        assert_eq!(toml.contents.package.name, "env-extractor");
         Ok(())
     }
 

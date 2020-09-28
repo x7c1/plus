@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Usage:
-# $ source ./scripts/setup_aws_env.local.sh "profile-to-load"
+# $ source ./scripts/setup_aws_env.sh "profile-to-load"
 
 if [ -z $1 ]; then
   echo "USAGE:"

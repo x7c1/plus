@@ -37,7 +37,7 @@ impl TaskCommands {
     }
 
     fn copy_workspace(&self) -> TaskResult<()> {
-        let params = copy_as_artifact::Params::builder(self.target)
+        let params = copy_as_artifact::Params::builder(self.target, self.build_mode)
             .src(Path::new("dist.bundle/plus_pilot_workspace"))
             .dst(Path::new("plus_pilot_workspace"))
             .build();
@@ -46,7 +46,7 @@ impl TaskCommands {
     }
 
     fn copy_test_runner(&self) -> TaskResult<()> {
-        let params = copy_as_artifact::Params::builder(self.target)
+        let params = copy_as_artifact::Params::builder(self.target, self.build_mode)
             .src(Path::new("dist.bundle/run_pilot_tests.sh.template"))
             .dst(Path::new("run_pilot_tests.sh"))
             .build();
@@ -63,7 +63,7 @@ impl TaskCommands {
     }
 
     fn to_app_params(&self, name: &str) -> copy_as_artifact::Params {
-        copy_as_artifact::Params::builder(self.target)
+        copy_as_artifact::Params::builder(self.target, self.build_mode)
             .src(
                 &Path::new("target")
                     .join(self.target.as_triple())

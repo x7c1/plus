@@ -1,4 +1,5 @@
 mod build_pilot;
+
 use build_pilot::OutputKind;
 
 use crate::core::build_mode::AsBuildMode;
@@ -69,11 +70,13 @@ impl CopyFile {
     pub fn new<P>(params: &P, output: ActionOutput<build_pilot::Params>) -> Self
     where
         P: AsBuildTarget,
+        P: AsBuildMode,
     {
-        let params = copy_as_artifact::Params::builder(*params.as_build_target())
-            .src(&output.pilot_file_path())
-            .dst(Path::new("plus_pilot_tests"))
-            .build();
+        let params =
+            copy_as_artifact::Params::builder(*params.as_build_target(), *params.as_build_mode())
+                .src(&output.pilot_file_path())
+                .dst(Path::new("plus_pilot_tests"))
+                .build();
 
         let runner = copy_as_artifact::create_runner(&params);
         Self { runner }

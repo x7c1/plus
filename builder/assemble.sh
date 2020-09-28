@@ -14,7 +14,7 @@ assemble() {
     --target="$build_target" --release
 
   task setup-artifacts-directory \
-    --target="$build_target"
+    --target="$build_target" --release
 
   task assemble-pilot-tests \
     --target="$build_target" --release
@@ -36,6 +36,12 @@ assemble() {
   ls -lh dist/"$build_target"
 
   echo "done."
+}
+
+assemble_debug_pilot() {
+  task setup-artifacts-directory --target="linux_x86"
+  task assemble-pilot-tests --target="linux_x86"
+  task copy-artifact-files --target="linux_x86"
 }
 
 build_task_runner() {

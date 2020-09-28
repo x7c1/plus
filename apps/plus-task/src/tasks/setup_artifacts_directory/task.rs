@@ -1,4 +1,5 @@
-use crate::core::env::artifacts_dir;
+use crate::core::build_mode::AsBuildMode;
+use crate::core::support::get_artifacts_dir;
 use crate::core::targets::AsBuildTarget;
 use crate::TaskResult;
 use shellwork::core::command;
@@ -10,6 +11,7 @@ impl Task {
     pub fn start<P>(&self, params: &P) -> TaskResult<()>
     where
         P: AsBuildTarget,
+        P: AsBuildMode,
     {
         self.runner(params)
             .prepare(no_op::<crate::Error>)?
@@ -21,8 +23,9 @@ impl Task {
     fn runner<P>(&self, params: &P) -> Runner<Unprepared>
     where
         P: AsBuildTarget,
+        P: AsBuildMode,
     {
-        let dst = artifacts_dir().join(params.as_build_target().as_abbr());
+        let dst = get_artifacts_dir(*params.as_build_target(), *params.as_build_mode());
         command::program("mkdir").arg("-p").arg(&dst)
     }
 }

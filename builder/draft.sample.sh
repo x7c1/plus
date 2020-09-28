@@ -6,11 +6,10 @@
 . ./builder/assemble.sh
 
 cd "$PLUS_PROJECT_ROOT" || exit 1
-. ./builder/lib.linux_x86.sh
 
 main() {
   set -x
-  task release-libraries '--files=[".github/workflows/assemble.yml","Makefile","apps/plus-task/src/tasks/mod.rs","apps/plus-task/src/tasks/release_libraries/mod.rs","apps/plus-task/src/tasks/release_libraries/task.rs","builder/assemble.sh","libs/env-extractor/Cargo.toml","scripts/run_builder.sh"]'
+  task release-libs '--files=[".github/workflows/assemble.yml","Makefile","apps/plus-task/src/tasks/mod.rs","apps/plus-task/src/tasks/release_libraries/mod.rs","apps/plus-task/src/tasks/release_libraries/task.rs","builder/assemble.sh","libs/env-extractor/Cargo.toml","scripts/run_builder.sh"]'
   for_task_runner
 }
 
