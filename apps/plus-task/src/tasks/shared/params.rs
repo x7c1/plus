@@ -23,7 +23,7 @@ impl Params {
     pub fn builder() -> ParamsBuilder {
         ParamsBuilder {
             target: None,
-            build_mode: BuildMode::Debug,
+            build_mode: None,
         }
     }
 }
@@ -44,7 +44,7 @@ impl HasBuildMode for Params {}
 
 pub struct ParamsBuilder {
     target: Option<BuildTarget>,
-    build_mode: BuildMode,
+    build_mode: Option<BuildMode>,
 }
 
 impl<'a> ParamsBuilder {
@@ -54,14 +54,14 @@ impl<'a> ParamsBuilder {
     }
 
     pub fn build_mode(mut self, build_mode: BuildMode) -> Self {
-        self.build_mode = build_mode;
+        self.build_mode = Some(build_mode);
         self
     }
 
     pub fn build(self) -> Params {
         Params {
             target: self.target.expect("target is required"),
-            build_mode: self.build_mode,
+            build_mode: self.build_mode.expect("build-mode is required"),
         }
     }
 }

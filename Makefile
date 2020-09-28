@@ -1,11 +1,11 @@
-target=linux_x86
+target=x86_64-unknown-linux-musl
 
 # rf. https://stackoverflow.com/a/10699588
 CFLAGS = -c -g -D $(target)
 
 # usage:
-#   make assemble target=linux_armv7
-#   make assemble target=macos_x86
+#   make assemble target=armv7-unknown-linux-musleabihf
+#   make assemble target=x86_64-apple-darwin
 assemble:
 	./scripts/run_builder.sh assemble $(target)
 
