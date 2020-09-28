@@ -1,5 +1,5 @@
 use crate::core::support::release;
-use crate::core::support::release::{ChangedFiles, PackageName, ReleaseTerminal};
+use crate::core::support::release::{ChangedFiles, PackageName};
 use crate::TaskResult;
 
 pub struct Task;

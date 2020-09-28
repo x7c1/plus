@@ -21,12 +21,5 @@ pub trait HasBuildMode: AsBuildMode {
 }
 
 pub fn get_artifacts_dir(target: BuildTarget, mode: BuildMode) -> PathBuf {
-    let target = {
-        let suffix = match mode {
-            BuildMode::Debug => "-debug",
-            BuildMode::Release => "",
-        };
-        format!("{}{}", target.as_abbr(), suffix)
-    };
-    artifacts_dir().join(target)
+    artifacts_dir().join(mode.as_str()).join(target.as_triple())
 }

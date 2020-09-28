@@ -41,7 +41,7 @@ impl FromStr for BuildTarget {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         BuildTarget::all()
             .iter()
-            .find(|target| target.as_abbr() == s)
+            .find(|target| target.as_triple() == s)
             .ok_or_else(|| UnknownBuildTarget(s.to_string()))
             .map(|target| *target)
     }
