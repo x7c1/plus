@@ -132,7 +132,7 @@ jobs:
           name: plus-task
 
       - name: Assemble artifacts
-        run: ./builder/call.sh assemble linux_x86
+        run: ./builder/call.sh assemble x86_64-unknown-linux-musl
 
   target-linux-armv7:
     needs: cargo-test
@@ -172,7 +172,7 @@ jobs:
           name: plus-task
 
       - name: Assemble artifacts
-        run: ./builder/call.sh assemble linux_armv7
+        run: ./builder/call.sh assemble armv7-unknown-linux-musleabihf
 
   target-macos-x86:
     needs: cargo-test
@@ -218,7 +218,7 @@ jobs:
       - name: Assemble artifacts
         run: |
           . ./builder/init/env.macos_x86.sh
-          ./builder/call.sh assemble macos_x86
+          ./builder/call.sh assemble x86_64-apple-darwin
 
   release-libraries:
     needs:
