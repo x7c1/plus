@@ -22,6 +22,9 @@ assemble() {
   task copy-artifact-files \
     --target="$build_target" --release
 
+  task strip-executables \
+    --target="$build_target" --release
+
   # todo:
   exit
 
