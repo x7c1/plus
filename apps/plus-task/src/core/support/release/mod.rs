@@ -22,6 +22,9 @@ pub fn start(cargo_toml: &CargoToml) -> TaskResult<()> {
         terminal.git_tag()?;
         terminal.git_push()?;
     }
+    if cargo_toml.settings.has_github_release {
+        terminal.gh_release_create()?;
+    }
     Ok(())
 }
 
