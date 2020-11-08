@@ -253,6 +253,10 @@ jobs:
         with:
           name: plus-task
 
+      - name: Set up commands for release phase
+        run: |
+          ./builder/init/run-if-changed.sh ./builder/init/release.linux_x86.sh
+
       - name: Release libraries --dry-run
         if: ${{ github.ref != 'refs/heads/master' }}
         run: |
@@ -294,6 +298,10 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: plus-task
+
+      - name: Set up commands for release phase
+        run: |
+          ./builder/init/run-if-changed.sh ./builder/init/release.linux_x86.sh
 
       - name: Release applications --dry-run
         if: ${{ github.ref != 'refs/heads/master' }}
