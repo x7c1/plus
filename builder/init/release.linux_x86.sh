@@ -11,6 +11,7 @@ main() {
 setup_gh() {
   if command -v gh; then
     echo "gh already installed."
+    gh --version
     return
   fi
 
