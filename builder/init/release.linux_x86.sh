@@ -16,7 +16,7 @@ setup_gh() {
   fi
 
   curl -OL https://github.com/cli/cli/releases/download/v${GH_VERSION}/gh_${GH_VERSION}_linux_amd64.deb
-  apt install ./gh_${GH_VERSION}_linux_amd64.deb
+  apt install -y ./gh_${GH_VERSION}_linux_amd64.deb
 }
 
 main
