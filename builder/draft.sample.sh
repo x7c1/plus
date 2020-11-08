@@ -31,6 +31,11 @@ s3api() {
   "$PLUS_PROJECT_ROOT"/target/x86_64-unknown-linux-musl/debug/s3api $@
 }
 
+release_apps() {
+  export GITHUB_TOKEN="xxxxx"
+  task release-apps --files='["apps/s3api/Cargo.toml"]'
+}
+
 run_put() {
   s3api put-object \
     --bucket=my-test-bucket \
