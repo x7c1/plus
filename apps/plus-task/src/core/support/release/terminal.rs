@@ -97,6 +97,16 @@ impl ReleaseTerminal<'_> {
 
         Ok(())
     }
+
+    pub fn gh_release_create(&self) -> TaskResult<()> {
+        command::program("gh")
+            .args(&["release", "create", &self.next_tag])
+            .args(&["--notes", ""])
+            .prepare(no_op::<crate::Error>)?
+            .spawn()?;
+
+        Ok(())
+    }
 }
 
 fn runner_to_publish(toml: &Path) -> Runner<Unprepared> {
