@@ -1,9 +1,10 @@
 use crate::core::support::release::{CargoToml, CargoTomlPackage};
+use crate::core::targets::BuildTarget;
 use crate::error::Error::{CrateVersionNotFound, PackageAlreadyPublished};
 use crate::TaskResult;
 use shellwork::core::command;
 use shellwork::core::command::{no_op, Runner, Unprepared};
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use toml::Value;
 
 pub struct ReleaseTerminal<'a> {
@@ -106,6 +107,26 @@ impl ReleaseTerminal<'_> {
             .spawn()?;
 
         Ok(())
+    }
+
+    pub fn upload_assets(&self) -> TaskResult<()> {
+        let targets = BuildTarget::all();
+        let mut target_asset_paths = targets.iter().map(|target| {
+            PathBuf::from(".")
+                .join("dist")
+                .join("release")
+                .join(target.as_triple())
+                .join(format!("{}-{}.tar.xz", &self.next_tag, target.as_triple()))
+        });
+        let upload = |path: PathBuf| -> TaskResult<()> {
+            command::program("gh")
+                .args(&["release", "upload", &self.next_tag, &path.to_string_lossy()])
+                .prepare(no_op::<crate::Error>)?
+                .spawn()?;
+
+            Ok(())
+        };
+        target_asset_paths.try_for_each(upload)
     }
 }
 

@@ -25,6 +25,9 @@ pub fn start(cargo_toml: &CargoToml) -> TaskResult<()> {
     if cargo_toml.settings.has_github_release {
         terminal.gh_release_create()?;
     }
+    if cargo_toml.settings.has_github_assets {
+        terminal.upload_assets()?;
+    }
     Ok(())
 }
 
