@@ -2,12 +2,14 @@ extern crate failure;
 
 use crate::core::support::release::CargoTomlPackage;
 use std::fmt::Debug;
+use std::path::PathBuf;
 use std::string;
 
 pub type Result<T> = ::std::result::Result<T, Error>;
 
 #[derive(Debug)]
 pub enum Error {
+    AssetNotFound(PathBuf),
     PackageAlreadyPublished(CargoTomlPackage),
     ClapTaskError(clap_task::Error),
     ClapExtractorError(Box<dyn Debug>),

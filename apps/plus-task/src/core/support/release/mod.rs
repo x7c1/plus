@@ -37,5 +37,8 @@ pub fn start_dry_run(cargo_toml: &CargoToml) -> TaskResult<()> {
         terminal.cargo_search()?;
         terminal.cargo_publish_dry_run()?;
     }
+    if cargo_toml.settings.has_github_assets {
+        terminal.all_assets_exist()?;
+    }
     Ok(())
 }
