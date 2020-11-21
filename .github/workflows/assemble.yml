@@ -126,6 +126,11 @@ jobs:
           ./builder/init/run-if-changed.sh ./builder/init/init.sh
           ./builder/init/run-if-changed.sh ./builder/init/init.linux_x86.sh
 
+      - id: files
+        uses: jitterbit/get-changed-files@v1
+        with:
+          format: 'json'
+
       - name: Download plus-task
         uses: actions/download-artifact@v2
         with:
@@ -177,6 +182,11 @@ jobs:
           . ./builder/init/env.sh
           ./builder/init/run-if-changed.sh ./builder/init/init.sh
           ./builder/init/run-if-changed.sh ./builder/init/init.linux_armv7.sh
+
+      - id: files
+        uses: jitterbit/get-changed-files@v1
+        with:
+          format: 'json'
 
       - name: Download plus-task
         uses: actions/download-artifact@v2
@@ -233,6 +243,11 @@ jobs:
           . ./builder/init/env.macos_x86.sh
           ./builder/init/run-if-changed.sh ./builder/init/init.sh
           ./builder/init/run-if-changed.sh ./builder/init/init.macos_x86.sh
+
+      - id: files
+        uses: jitterbit/get-changed-files@v1
+        with:
+          format: 'json'
 
       - name: Download plus-task
         uses: actions/download-artifact@v2
