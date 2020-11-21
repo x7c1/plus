@@ -25,14 +25,6 @@ impl BuildTarget {
             BuildTarget::MacX86 => "x86_64-apple-darwin",
         }
     }
-
-    // pub fn as_abbr(&self) -> &str {
-    //     match self {
-    //         BuildTarget::LinuxX86 => "linux_x86",
-    //         BuildTarget::LinuxArmV7 => "linux_armv7",
-    //         BuildTarget::MacX86 => "macos_x86",
-    //     }
-    // }
 }
 
 impl FromStr for BuildTarget {
