@@ -36,6 +36,13 @@ release_apps() {
   task release-apps --files='["apps/s3api/Cargo.toml"]'
 }
 
+package_artifacts() {
+  task package-artifacts \
+    --release \
+    --target=x86_64-unknown-linux-musl \
+    --files='["apps/s3api/Cargo.toml"]'
+}
+
 run_put() {
   s3api put-object \
     --bucket=my-test-bucket \
