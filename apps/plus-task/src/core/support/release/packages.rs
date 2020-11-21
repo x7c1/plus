@@ -40,6 +40,10 @@ pub enum PackageName {
 }
 
 impl PackageName {
+    pub fn asset_packages() -> Vec<PackageName> {
+        vec![Self::S3Api]
+    }
+
     pub fn as_str(&self) -> &str {
         match self {
             PackageName::EnvExtractor => "env-extractor",

@@ -1,5 +1,6 @@
 use crate::core::build_mode::{AsBuildMode, BuildMode};
 use crate::core::env::artifacts_dir;
+use crate::core::support::release::CargoTomlPackage;
 use crate::core::targets::BuildTarget;
 use std::path::PathBuf;
 
@@ -22,4 +23,13 @@ pub trait HasBuildMode: AsBuildMode {
 
 pub fn get_artifacts_dir(target: BuildTarget, mode: BuildMode) -> PathBuf {
     artifacts_dir().join(mode.as_str()).join(target.as_triple())
+}
+
+pub fn get_tar_path(target: BuildTarget, mode: BuildMode, package: &CargoTomlPackage) -> PathBuf {
+    let artifacts_dir = get_artifacts_dir(target, mode);
+    artifacts_dir.join(format!(
+        "{}-{}.tar.xz",
+        package.create_next_tag(),
+        target.as_triple()
+    ))
 }

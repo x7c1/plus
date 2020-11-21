@@ -7,8 +7,8 @@ use clap::ArgMatches;
 
 #[derive(Debug)]
 pub struct Params {
-    target: BuildTarget,
-    build_mode: BuildMode,
+    pub target: BuildTarget,
+    pub build_mode: BuildMode,
 }
 
 impl Params {

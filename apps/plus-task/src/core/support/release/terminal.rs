@@ -1,3 +1,5 @@
+use crate::core::build_mode::BuildMode::Release;
+use crate::core::support::get_tar_path;
 use crate::core::support::release::{CargoToml, CargoTomlPackage};
 use crate::core::targets::BuildTarget;
 use crate::error::Error::{AssetNotFound, CrateVersionNotFound, PackageAlreadyPublished};
@@ -18,7 +20,7 @@ impl ReleaseTerminal<'_> {
     pub fn load<'a>(cargo_toml: &'a CargoToml) -> TaskResult<ReleaseTerminal<'a>> {
         let terminal = ReleaseTerminal {
             cargo_toml_path: cargo_toml.path,
-            next_tag: create_next_tag(&cargo_toml.contents.package),
+            next_tag: cargo_toml.contents.package.create_next_tag(),
             package: &cargo_toml.contents.package,
         };
         Ok(terminal)
@@ -133,13 +135,10 @@ impl ReleaseTerminal<'_> {
 
     fn asset_paths(&self) -> Vec<PathBuf> {
         let targets = BuildTarget::all();
-        let iter = targets.iter().map(|target| {
-            PathBuf::from(".")
-                .join("dist")
-                .join("release")
-                .join(target.as_triple())
-                .join(format!("{}-{}.tar.xz", &self.next_tag, target.as_triple()))
-        });
+        let iter = targets
+            .iter()
+            .map(|target| get_tar_path(*target, Release, self.package));
+
         Vec::from_iter(iter)
     }
 }
@@ -150,14 +149,6 @@ fn runner_to_publish(toml: &Path) -> Runner<Unprepared> {
         "--manifest-path",
         toml.to_str().expect("path to Cargo.toml required"),
     ])
-}
-
-fn create_next_tag(package: &CargoTomlPackage) -> String {
-    format!(
-        "{prefix}-v{version}",
-        prefix = package.name,
-        version = package.version
-    )
 }
 
 fn extract_version(toml_line: &str, package_name: &str) -> Option<String> {
