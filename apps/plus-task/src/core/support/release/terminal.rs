@@ -68,6 +68,7 @@ impl ReleaseTerminal<'_> {
         Ok(())
     }
 
+    /// caution: this method change .git/config file.
     pub fn git_config(&self) -> TaskResult<()> {
         command::program("git")
             .arg("config")
