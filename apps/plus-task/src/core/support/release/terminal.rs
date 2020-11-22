@@ -3,22 +3,29 @@ use crate::core::support::get_tar_path;
 use crate::core::support::release::{CargoToml, CargoTomlPackage};
 use crate::core::targets::BuildTarget;
 use crate::error::Error::{AssetNotFound, CrateVersionNotFound, PackageAlreadyPublished};
+use crate::tasks::shared::git_arg::{GitConfig, HasGitConfig};
 use crate::TaskResult;
 use shellwork::core::command;
 use shellwork::core::command::{no_op, Runner, Unprepared};
 use std::iter::FromIterator;
 use std::path::{Path, PathBuf};
+use std::process::exit;
 use toml::Value;
 
 pub struct ReleaseTerminal<'a> {
+    git_config: &'a GitConfig,
     cargo_toml_path: &'a Path,
     next_tag: String,
     package: &'a CargoTomlPackage,
 }
 
 impl ReleaseTerminal<'_> {
-    pub fn load<'a>(cargo_toml: &'a CargoToml) -> TaskResult<ReleaseTerminal<'a>> {
+    pub fn load<'a, A: HasGitConfig>(
+        git_config: &'a A,
+        cargo_toml: &'a CargoToml,
+    ) -> TaskResult<ReleaseTerminal<'a>> {
         let terminal = ReleaseTerminal {
+            git_config: git_config.get_git_config(),
             cargo_toml_path: cargo_toml.path,
             next_tag: cargo_toml.contents.package.create_next_tag(),
             package: &cargo_toml.contents.package,
@@ -63,19 +70,18 @@ impl ReleaseTerminal<'_> {
     }
 
     pub fn git_config(&self) -> TaskResult<()> {
-        // rf. https://github.community/t/github-actions-bot-email-address/17204/4
         command::program("git")
             .arg("config")
             .args(&[
                 "user.email",
-                "41898282+github-actions[bot]@users.noreply.github.com",
+                &self.git_config.user_email,
             ])
             .prepare(no_op::<crate::Error>)?
             .spawn()?;
 
         command::program("git")
             .arg("config")
-            .args(&["user.name", "github-actions[bot]"])
+            .args(&["user.name", &self.git_config.user_name])
             .prepare(no_op::<crate::Error>)?
             .spawn()?;
 
@@ -84,6 +90,7 @@ impl ReleaseTerminal<'_> {
 
     pub fn git_tag(&self) -> TaskResult<()> {
         command::program("git")
+            .args(self.git_config.as_cli_format())
             .arg("tag")
             .args(&["-a", &self.next_tag])
             .args(&["-m", ""])
@@ -95,6 +102,7 @@ impl ReleaseTerminal<'_> {
 
     pub fn git_push(&self) -> TaskResult<()> {
         command::program("git")
+            .args(self.git_config.as_cli_format())
             .args(&["push", "origin", &self.next_tag])
             .prepare(no_op::<crate::Error>)?
             .spawn()?;

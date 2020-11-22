@@ -2,6 +2,7 @@ mod task;
 use task::Params;
 use task::Task;
 
+use crate::tasks::shared::git_arg::GitConfig;
 use crate::TaskResult;
 use clap::{App, Arg, ArgMatches, SubCommand};
 use clap_extractor::Matcher;
@@ -41,6 +42,10 @@ impl ClapTask<TaskResult<()>> for Task {
         let params = Params {
             files: matches.single("files").as_required()?,
             target_packages: vec![Name::EnvExtractor],
+            git_config: GitConfig {
+                user_name: matches.single("git-user-name").as_required()?,
+                user_email: matches.single("git-user-email").as_required()?,
+            },
         };
         if matches.is_present("dry-run") {
             self.release_dry_run(&params)
