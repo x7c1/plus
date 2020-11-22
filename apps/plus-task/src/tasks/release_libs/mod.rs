@@ -1,8 +1,10 @@
 mod task;
+
 use task::Params;
 use task::Task;
 
 use crate::tasks::shared::git_arg::GitConfig;
+use crate::tasks::shared::{files, git_arg};
 use crate::TaskResult;
 use clap::{App, Arg, ArgMatches, SubCommand};
 use clap_extractor::Matcher;
@@ -22,13 +24,9 @@ impl ClapTask<TaskResult<()>> for Task {
         SubCommand::with_name(self.name())
             .about("Release libraries.")
             .long_about("Run cargo publish, git tag, git push, etc")
-            .arg(
-                Arg::with_name("files")
-                    .long("files")
-                    .required(true)
-                    .takes_value(true)
-                    .help("All added and modified files."),
-            )
+            .arg(files::arg())
+            .arg(git_arg::user_name())
+            .arg(git_arg::user_email())
             .arg(
                 Arg::with_name("dry-run")
                     .long("dry-run")
