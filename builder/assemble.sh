@@ -25,22 +25,6 @@ assemble() {
   task strip-executables \
     --target="$build_target" --release
 
-  # todo:
-  exit
-
-  task package-artifacts \
-    --target="$build_target" --release
-
-  ls -lh dist/"$build_target"
-
-  task strip-executables \
-    --target="$build_target" --release
-
-  task package-artifacts \
-    --target="$build_target" --release
-
-  ls -lh dist/"$build_target"
-
   echo "done."
 }
 
