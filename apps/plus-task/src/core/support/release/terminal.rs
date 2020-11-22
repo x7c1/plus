@@ -9,7 +9,6 @@ use shellwork::core::command;
 use shellwork::core::command::{no_op, Runner, Unprepared};
 use std::iter::FromIterator;
 use std::path::{Path, PathBuf};
-use std::process::exit;
 use toml::Value;
 
 pub struct ReleaseTerminal<'a> {
@@ -72,10 +71,7 @@ impl ReleaseTerminal<'_> {
     pub fn git_config(&self) -> TaskResult<()> {
         command::program("git")
             .arg("config")
-            .args(&[
-                "user.email",
-                &self.git_config.user_email,
-            ])
+            .args(&["user.email", &self.git_config.user_email])
             .prepare(no_op::<crate::Error>)?
             .spawn()?;
 
