@@ -24,6 +24,9 @@ cargo-fmt-check:
 cargo-test:
 	./scripts/run_builder.sh cargo_test
 
+cargo-outdated:
+	./scripts/run_builder.sh cargo_outdated
+
 cargo-update:
 	./scripts/run_builder.sh cargo_update
 

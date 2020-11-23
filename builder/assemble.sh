@@ -58,6 +58,10 @@ cargo_fmt_check() {
   cargo fmt --verbose --all -- --check
 }
 
+cargo_outdated() {
+  cargo outdated
+}
+
 cargo_test() {
   export RUSTFLAGS="-C opt-level=0"
   cargo test --target=x86_64-unknown-linux-musl \
