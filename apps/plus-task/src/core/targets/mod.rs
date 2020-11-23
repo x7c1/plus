@@ -25,14 +25,6 @@ impl BuildTarget {
             BuildTarget::MacX86 => "x86_64-apple-darwin",
         }
     }
-
-    pub fn as_abbr(&self) -> &str {
-        match self {
-            BuildTarget::LinuxX86 => "linux_x86",
-            BuildTarget::LinuxArmV7 => "linux_armv7",
-            BuildTarget::MacX86 => "macos_x86",
-        }
-    }
 }
 
 impl FromStr for BuildTarget {
@@ -41,7 +33,7 @@ impl FromStr for BuildTarget {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         BuildTarget::all()
             .iter()
-            .find(|target| target.as_abbr() == s)
+            .find(|target| target.as_triple() == s)
             .ok_or_else(|| UnknownBuildTarget(s.to_string()))
             .map(|target| *target)
     }

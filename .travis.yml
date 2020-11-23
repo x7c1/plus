@@ -23,6 +23,6 @@ script:
   - |
     set -e
     make cargo-test
-    make assemble target=linux_x86
-    make assemble target=linux_armv7
-    make assemble target=macos_x86
+    make assemble target=x86_64-unknown-linux-musl
+    make assemble target=armv7-unknown-linux-musleabihf
+    make assemble target=x86_64-apple-darwin

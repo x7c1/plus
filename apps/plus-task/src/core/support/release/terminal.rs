@@ -1,22 +1,32 @@
+use crate::core::build_mode::BuildMode::Release;
+use crate::core::support::get_tar_path;
 use crate::core::support::release::{CargoToml, CargoTomlPackage};
-use crate::error::Error::{CrateVersionNotFound, PackageAlreadyPublished};
+use crate::core::targets::BuildTarget;
+use crate::error::Error::{AssetNotFound, CrateVersionNotFound, PackageAlreadyPublished};
+use crate::tasks::shared::git_arg::{GitConfig, HasGitConfig};
 use crate::TaskResult;
 use shellwork::core::command;
 use shellwork::core::command::{no_op, Runner, Unprepared};
-use std::path::Path;
+use std::iter::FromIterator;
+use std::path::{Path, PathBuf};
 use toml::Value;
 
 pub struct ReleaseTerminal<'a> {
+    git_config: &'a GitConfig,
     cargo_toml_path: &'a Path,
     next_tag: String,
     package: &'a CargoTomlPackage,
 }
 
 impl ReleaseTerminal<'_> {
-    pub fn load<'a>(cargo_toml: &'a CargoToml) -> TaskResult<ReleaseTerminal<'a>> {
+    pub fn load<'a, A: HasGitConfig>(
+        git_config: &'a A,
+        cargo_toml: &'a CargoToml,
+    ) -> TaskResult<ReleaseTerminal<'a>> {
         let terminal = ReleaseTerminal {
+            git_config: git_config.get_git_config(),
             cargo_toml_path: cargo_toml.path,
-            next_tag: create_next_tag(&cargo_toml.contents.package),
+            next_tag: cargo_toml.contents.package.create_next_tag(),
             package: &cargo_toml.contents.package,
         };
         Ok(terminal)
@@ -58,20 +68,17 @@ impl ReleaseTerminal<'_> {
         Ok(())
     }
 
+    /// caution: this method change .git/config file.
     pub fn git_config(&self) -> TaskResult<()> {
-        // rf. https://github.community/t/github-actions-bot-email-address/17204/4
         command::program("git")
             .arg("config")
-            .args(&[
-                "user.email",
-                "41898282+github-actions[bot]@users.noreply.github.com",
-            ])
+            .args(&["user.email", &self.git_config.user_email])
             .prepare(no_op::<crate::Error>)?
             .spawn()?;
 
         command::program("git")
             .arg("config")
-            .args(&["user.name", "github-actions[bot]"])
+            .args(&["user.name", &self.git_config.user_name])
             .prepare(no_op::<crate::Error>)?
             .spawn()?;
 
@@ -80,6 +87,7 @@ impl ReleaseTerminal<'_> {
 
     pub fn git_tag(&self) -> TaskResult<()> {
         command::program("git")
+            .args(self.git_config.as_cli_format())
             .arg("tag")
             .args(&["-a", &self.next_tag])
             .args(&["-m", ""])
@@ -91,11 +99,52 @@ impl ReleaseTerminal<'_> {
 
     pub fn git_push(&self) -> TaskResult<()> {
         command::program("git")
+            .args(self.git_config.as_cli_format())
             .args(&["push", "origin", &self.next_tag])
             .prepare(no_op::<crate::Error>)?
             .spawn()?;
 
         Ok(())
+    }
+
+    pub fn gh_release_create(&self) -> TaskResult<()> {
+        command::program("gh")
+            .args(&["release", "create", &self.next_tag])
+            .args(&["--notes", ""])
+            .prepare(no_op::<crate::Error>)?
+            .spawn()?;
+
+        Ok(())
+    }
+
+    pub fn upload_assets(&self) -> TaskResult<()> {
+        let upload = |path: &PathBuf| -> TaskResult<()> {
+            command::program("gh")
+                .args(&["release", "upload", &self.next_tag, &path.to_string_lossy()])
+                .prepare(no_op::<crate::Error>)?
+                .spawn()?;
+
+            Ok(())
+        };
+        self.asset_paths().iter().try_for_each(upload)
+    }
+
+    pub fn all_assets_exist(&self) -> TaskResult<()> {
+        for path in self.asset_paths() {
+            if !path.exists() {
+                return Err(AssetNotFound(path));
+            }
+        }
+        Ok(())
+    }
+
+    fn asset_paths(&self) -> Vec<PathBuf> {
+        let targets = BuildTarget::all();
+        let iter = targets
+            .iter()
+            .map(|target| get_tar_path(*target, Release, self.package));
+
+        Vec::from_iter(iter)
     }
 }
 
@@ -105,14 +154,6 @@ fn runner_to_publish(toml: &Path) -> Runner<Unprepared> {
         "--manifest-path",
         toml.to_str().expect("path to Cargo.toml required"),
     ])
-}
-
-fn create_next_tag(package: &CargoTomlPackage) -> String {
-    format!(
-        "{prefix}-v{version}",
-        prefix = package.name,
-        version = package.version
-    )
 }
 
 fn extract_version(toml_line: &str, package_name: &str) -> Option<String> {

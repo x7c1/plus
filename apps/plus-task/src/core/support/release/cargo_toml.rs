@@ -42,3 +42,13 @@ pub struct CargoTomlPackage {
     pub name: String,
     pub version: String,
 }
+
+impl CargoTomlPackage {
+    pub fn create_next_tag(&self) -> String {
+        format!(
+            "{prefix}-v{version}",
+            prefix = self.name,
+            version = self.version
+        )
+    }
+}

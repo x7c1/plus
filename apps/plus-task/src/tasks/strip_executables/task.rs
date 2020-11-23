@@ -1,5 +1,6 @@
-use crate::core::env::{artifacts_dir, executable_names};
-use crate::core::support::program_exists;
+use crate::core::build_mode::AsBuildMode;
+use crate::core::env::executable_names;
+use crate::core::support::{get_artifacts_dir, program_exists};
 use crate::core::targets::{AsBuildTarget, BuildTarget};
 use crate::TaskResult;
 use shellwork::core::command;
@@ -9,7 +10,11 @@ use std::path::{Path, PathBuf};
 pub struct Task;
 
 impl Task {
-    pub fn start<P: AsBuildTarget>(&self, params: &P) -> TaskResult<()> {
+    pub fn start<P>(&self, params: &P) -> TaskResult<()>
+    where
+        P: AsBuildTarget,
+        P: AsBuildMode,
+    {
         let file_names = executable_names();
         let runners = file_names
             .iter()
@@ -24,9 +29,14 @@ impl Task {
     }
 }
 
-fn to_path<P: AsBuildTarget>(params: &P, file_name: &str) -> PathBuf {
+fn to_path<P>(params: &P, file_name: &str) -> PathBuf
+where
+    P: AsBuildTarget,
+    P: AsBuildMode,
+{
     let target = params.as_build_target();
-    artifacts_dir().join(target.as_abbr()).join(file_name)
+    let mode = params.as_build_mode();
+    get_artifacts_dir(*target, *mode).join(file_name)
 }
 
 fn to_runner<A, B>(params: &A, path: B) -> Runner<Unprepared>

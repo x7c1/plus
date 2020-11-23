@@ -22,26 +22,17 @@ assemble() {
   task copy-artifact-files \
     --target="$build_target" --release
 
-  task package-artifacts \
-    --target="$build_target"
-
-  ls -lh dist/"$build_target"
-
   task strip-executables \
-    --target="$build_target"
-
-  task package-artifacts \
-    --target="$build_target"
-
-  ls -lh dist/"$build_target"
+    --target="$build_target" --release
 
   echo "done."
 }
 
 assemble_debug_pilot() {
-  task setup-artifacts-directory --target="linux_x86"
-  task assemble-pilot-tests --target="linux_x86"
-  task copy-artifact-files --target="linux_x86"
+  target="x86_64-unknown-linux-musl"
+  task setup-artifacts-directory --target="$target"
+  task assemble-pilot-tests --target="$target"
+  task copy-artifact-files --target="$target"
 }
 
 build_task_runner() {

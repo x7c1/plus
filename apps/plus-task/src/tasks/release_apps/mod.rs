@@ -1,7 +1,11 @@
 mod task;
+
 use task::Params;
 use task::Task;
 
+use crate::core::support::release::PackageName;
+use crate::tasks::shared::files;
+use crate::tasks::shared::git_arg::GitConfig;
 use crate::TaskResult;
 use clap::{App, Arg, ArgMatches, SubCommand};
 use clap_extractor::Matcher;
@@ -21,13 +25,7 @@ impl ClapTask<TaskResult<()>> for Task {
         SubCommand::with_name(self.name())
             .about("Release applications.")
             .long_about("Run cargo publish, git tag, git push, etc")
-            .arg(
-                Arg::with_name("files")
-                    .long("files")
-                    .required(true)
-                    .takes_value(true)
-                    .help("All added and modified files."),
-            )
+            .arg(files::arg())
             .arg(
                 Arg::with_name("dry-run")
                     .long("dry-run")
@@ -36,11 +34,10 @@ impl ClapTask<TaskResult<()>> for Task {
     }
 
     async fn run<'a>(&'a self, matches: &'a ArgMatches<'a>) -> TaskResult<()> {
-        use crate::core::support::release::PackageName as Name;
-
         let params = Params {
             files: matches.single("files").as_required()?,
-            target_packages: vec![Name::S3Api],
+            target_packages: PackageName::asset_packages(),
+            git_config: GitConfig::gh_actions_bot(),
         };
         if matches.is_present("dry-run") {
             self.release_dry_run(&params)

@@ -25,6 +25,7 @@ setup_shared_modules() {
 setup_linux_x86() {
   run ./builder/init/init.linux_x86.sh
   run ./builder/init/tools.linux_x86.sh
+  run ./builder/init/release.linux_x86.sh
 }
 
 setup_linux_armv7() {

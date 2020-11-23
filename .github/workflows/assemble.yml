@@ -126,13 +126,30 @@ jobs:
           ./builder/init/run-if-changed.sh ./builder/init/init.sh
           ./builder/init/run-if-changed.sh ./builder/init/init.linux_x86.sh
 
+      - id: files
+        uses: jitterbit/get-changed-files@v1
+        with:
+          format: 'json'
+
       - name: Download plus-task
         uses: actions/download-artifact@v2
         with:
           name: plus-task
 
       - name: Assemble artifacts
-        run: ./builder/call.sh assemble linux_x86
+        run: ./builder/call.sh assemble x86_64-unknown-linux-musl
+
+      - name: Package artifacts
+        run: |
+          ./builder/call.sh task package-artifacts \
+            --target=x86_64-unknown-linux-musl \
+            --files='${{ steps.files.outputs.added_modified }}'
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: x86_64-unknown-linux-musl
+          path: ./dist/release/x86_64-unknown-linux-musl
 
   target-linux-armv7:
     needs: cargo-test
@@ -166,13 +183,30 @@ jobs:
           ./builder/init/run-if-changed.sh ./builder/init/init.sh
           ./builder/init/run-if-changed.sh ./builder/init/init.linux_armv7.sh
 
+      - id: files
+        uses: jitterbit/get-changed-files@v1
+        with:
+          format: 'json'
+
       - name: Download plus-task
         uses: actions/download-artifact@v2
         with:
           name: plus-task
 
       - name: Assemble artifacts
-        run: ./builder/call.sh assemble linux_armv7
+        run: ./builder/call.sh assemble armv7-unknown-linux-musleabihf
+
+      - name: Package artifacts
+        run: |
+          ./builder/call.sh task package-artifacts \
+            --target=armv7-unknown-linux-musleabihf \
+            --files='${{ steps.files.outputs.added_modified }}'
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: armv7-unknown-linux-musleabihf
+          path: ./dist/release/armv7-unknown-linux-musleabihf
 
   target-macos-x86:
     needs: cargo-test
@@ -210,6 +244,11 @@ jobs:
           ./builder/init/run-if-changed.sh ./builder/init/init.sh
           ./builder/init/run-if-changed.sh ./builder/init/init.macos_x86.sh
 
+      - id: files
+        uses: jitterbit/get-changed-files@v1
+        with:
+          format: 'json'
+
       - name: Download plus-task
         uses: actions/download-artifact@v2
         with:
@@ -218,7 +257,19 @@ jobs:
       - name: Assemble artifacts
         run: |
           . ./builder/init/env.macos_x86.sh
-          ./builder/call.sh assemble macos_x86
+          ./builder/call.sh assemble x86_64-apple-darwin
+
+      - name: Package artifacts
+        run: |
+          ./builder/call.sh task package-artifacts \
+            --target=x86_64-apple-darwin \
+            --files='${{ steps.files.outputs.added_modified }}'
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: x86_64-apple-darwin
+          path: ./dist/release/x86_64-apple-darwin
 
   release-libraries:
     needs:
@@ -246,6 +297,10 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: plus-task
+
+      - name: Set up commands for release phase
+        run: |
+          ./builder/init/run-if-changed.sh ./builder/init/release.linux_x86.sh
 
       - name: Release libraries --dry-run
         if: ${{ github.ref != 'refs/heads/master' }}
@@ -288,6 +343,10 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: plus-task
+
+      - name: Set up commands for release phase
+        run: |
+          ./builder/init/run-if-changed.sh ./builder/init/release.linux_x86.sh
 
       - name: Release applications --dry-run
         if: ${{ github.ref != 'refs/heads/master' }}

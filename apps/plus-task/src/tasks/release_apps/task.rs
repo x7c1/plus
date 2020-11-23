@@ -1,5 +1,6 @@
 use crate::core::support::release;
-use crate::core::support::release::{ChangedFiles, PackageName, ReleaseTerminal};
+use crate::core::support::release::{ChangedFiles, PackageName};
+use crate::tasks::shared::git_arg::{GitConfig, HasGitConfig};
 use crate::TaskResult;
 
 pub struct Task;
@@ -10,7 +11,7 @@ impl Task {
         params
             .files
             .filter_cargo_tomls(&params.target_packages)
-            .try_for_each(|toml| release::start(&toml?))
+            .try_for_each(|toml| release::start(params, &toml?))
     }
 
     pub fn release_dry_run(&self, params: &Params) -> TaskResult<()> {
@@ -18,7 +19,7 @@ impl Task {
         params
             .files
             .filter_cargo_tomls(&params.target_packages)
-            .try_for_each(|toml| release::start_dry_run(&toml?))
+            .try_for_each(|toml| release::start_dry_run(params, &toml?))
     }
 }
 
@@ -26,4 +27,11 @@ impl Task {
 pub struct Params {
     pub files: ChangedFiles,
     pub target_packages: Vec<PackageName>,
+    pub git_config: GitConfig,
+}
+
+impl HasGitConfig for &Params {
+    fn get_git_config(&self) -> &GitConfig {
+        &self.git_config
+    }
 }
