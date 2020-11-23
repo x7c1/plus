@@ -347,6 +347,12 @@ jobs:
         with:
           name: plus-task
 
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: x86_64-unknown-linux-musl
+          path: ./dist/release/x86_64-unknown-linux-musl
+
       - name: Set up commands for release phase
         run: |
           ./builder/init/run-if-changed.sh ./builder/init/release.linux_x86.sh
