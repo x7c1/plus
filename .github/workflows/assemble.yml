@@ -142,6 +142,7 @@ jobs:
       - name: Package artifacts
         run: |
           ./builder/call.sh task package-artifacts \
+            --release \
             --target=x86_64-unknown-linux-musl \
             --files='${{ steps.files.outputs.added_modified }}'
 
@@ -199,6 +200,7 @@ jobs:
       - name: Package artifacts
         run: |
           ./builder/call.sh task package-artifacts \
+            --release \
             --target=armv7-unknown-linux-musleabihf \
             --files='${{ steps.files.outputs.added_modified }}'
 
@@ -262,6 +264,7 @@ jobs:
       - name: Package artifacts
         run: |
           ./builder/call.sh task package-artifacts \
+            --release \
             --target=x86_64-apple-darwin \
             --files='${{ steps.files.outputs.added_modified }}'
 
