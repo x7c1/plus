@@ -59,7 +59,7 @@ cargo_fmt_check() {
 }
 
 cargo_outdated() {
-  cargo outdated
+  cargo outdated --exit-code 1
 }
 
 cargo_test() {
