@@ -58,11 +58,19 @@ cargo_fmt_check() {
   cargo fmt --verbose --all -- --check
 }
 
+cargo_outdated() {
+  cargo outdated --exit-code 1
+}
+
 cargo_test() {
   export RUSTFLAGS="-C opt-level=0"
   cargo test --target=x86_64-unknown-linux-musl \
     --workspace --exclude=plus-pilot \
     -- --nocapture
+}
+
+cargo_update() {
+  cargo update
 }
 
 task() {

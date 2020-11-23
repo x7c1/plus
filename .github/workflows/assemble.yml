@@ -142,6 +142,7 @@ jobs:
       - name: Package artifacts
         run: |
           ./builder/call.sh task package-artifacts \
+            --release \
             --target=x86_64-unknown-linux-musl \
             --files='${{ steps.files.outputs.added_modified }}'
 
@@ -199,6 +200,7 @@ jobs:
       - name: Package artifacts
         run: |
           ./builder/call.sh task package-artifacts \
+            --release \
             --target=armv7-unknown-linux-musleabihf \
             --files='${{ steps.files.outputs.added_modified }}'
 
@@ -262,6 +264,7 @@ jobs:
       - name: Package artifacts
         run: |
           ./builder/call.sh task package-artifacts \
+            --release \
             --target=x86_64-apple-darwin \
             --files='${{ steps.files.outputs.added_modified }}'
 
@@ -343,6 +346,24 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: plus-task
+
+      - name: Download artifacts - x86_64-unknown-linux-musl
+        uses: actions/download-artifact@v2
+        with:
+          name: x86_64-unknown-linux-musl
+          path: ./dist/release/x86_64-unknown-linux-musl
+
+      - name: Download artifacts - armv7-unknown-linux-musleabihf
+        uses: actions/download-artifact@v2
+        with:
+          name: armv7-unknown-linux-musleabihf
+          path: ./dist/release/armv7-unknown-linux-musleabihf
+
+      - name: Download artifacts - x86_64-apple-darwin
+        uses: actions/download-artifact@v2
+        with:
+          name: x86_64-apple-darwin
+          path: ./dist/release/x86_64-apple-darwin
 
       - name: Set up commands for release phase
         run: |
