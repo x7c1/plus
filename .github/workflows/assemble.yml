@@ -313,6 +313,7 @@ jobs:
             --dry-run
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Release libraries
         if: ${{ github.ref == 'refs/heads/master' }}
@@ -321,6 +322,7 @@ jobs:
             --files='${{ steps.files.outputs.added_modified }}'
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   release-applications:
     needs:
@@ -377,6 +379,7 @@ jobs:
             --dry-run
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Release applications
         if: ${{ github.ref == 'refs/heads/master' }}
@@ -385,3 +388,4 @@ jobs:
             --files='${{ steps.files.outputs.added_modified }}'
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
