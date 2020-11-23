@@ -24,6 +24,9 @@ cargo-fmt-check:
 cargo-test:
 	./scripts/run_builder.sh cargo_test
 
+cargo-update:
+	./scripts/run_builder.sh cargo_update
+
 download-osxcross:
 	./scripts/download_osxcross.sh
 

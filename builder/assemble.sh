@@ -65,6 +65,10 @@ cargo_test() {
     -- --nocapture
 }
 
+cargo_update() {
+  cargo update
+}
+
 task() {
   if [ -e ./plus-task ]; then
     # when called by GitHub Actions using actions/download-artifact
