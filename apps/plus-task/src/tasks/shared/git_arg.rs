@@ -1,21 +1,3 @@
-use clap::Arg;
-
-pub fn user_name<'a, 'b>() -> Arg<'a, 'b> {
-    Arg::with_name("git-user-name")
-        .long("git-user-name")
-        .required(true)
-        .takes_value(true)
-        .help("For 'git config user.name'")
-}
-
-pub fn user_email<'a, 'b>() -> Arg<'a, 'b> {
-    Arg::with_name("git-user-email")
-        .long("git-user-email")
-        .required(true)
-        .takes_value(true)
-        .help("For 'git config user.email'")
-}
-
 #[derive(Debug)]
 pub struct GitConfig {
     pub user_name: String,
@@ -23,6 +5,12 @@ pub struct GitConfig {
 }
 
 impl GitConfig {
+    pub fn gh_actions_bot() -> GitConfig {
+        GitConfig {
+            user_name: "github-actions[bot]".to_string(),
+            user_email: "41898282+github-actions[bot]@users.noreply.github.com".to_string(),
+        }
+    }
     pub fn as_cli_format(&self) -> Vec<String> {
         vec![
             "-c".to_string(),

@@ -307,8 +307,6 @@ jobs:
         run: |
           ./builder/call.sh task release-libs \
             --files='${{ steps.files.outputs.added_modified }}' \
-            --git-user-name='github-actions[bot]' \
-            --git-user-email='41898282+github-actions[bot]@users.noreply.github.com' \
             --dry-run
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
@@ -317,9 +315,7 @@ jobs:
         if: ${{ github.ref == 'refs/heads/master' }}
         run: |
           ./builder/call.sh task release-libs \
-            --files='${{ steps.files.outputs.added_modified }}' \
-            --git-user-name='github-actions[bot]' \
-            --git-user-email='41898282+github-actions[bot]@users.noreply.github.com'
+            --files='${{ steps.files.outputs.added_modified }}'
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
 
@@ -357,8 +353,6 @@ jobs:
         run: |
           ./builder/call.sh task release-apps \
             --files='${{ steps.files.outputs.added_modified }}' \
-            --git-user-name='github-actions[bot]' \
-            --git-user-email='41898282+github-actions[bot]@users.noreply.github.com' \
             --dry-run
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
@@ -367,8 +361,6 @@ jobs:
         if: ${{ github.ref == 'refs/heads/master' }}
         run: |
           ./builder/call.sh task release-apps \
-            --files='${{ steps.files.outputs.added_modified }}' \
-            --git-user-name='github-actions[bot]' \
-            --git-user-email='41898282+github-actions[bot]@users.noreply.github.com'
+            --files='${{ steps.files.outputs.added_modified }}'
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}

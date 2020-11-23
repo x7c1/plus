@@ -21,9 +21,7 @@ release_apps() {
 
   # rf. https://github.community/t/github-actions-bot-email-address/17204/4
   task release-apps \
-    --files='["apps/s3api/Cargo.toml"]' \
-    --git-user-name='github-actions[bot]' \
-    --git-user-email='41898282+github-actions[bot]@users.noreply.github.com'
+    --files='["apps/s3api/Cargo.toml"]'
 }
 
 package_artifacts() {
